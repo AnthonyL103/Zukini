@@ -11,7 +11,7 @@ app.use(cors());
 // Configure Multer to save uploaded files to 'uploads/' folder
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../uploads')); // Save to 'uploads' folder
+    cb(null, path.join(__dirname, '/uploads')); // Save to 'uploads' folder
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + '-' + file.originalname); // Unique filename
