@@ -1,12 +1,18 @@
 import Scan from './Scan';
+import AddScan from './AddScan';
 
-const ScanList = () => {
+const ScanList = ({ scans }) => {
     return(
-    <div className = "scans_list">
-        <Scan />
-        <Scan />
-        <Scan />
-        <Scan />
-    </div>);
+    <div className = "scan-list">
+        {scans.map((scan)=> (
+        <Scan 
+            id = {scan.id} 
+            text = {scan.text} 
+            date = {scan.date}
+            />
+        ))}
+        <AddScan />
+    </div>
+    );
 };
 export default ScanList;

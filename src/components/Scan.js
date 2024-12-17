@@ -1,12 +1,12 @@
 import { MdDeleteForever } from 'react-icons/md';
 
-const Scan = () => {
+const Scan = ({ id, text, date }) => {
     return (
         <div className="scan">
-        <span>Hello this is our first scan</span>
+        <span>{text}</span>
         <div className = "scan-footer"> 
-            <small>12/16/2024</small>
-            <MdDeleteForever className ="deleteicon" size="1.3em" />
+            <small>{date}</small>
+            <MdDeleteForever className ="delete-icon" size="1.3em" />
 
         </div>
     </div>
