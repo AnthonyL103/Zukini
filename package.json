@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@google-cloud/vision": "^4.3.2",
     "cors": "^2.8.5",
     "cra-template": "1.2.0",
     "express": "^4.21.2",
@@ -13,8 +14,9 @@
     "react-scripts": "^5.0.1"
   },
   "scripts": {
-    "start": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "nodemon src/backend/parse.js",
+    "start": "concurrently \"npm run server\" \"npm run server2\" \"npm run client\" ",
+    "server": "nodemon src/backend/scan.js",
+    "server2": "nodemon src/backend/parse.js",
     "client": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

@@ -1,31 +1,34 @@
+const vision = require('@google-cloud/vision');
 const express = require('express');
-const multer = require('multer');
 const path = require('path');
-const cors = require('cors');
-
+const fs = require('fs');
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 0;
 
-app.use(cors());
-
-// Configure Multer to save uploaded files to 'uploads/' folder
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '/uploads')); // Save to 'uploads' folder
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname); // Unique filename
-  },
-});
-const upload = multer({ storage });
-
-app.post('/upload', upload.single('file'), (req, res) => {
-    res.json({
-      message: 'File uploaded successfully!',
-      filename: req.file.filename,
-    });
+const client = new vision.ImageAnnotatorClient({
+    keyFilename: path.join(__dirname, 'credentials.json'), // Path to your Google Cloud credentials JSON file
   });
 
-app.listen(port, () => {
-    console.log(`Backend running on http://localhost:${port}`);
+  async function parseTextFromFile(filePath) {
+    try {
+      // Perform text detection on the image file
+      const [result] = await client.textDetection(filePath);
+      const detections = result.textAnnotations;
+  
+      // Check if any text was detected
+      if (detections.length > 0) {
+        return detections[0].description; // The detected text
+      } else {
+        return 'No text detected.';
+      }
+    } catch (error) {
+      console.error('Error during text parsing:', error);
+      throw error; // Re-throw the error to be handled in the calling function
+    }
+  }
+  
+  module.exports = { parseTextFromFile };
+
+  app.listen(port, () => {
+    console.log(`Parse server running on http://localhost:${port}`);
   });
