@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { nanoid } from 'nanoid';
-import ScanList from './components/ScanList';
+import ScanList from './ScanList';
 
 const App = () => {
     const [scans, setScans] = useState([

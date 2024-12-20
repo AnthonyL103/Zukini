@@ -73,22 +73,29 @@ const AddScan = () => {
       </div>
   
       {/* Modal Container */}
-      <div className="parsedTextmodal-container">
-        {showModal && (
-          <div className="parsedText-modal">
-            <h2 className="parsedText-heading">Parsed Text</h2>
-            <p className="parsedText-para">{displayedText}</p>
-            <div className="button-wrapper">
-              <button
-                className="parsedText-button accept"
-                onClick={handleCloseModal}
-              >
-                Accept
-              </button>
-            </div>
-          </div>
-        )}
+    <div className={`parsedTextmodal-container ${showModal ? "show" : ""}`}>
+    {showModal && (
+    <div className="parsedText-modal">
+      <h2 className="parsedText-heading">Parsed Text</h2>
+      <p className="parsedText-para">{displayedText}</p>
+      <div className="button-wrapper">
+        <button
+          className="parsedText-button accept"
+          onClick={handleCloseModal}
+        >
+          Accept
+        </button>
+        <button
+          className="parsedText-button Re-Scan"
+          onClick={handleCloseModal}
+        >
+          Re-Scan
+        </button>
       </div>
+    </div>
+  )}
+</div>
+
     </>
   );
   
