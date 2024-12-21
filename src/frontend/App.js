@@ -20,6 +20,7 @@ const App = () => {
             date: "15/04/2021"
         }
     ]);
+    
     return (<div className = "container">
         <ScanList scans={scans}/>
     </div>

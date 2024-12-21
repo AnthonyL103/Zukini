@@ -7,7 +7,7 @@ const fs = require('fs');
 const { parseTextFromFile } = require('./parse'); // Import the parsing function from parse.js
 
 const app = express();
-const port = 5000;
+const port = 5001;
 
 app.use(cors());
 
@@ -70,6 +70,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     res.status(500).json({ error: 'Failed to parse file.' });
   }
 });
+
 
 app.listen(port, () => {
     console.log(`scan server on http://localhost:${port}`);
