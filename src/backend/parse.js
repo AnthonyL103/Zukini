@@ -2,8 +2,8 @@ const vision = require('@google-cloud/vision');
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const app = express();
 const port = process.env.PORT || 0;
+const app = express();
 
 const client = new vision.ImageAnnotatorClient({
     keyFilename: path.join(__dirname, 'credentials.json'), // Path to your Google Cloud credentials JSON file

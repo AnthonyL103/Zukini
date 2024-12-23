@@ -3,38 +3,92 @@ import {useState, useEffect} from 'react';
 const AddScan = () => {
     const [showModal, setShowModal] = useState(false);
     const [parsedText, setParsedText] = useState("");
-    const [file, setFile] = useState(null)
+    const [currFile, setCurrFile] = useState("");
+    const [file, setFile] = useState(null);
     const [displayedText, setDisplayedText] = useState("");
     
     const handleFileChange = (e) => {
         setFile(e.target.files[0]); // Update the state with the selected file
     };
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Prevent default form behavior
+      e.preventDefault();
     
-        const formData = new FormData(); // Create a form data object to send the file
-        formData.append('file', file); // Append the file with the name 'file'
+      if (!file) {
+        console.error('No file selected for upload');
+        return;
+      }
     
-        try {
-          // Send the file to the server
-          const response = await fetch('http://localhost:5000/upload', {
-            method: 'POST',
-            body: formData,
-          });
+      const formData = new FormData();
+      formData.append('file', file);
     
-          const result = await response.json(); // Parse the server's JSON response
-          setParsedText(result.text);
-          //setScanText(result.text); // Set the extracted text in state
-          setShowModal(true)
-        } catch (error) {
-          console.error('Error uploading file:', error);
+      try {
+        // Step 1: Upload the file
+        const uploadResponse = await fetch('http://localhost:5000/upload', {
+          method: 'POST',
+          body: formData,
+        });
+    
+        if (!uploadResponse.ok) {
+          throw new Error('Failed to upload the file');
         }
-      };
+    
+        const uploadResult = await uploadResponse.json();
+        const filePath = uploadResult.filePath; // Get the file path from the upload response
+        setCurrFile(filePath);
+        console.log('File uploaded successfully:', filePath);
+    
+        // Step 2: Automatically parse the uploaded file
+        const parseResponse = await fetch('http://localhost:5000/callparse', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json', // Specify JSON content type
+          },
+          body: JSON.stringify({ filePath }), // Properly send filePath as JSON
+        });
+        
+    
+        const parseResult = await parseResponse.json();
+        setParsedText(parseResult.text); // Update the parsed text
+        setShowModal(true); // Show modal with parsed text
+    
+        console.log('File parsed successfully:', parseResult.text);
+      } catch (error) {
+        console.error('Error in handleSubmit:', error);
+      }
+    };
+    
     
     const handleCloseModal = () => {
         setDisplayedText("");
         setShowModal(false); // Close the modal
     };
+
+    const handleReScan = async () => {
+      handleCloseModal();
+      try {
+        const parseResponse = await fetch('http://localhost:5000/callparse', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json', // Specify JSON content type
+          },
+          body: JSON.stringify({ filePath: currFile }), // Send filePath as JSON
+        });
+    
+        if (!parseResponse.ok) {
+          throw new Error('Failed to re-scan the file');
+        }
+    
+        const parseResult = await parseResponse.json();
+        setDisplayedText(""); // Clear displayed text for re-animation
+        // Clear previous displayed text
+        setParsedText(parseResult.text); // Update the parsed text
+        setShowModal(true);
+      } catch (error) {
+        console.error('Error during re-scan:', error);
+      }
+    };
+    
+  
 
     useEffect(() => {
       if (showModal && parsedText) {
@@ -48,7 +102,7 @@ const AddScan = () => {
               } else {
                   clearInterval(interval); // Stop the interval when all words are displayed
               }
-          }, 300); 
+          }, 100); 
           return () => clearInterval(interval); // Cleanup interval on modal close
       }
   }, [showModal, parsedText]);
@@ -87,7 +141,7 @@ const AddScan = () => {
         </button>
         <button
           className="parsedText-button Re-Scan"
-          onClick={handleCloseModal}
+          onClick={handleReScan}
         >
           Re-Scan
         </button>
