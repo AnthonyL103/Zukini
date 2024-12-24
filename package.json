@@ -16,9 +16,10 @@
     "react-scripts": "^5.0.1"
   },
   "scripts": {
-    "start": "concurrently \"npm run server\" \"npm run server2\" \"npm run client\" ",
+    "start": "concurrently \"npm run server\" \"npm run server2\" \"npm run server3\" \"npm run client\" ",
     "server": "nodemon src/backend/scan.js",
     "server2": "nodemon src/backend/parse.js",
+    "server3": "nodemon src/backend/display.js",
     "client": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

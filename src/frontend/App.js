@@ -1,31 +1,32 @@
-import { useState } from 'react';
-import { nanoid } from 'nanoid';
+import { useState, useEffect } from 'react';
 import ScanList from './ScanList';
 
 const App = () => {
-    const [scans, setScans] = useState([
-        {
-            id: nanoid(),
-            text: "This is my first scan",
-            date: "15/04/2021"
-        },
-        {
-            id: nanoid(),
-            text: "This is my first scan",
-            date: "15/04/2021"
-        },
-        {
-            id: nanoid(),
-            text: "This is my first scan",
-            date: "15/04/2021"
-        }
-    ]);
-    
-    return (<div className = "container">
-        <ScanList scans={scans}/>
-    </div>
-    );
-}
+  const [scans, setScans] = useState([]);
 
+  useEffect(() => {
+    const fetchScans = async () => {
+      try {
+        const response = await fetch('http://localhost:5001/displayscans');
+        if (!response.ok) {
+          throw new Error('Failed to fetch scans');
+        }
+        const data = await response.json();
+        setScans(data);
+      } catch (error) {
+        console.error('Error fetching scans:', error);
+      }
+    };
+
+    fetchScans();
+  }, []);
+
+  return (
+    <div className="app">
+      <h1>Scans</h1>
+      <ScanList scans={scans} />
+    </div>
+  );
+};
 
 export default App;

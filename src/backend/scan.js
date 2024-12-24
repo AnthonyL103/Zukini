@@ -10,7 +10,6 @@ const app = express();
 app.use(express.json());
 const port = 5000;
 
-
 app.use(cors());
 
 // Configure Multer to save uploaded files to 'uploads/' folder
@@ -28,11 +27,16 @@ const textJsonPath = path.join(__dirname, '/text.json');
 
 function appendToJsonFile(newEntry) {
   try {
-    // Read the current content of the file
+    // Initialize an empty array for JSON data
     let jsonData = [];
+
+    // Check if the file exists
     if (fs.existsSync(textJsonPath)) {
-      const fileContent = fs.readFileSync(textJsonPath, 'utf8');
-      jsonData = JSON.parse(fileContent); // Parse existing JSON data
+      const fileContent = fs.readFileSync(textJsonPath, 'utf8').trim();
+      if (fileContent) {
+        // If content is not empty, parse it
+        jsonData = JSON.parse(fileContent);
+      }
     }
 
     // Append the new entry to the array
@@ -48,33 +52,28 @@ function appendToJsonFile(newEntry) {
 app.post('/upload', upload.single('file'), (req, res) => {
   const filePath = path.join(__dirname, 'uploads', req.file.filename);
   console.log(`File uploaded: ${filePath}`);
+  const now = new Date();
+  const uploadDate = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`; // Format as MM/DD/YYYY
 
   // Return the file path to the client
   res.json({
     message: 'File uploaded successfully!',
     filePath: filePath, // Use relative path for simplicity
+    uploadDate: uploadDate,
   });
 });
 
 app.post('/callparse', async (req, res) => {
-  console.log('Request body:', req.body);
   const { filePath } = req.body; // Correctly destructure filePath
   console.log('Received filePath:', filePath);
   if (!filePath || !fs.existsSync(filePath)) {
     return res.status(400).json({ error: 'Invalid or missing file path' });
   }
-
   try {
     // Call the parsing function from parse.js
     const parsedText = await parseTextFromFile(filePath);
-    console.log('hello');
-    const newEntry = {
-      filename: filePath, // Use the provided filePath
-      text: parsedText,
-    };
-
-    // Append to the JSON file immediately
-    appendToJsonFile(newEntry);
+    //console.log('hello');
+    
 
     res.json({
       message: 'File parsed successfully!',
@@ -86,6 +85,27 @@ app.post('/callparse', async (req, res) => {
     res.status(500).json({ error: 'Failed to parse file.' });
   }
 });
+
+app.post('/saveandexit', (req, res) => {
+  const { filePath, parsedText, currDate } = req.body; // Extract filePath and parsedText from the JSON body
+
+  if (!filePath || !parsedText) {
+    return res.status(400).json({ message: 'filePath and parsedText are required' });
+  }
+
+  // Create a new entry with the filePath and parsedText
+  const newEntry = {
+    filename: filePath,
+    text: parsedText,
+    date: currDate,
+  };
+
+  // Append to JSON file immediately
+  appendToJsonFile(newEntry);
+
+  res.json({ message: 'Data saved successfully', newEntry });
+});
+
 
 
 

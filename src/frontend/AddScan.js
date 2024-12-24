@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 
 const AddScan = () => {
     const [showModal, setShowModal] = useState(false);
@@ -6,6 +6,9 @@ const AddScan = () => {
     const [currFile, setCurrFile] = useState("");
     const [file, setFile] = useState(null);
     const [displayedText, setDisplayedText] = useState("");
+    const fileInputRef = useRef();
+    const [saveEnabled, setSaveEnabled] = useState(false);
+    const [currDate, setCurrDate] = useState("");
     
     const handleFileChange = (e) => {
         setFile(e.target.files[0]); // Update the state with the selected file
@@ -33,8 +36,11 @@ const AddScan = () => {
         }
     
         const uploadResult = await uploadResponse.json();
-        const filePath = uploadResult.filePath; // Get the file path from the upload response
+        const filePath = uploadResult.filePath;
+         // Get the file path from the upload response
+        const currDate = uploadResult.uploadDate;
         setCurrFile(filePath);
+        setCurrDate(currDate);
         console.log('File uploaded successfully:', filePath);
     
         // Step 2: Automatically parse the uploaded file
@@ -61,6 +67,7 @@ const AddScan = () => {
     const handleCloseModal = () => {
         setDisplayedText("");
         setShowModal(false); // Close the modal
+        setSaveEnabled(true);
     };
 
     const handleReScan = async () => {
@@ -87,8 +94,50 @@ const AddScan = () => {
         console.error('Error during re-scan:', error);
       }
     };
+
     
-  
+    const onsave = async () => {
+      try {
+        // Prepare the data as JSON
+        const payload = {
+          filePath: currFile, // Send the current file path
+          parsedText, // Send the parsed text
+          currDate,
+        };
+    
+        // Sending the POST request with JSON
+        const onsaveresponse = await fetch('http://localhost:5000/saveandexit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json', // Specify JSON content type
+          },
+          body: JSON.stringify(payload), // Convert the payload to JSON
+        });
+    
+        if (onsaveresponse.ok) {
+          const responseData = await onsaveresponse.json();
+          console.log('Successfully saved:', responseData);
+    
+          // Clear form data and states
+          setParsedText("");
+          setCurrFile("");
+          setFile(null);
+          setDisplayedText("");
+          setSaveEnabled(false);
+          if (fileInputRef.current) {
+            fileInputRef.current.value = ""; // Clear the file input field visually
+          }
+        } else {
+          console.error('Failed to save data');
+        }
+        
+      } catch (error) {
+        console.error('Error during saving:', error);
+      }
+    };
+
+
+    
 
     useEffect(() => {
       if (showModal && parsedText) {
@@ -116,13 +165,14 @@ const AddScan = () => {
             type="file"
             accept="image/*"
             onChange={handleFileChange}
+            ref={fileInputRef}
             required
           />
           <button type="submit">Upload and Scan</button>
         </form>
   
         <div className="scan-footer">
-          <button className="save">Save</button>
+          <button className="save" onClick={onsave} disabled={!saveEnabled} >Save</button>
         </div>
       </div>
   
