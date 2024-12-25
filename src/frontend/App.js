@@ -12,6 +12,7 @@ const App = () => {
           throw new Error('Failed to fetch scans');
         }
         const data = await response.json();
+        console.log('Fetched scans:', data);
         setScans(data);
       } catch (error) {
         console.error('Error fetching scans:', error);
@@ -22,7 +23,7 @@ const App = () => {
   }, []);
 
   return (
-    <div className="app">
+    <div className="container">
       <h1>Scans</h1>
       <ScanList scans={scans} />
     </div>

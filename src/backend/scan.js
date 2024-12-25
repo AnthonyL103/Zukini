@@ -87,7 +87,7 @@ app.post('/callparse', async (req, res) => {
 });
 
 app.post('/saveandexit', (req, res) => {
-  const { filePath, parsedText, currDate } = req.body; // Extract filePath and parsedText from the JSON body
+  const { filePath, scanName, parsedText, currDate } = req.body; // Extract filePath and parsedText from the JSON body
 
   if (!filePath || !parsedText) {
     return res.status(400).json({ message: 'filePath and parsedText are required' });
@@ -96,6 +96,7 @@ app.post('/saveandexit', (req, res) => {
   // Create a new entry with the filePath and parsedText
   const newEntry = {
     filename: filePath,
+    scanname: scanName,
     text: parsedText,
     date: currDate,
   };

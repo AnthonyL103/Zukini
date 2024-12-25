@@ -9,9 +9,13 @@ const AddScan = () => {
     const fileInputRef = useRef();
     const [saveEnabled, setSaveEnabled] = useState(false);
     const [currDate, setCurrDate] = useState("");
+    const [scanName, setScanName] = useState("");
     
     const handleFileChange = (e) => {
         setFile(e.target.files[0]); // Update the state with the selected file
+    };
+    const handleScanNameChange = (e) => {
+      setScanName(e.target.value); // Update scan name state
     };
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -101,8 +105,10 @@ const AddScan = () => {
         // Prepare the data as JSON
         const payload = {
           filePath: currFile, // Send the current file path
+          scanName,
           parsedText, // Send the parsed text
           currDate,
+          
         };
     
         // Sending the POST request with JSON
@@ -121,6 +127,7 @@ const AddScan = () => {
           // Clear form data and states
           setParsedText("");
           setCurrFile("");
+          setScanName("");
           setFile(null);
           setDisplayedText("");
           setSaveEnabled(false);
@@ -160,14 +167,26 @@ const AddScan = () => {
     <>
       <div className="scan new">
         <form onSubmit={handleSubmit} encType="multipart/form-data">
-          <label htmlFor="note">Create a new scan:</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            ref={fileInputRef}
-            required
-          />
+        <div>
+        <label htmlFor="scanName">Create a new scan:</label>
+        <input
+        type="text"
+        id="scanName"
+        value={scanName}
+        onChange={handleScanNameChange}
+        placeholder="Enter scan name"
+        required
+        />
+      </div>
+      <div>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          ref={fileInputRef}
+          required
+        />
+      </div>
           <button type="submit">Upload and Scan</button>
         </form>
   

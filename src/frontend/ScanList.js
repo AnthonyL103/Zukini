@@ -6,8 +6,8 @@ const ScanList = ({ scans }) => {
     <div className="scan-list">
       {scans.map((scan, index) => (
         <Scan
-          key={index} // Use index as key if no unique ID is present
-          filename={scan.filename}
+          key={index}
+          scanname={scan.scanname}
           text={scan.text}
           date={scan.date}
         />

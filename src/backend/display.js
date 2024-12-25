@@ -1,10 +1,13 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const cors = require('cors');
 const PORT = 5001;
 
 const app = express();
-const dataFilePath = path.join(__dirname, 'data.json');
+const dataFilePath = path.join(__dirname, 'text.json');
+
+app.use(cors()); 
 
 app.get('/displayscans', (req, res) => {
   try {
