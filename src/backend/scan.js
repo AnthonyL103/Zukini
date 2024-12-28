@@ -95,7 +95,7 @@ app.post('/saveandexit', (req, res) => {
 
   // Create a new entry with the filePath and parsedText
   const newEntry = {
-    filename: filePath,
+    filepath: filePath,
     scanname: scanName,
     text: parsedText,
     date: currDate,
