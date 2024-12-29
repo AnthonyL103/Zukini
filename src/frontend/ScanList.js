@@ -1,7 +1,7 @@
 import Scan from './Scan';
 import AddScan from './AddScan';
 
-const ScanList = ({ scans, onDelete, index }) => {
+const ScanList = ({ scans, onDelete, index, onAddScan }) => {
   return (
     <div className="scan-list">
       {scans.map((scan) => (
@@ -14,7 +14,7 @@ const ScanList = ({ scans, onDelete, index }) => {
           onDelete={onDelete}
         />
       ))}
-      <AddScan />
+      <AddScan onAddScan={onAddScan}/>
     </div>
   );
 };

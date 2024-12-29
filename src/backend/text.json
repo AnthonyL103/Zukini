@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "filepath": "/Users/anthonyli/react-noteletapp/src/backend/uploads/1735450525515-Screenshot 2024-12-11 at 12.41.57â¯PM.png",
+    "scanname": "test 1",
+    "text": "Language closure properties\n•Regular language\nUnion, concatenation, Kleene star (complete) [Lec 8]\nComplement, intersection (“redundant”) [Lec 4]\n• Context-free language\n•\nUnion, concatenation, Kleene star [Lec 17]\nNOT closed under complement, intersection",
+    "date": "12/28/2024"
+  },
+  {
+    "filepath": "/Users/anthonyli/react-noteletapp/src/backend/uploads/1735450626115-Screenshot 2024-12-10 at 2.20.08â¯PM.png",
+    "scanname": "test 1",
+    "text": "Finite State Machine\nA\na\nB\nPushdown Automata\nA\na, b-c\nPushdown Automata (Graphical Notation)\nB\nInput Symbol\nSymbol on\nThis symbol\nTop of the Stack\nis pushed onto\nMaybe €\nThis symbol\nis popped.\n'E' means the\nthe stack\nstack is neither read\n'E' means\nnothing is pushed\nnor popped",
+    "date": "12/28/2024"
+  }
+]

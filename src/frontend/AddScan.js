@@ -1,6 +1,6 @@
 import {useState, useEffect, useRef} from 'react';
 
-const AddScan = () => {
+const AddScan = ({onAddScan})  => {
     const [showModal, setShowModal] = useState(false);
     const [parsedText, setParsedText] = useState("");
     const [currFile, setCurrFile] = useState("");
@@ -30,7 +30,7 @@ const AddScan = () => {
     
       try {
         // Step 1: Upload the file
-        const uploadResponse = await fetch('http://localhost:5000/upload', {
+        const uploadResponse = await fetch('http://localhost:5002/upload', {
           method: 'POST',
           body: formData,
         });
@@ -48,7 +48,7 @@ const AddScan = () => {
         console.log('File uploaded successfully:', filePath);
     
         // Step 2: Automatically parse the uploaded file
-        const parseResponse = await fetch('http://localhost:5000/callparse', {
+        const parseResponse = await fetch('http://localhost:5002/callparse', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json', // Specify JSON content type
@@ -77,7 +77,7 @@ const AddScan = () => {
     const handleReScan = async () => {
       handleCloseModal();
       try {
-        const parseResponse = await fetch('http://localhost:5000/callparse', {
+        const parseResponse = await fetch('http://localhost:5002/callparse', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json', // Specify JSON content type
@@ -112,7 +112,7 @@ const AddScan = () => {
         };
     
         // Sending the POST request with JSON
-        const onsaveresponse = await fetch('http://localhost:5000/saveandexit', {
+        const onsaveresponse = await fetch('http://localhost:5002/saveandexit', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json', // Specify JSON content type
@@ -123,6 +123,14 @@ const AddScan = () => {
         if (onsaveresponse.ok) {
           const responseData = await onsaveresponse.json();
           console.log('Successfully saved:', responseData);
+          if (onAddScan) {
+            onAddScan({
+              filepath: currFile,
+              scanname: scanName,
+              text: parsedText,
+              date: currDate,
+            });
+          }
     
           // Clear form data and states
           setParsedText("");
@@ -142,9 +150,6 @@ const AddScan = () => {
         console.error('Error during saving:', error);
       }
     };
-
-
-    
 
     useEffect(() => {
       if (showModal && parsedText) {

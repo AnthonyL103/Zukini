@@ -8,7 +8,7 @@ const { parseTextFromFile } = require('./parse');
 const fs = require('fs');
 const app = express();
 app.use(express.json());
-const port = 5000;
+const port = 5002;
 
 app.use(cors());
 

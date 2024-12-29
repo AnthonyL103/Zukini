@@ -3,6 +3,8 @@ import ScanList from './ScanList';
 
 const App = () => {
   const [scans, setScans] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [scanToDelete, setScanToDelete] = useState(null); 
 
   useEffect(() => {
     const fetchScans = async () => {
@@ -21,16 +23,25 @@ const App = () => {
 
     fetchScans();
   }, []);
+  
+  const displayModal = (filepath) => {
+    setScanToDelete(filepath); // Set the scan to delete
+    setShowModal(true); // Show the modal
+  };
 
-  const handleDeleteScan = async (filepath) => {
-    console.log(filepath)
+  const handleCloseModal = () => {
+    setShowModal(false); // Close the modal
+    setScanToDelete(null); // Clear the scan to delete
+  };
+
+  const handleDeleteScan = async () => {
     try {
       const response = await fetch('http://localhost:5001/deleteScan', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ filepath: filepath }),
+        body: JSON.stringify({ filepath: scanToDelete }),
       });
       console.log(response);
 
@@ -39,18 +50,46 @@ const App = () => {
       }
 
       // Update the state to remove the deleted scan
-      setScans((prevScans) => prevScans.filter((scan) => scan.filepath !== filepath));
-      console.log('Scan deleted successfully:', filepath);
+      setScans((prevScans) => prevScans.filter((scan) => scan.filepath !== scanToDelete));
+      console.log('Scan deleted successfully:', scanToDelete);
+      setShowModal(true);
     } catch (error) {
       console.error('Error deleting scan:', error);
     }
+  };
+  
+  
+  
+  const handleAddScan = (newScan) => {
+    setScans((prevScans) => [...prevScans, newScan]); // Add the new scan to the state
   };
 
   return (
     <div className="container">
       <h1>Scans</h1>
-      <ScanList scans={scans} onDelete={handleDeleteScan}/>
+      <ScanList scans={scans} onDelete={displayModal} onAddScan={handleAddScan} />
+      <div className={`deleteWarn-container ${showModal ? "show" : ""}`}>
+        {showModal && (
+        <div className="deleteWarn-modal">
+        <h2 className="deleteWarn-heading">Are you Sure?</h2>
+        <div className="deleteWarnbutton-wrapper">
+            <button
+            className="deletWarn-button yes" // Updated to match CSS
+            onClick={handleDeleteScan}
+            >
+            Accept
+            </button>
+            <button
+            className="deletWarn-button cancel" // Updated to match CSS
+            onClick={handleCloseModal}
+            >
+            Cancel
+            </button>
+        </div>
     </div>
+    )}
+</div>
+</div>
   );
 };
 
