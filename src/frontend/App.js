@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Navbar from './Navbar';
 import ScanList from './ScanList';
 
 const App = () => {
@@ -52,7 +53,7 @@ const App = () => {
       // Update the state to remove the deleted scan
       setScans((prevScans) => prevScans.filter((scan) => scan.filepath !== scanToDelete));
       console.log('Scan deleted successfully:', scanToDelete);
-      setShowModal(true);
+      setShowModal(false);
     } catch (error) {
       console.error('Error deleting scan:', error);
     }
@@ -66,6 +67,7 @@ const App = () => {
 
   return (
     <div className="container">
+      <Navbar /> {/* Render Navbar here */}
       <h1>Scans</h1>
       <ScanList scans={scans} onDelete={displayModal} onAddScan={handleAddScan} />
       <div className={`deleteWarn-container ${showModal ? "show" : ""}`}>
@@ -77,13 +79,13 @@ const App = () => {
             className="deletWarn-button yes" // Updated to match CSS
             onClick={handleDeleteScan}
             >
-            Accept
+            Yes
             </button>
             <button
             className="deletWarn-button cancel" // Updated to match CSS
             onClick={handleCloseModal}
             >
-            Cancel
+            No
             </button>
         </div>
     </div>

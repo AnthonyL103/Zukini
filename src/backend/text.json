@@ -1,14 +1,8 @@
 [
   {
-    "filepath": "/Users/anthonyli/react-noteletapp/src/backend/uploads/1735450525515-Screenshot 2024-12-11 at 12.41.57â¯PM.png",
+    "filepath": "C:\\Users\\reddi\\NoteLetApp\\src\\backend\\uploads\\1735940154348-image1.png",
     "scanname": "test 1",
-    "text": "Language closure properties\n•Regular language\nUnion, concatenation, Kleene star (complete) [Lec 8]\nComplement, intersection (“redundant”) [Lec 4]\n• Context-free language\n•\nUnion, concatenation, Kleene star [Lec 17]\nNOT closed under complement, intersection",
-    "date": "12/28/2024"
-  },
-  {
-    "filepath": "/Users/anthonyli/react-noteletapp/src/backend/uploads/1735450626115-Screenshot 2024-12-10 at 2.20.08â¯PM.png",
-    "scanname": "test 1",
-    "text": "Finite State Machine\nA\na\nB\nPushdown Automata\nA\na, b-c\nPushdown Automata (Graphical Notation)\nB\nInput Symbol\nSymbol on\nThis symbol\nTop of the Stack\nis pushed onto\nMaybe €\nThis symbol\nis popped.\n'E' means the\nthe stack\nstack is neither read\n'E' means\nnothing is pushed\nnor popped",
-    "date": "12/28/2024"
+    "text": "8:07 1\nInbox\nstockX\nOrder 5284446-5184205\nWe Sent Your Payout!\nYOUR PAYOUT AMOUNT\n$235.38\nGreat news, Anthony!\nYour items have been authenticated and payment has been released.\nAir Max 97 Neon Seoul\nStyle ID: CI1503-001\nU.S. Men's Size: 9.5 | Condition: New; 100% Authentic\nSales Price:\nTransaction Fee (9.5%):\nPayment Proc. (3%):\nShipping:\nTotal Payout\n$269.00\n$-25.56\n$-8.07\nFREE\n$235.38\nNow that that's done, allow us to blatantly solicit you to list more stuff. Here\nare a few of the most active products on the market:\nAsk well Ask right",
+    "date": "1/3/2025"
   }
 ]
