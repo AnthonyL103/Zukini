@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^5.5.2",
     "@google-cloud/vision": "^4.3.2",
     "cors": "^2.8.5",
     "cra-template": "1.2.0",
@@ -12,7 +13,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.4.0",
-    "react-router-dom": "^6.28.0",
+    "react-router-dom": "^6.28.1",
     "react-scripts": "^5.0.1"
   },
   "scripts": {

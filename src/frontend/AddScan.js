@@ -173,17 +173,18 @@ const AddScan = ({onAddScan})  => {
       <div className="scan new">
         <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div>
-        <label htmlFor="scanName">Create a new scan:</label>
+        <label htmlFor="scanName" className="Make-bold">Create a new scan:</label>
         <input
         type="text"
+        className="scanname"
         id="scanName"
         value={scanName}
         onChange={handleScanNameChange}
         placeholder="Enter scan name"
         required
         />
-      </div>
-      <div>
+       </div>
+       <div>
         <input
           type="file"
           accept="image/*"
@@ -191,9 +192,9 @@ const AddScan = ({onAddScan})  => {
           ref={fileInputRef}
           required
         />
-      </div>
+       </div>
           <button type="submit">Upload and Scan</button>
-        </form>
+       </form>
   
         <div className="scan-footer">
           <button className="save" onClick={onsave} disabled={!saveEnabled} >Save</button>
