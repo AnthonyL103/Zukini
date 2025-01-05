@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import Navbar from '/Users/anthonyli/react-noteletapp/src/frontend/Navbar.js';
-import ScanList from '/Users/anthonyli/react-noteletapp/src/frontend/ScanList.js';
+import ScanList from '../ScanList.js';
 
 const ScansPage = () => {
   const [scans, setScans] = useState([]);
