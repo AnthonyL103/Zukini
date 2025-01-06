@@ -1,3 +1,10 @@
-const Shop = () => <h1>Welcome to the shop page</h1>;
+const Shop = () => {
+    return (
+        <div className="container">
+            <h1>Shop</h1>
+        </div>
+    )
+};
+
 export default Shop;
 
