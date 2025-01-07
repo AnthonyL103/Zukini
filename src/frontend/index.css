@@ -292,14 +292,26 @@ textarea:focus{
   }
 
 
-  .studymenu {
+  .navbar {
     padding: 0.5rem;
     background-color:  #67d7cc;
     position: relative;
     display: flex;
-    justify-content: center;
+    align-items: center;
+    justify-content: space-around;
+    box-shadow: 0 10px 25px 0 rgba(#000, 0.075);
+  }
+  
+  .studynavbar {
+    padding: 0.5rem;
+    background-color:  #67d7cc;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
     border-radius: 15px;
     box-shadow: 0 10px 25px 0 rgba(#000, 0.075);
+    
   }
   
   .link {

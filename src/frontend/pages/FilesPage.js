@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import ScanList from '../ScanList.js';
 
-const ScansPage = () => {
+const FilesPage = () => {
   const [scans, setScans] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [scanToDelete, setScanToDelete] = useState(null); 
@@ -93,4 +93,4 @@ const ScansPage = () => {
   );
 };
 
-export default ScansPage;
+export default FilesPage;

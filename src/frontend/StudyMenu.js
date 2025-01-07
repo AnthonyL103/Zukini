@@ -1,15 +1,16 @@
 import React from 'react';
 import { ReadOutlined, CopyOutlined } from '@ant-design/icons';
-const StudyMenu = () => {
+const StudyMenu = ({onCardsClick, onTestClick}) => {
+    
   return (
-    <div className="studymenu">
-      <a className="link">
+    <div className="studynavbar">
+      <a className="link" onClick={onCardsClick}>
         <span className="link-icon">
         <CopyOutlined />
         </span>
         <span className="link-title">Cards</span>
       </a>
-      <a className="link">
+      <a className="link" onClick={onTestClick}>
         <span className="link-icon">
         <ReadOutlined />
         </span>

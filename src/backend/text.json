@@ -10,5 +10,11 @@
     "scanname": "test 2",
     "text": "R = union of both Final States.\nון\n=\n0+ +\n0* 11*\n0* (€ + 11*)\n0*1*\nRegular Expres",
     "date": "1/6/2025"
+  },
+  {
+    "filepath": "/Users/anthonyli/react-noteletapp/src/backend/uploads/1736189572845-Screenshot 2024-12-11 at 12.41.57â¯PM.png",
+    "scanname": "test 1",
+    "text": "Language closure properties\n•Regular language\nUnion, concatenation, Kleene star (complete) [Lec 8]\nComplement, intersection (“redundant”) [Lec 4]\n• Context-free language\n•\nUnion, concatenation, Kleene star [Lec 17]\nNOT closed under complement, intersection",
+    "date": "1/6/2025"
   }
 ]

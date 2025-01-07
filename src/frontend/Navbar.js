@@ -4,18 +4,30 @@ import { FileTextOutlined, ShoppingCartOutlined, HomeOutlined, BookOutlined } fr
 
 const Navbar = () => {
   return (
-    <div className="navbar-container">
-      <Link to="/" className="navbutton">
-        <HomeOutlined className="icon" />
+    <div className="navbar">
+      <Link to="/" className="link">
+        <span className="link-icon">
+        <HomeOutlined />
+        </span>
+        <span className="link-title">Home</span>
+        </Link>
+      <Link to="/files" className="link">
+        <span className="link-icon">
+        <FileTextOutlined />
+        </span>
+        <span className="link-title">Files</span>
       </Link>
-      <Link to="/scans" className="navbutton">
-        <FileTextOutlined className="icon" />
+      <Link to="/study" className="link">
+        <span className="link-icon">
+        <BookOutlined />
+        </span>
+        <span className="link-title">Study</span>
       </Link>
-      <Link to="/study" className="navbutton">
-        <BookOutlined className="icon" />
-      </Link>
-      <Link to="/shop" className="navbutton">
-        <ShoppingCartOutlined className="icon" />
+      <Link to="/shop" className="link">
+        <span className="link-icon">
+        <ShoppingCartOutlined />
+        </span>
+        <span className="link-title">Shop</span>
       </Link>
     </div>
   );
