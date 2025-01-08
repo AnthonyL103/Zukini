@@ -1,38 +1,35 @@
-const express = require('express');
 const axios = require('axios');
-const path = require('path');
-const fs = require('fs');
-const port = process.env.PORT || 3000; // Default to 3000 if no PORT environment variable
-const app = express();
-
 // Load environment variables (if using dotenv for the OpenAI API key)
-require('dotenv').config();
-
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+//require('dotenv').config({ path: './apikey.env' });
+const OPENAI_API_KEY = "sk-svcacct-LqFPY8ZKEzmmd65EkuN7reD88ZlPaooQU3OfHXhnFm5WhOrlxiY0hXsI9QOUj-oHU0qT3BlbkFJiUEMA2a56IrUTEKbhFtWje_4JynHR4rmLRS2DOlXYhAlIk_o2N72-QYOF06DVfu78rAA";
 
 async function parseFlashCards(text) {
   try {
+    console.log('Using OpenAI API Key:', OPENAI_API_KEY ? 'Key Loaded' : 'Key Missing');
     // Define the prompt
     const prompt = `
-      Generate educational flashcards from the following text. Use this format:
-      - Question: [Question]
+      Generate educational flashcards from Notestext. Use this format:
+        Question: [Question],
+        Answer: [Answer],
+        Question: [Question],
         Answer: [Answer]
-
-      Text:
+        
+      NotesText:
       ${text}
     `;
 
     // Send a request to OpenAI API
+    console.log("made call")
     const response = await axios.post(
       'https://api.openai.com/v1/chat/completions',
       {
         model: 'gpt-4',
         messages: [
-          { role: 'system', content: 'You are an assistant that generates flashcards.' },
+          { role: 'system', content: 'You are an assistant that generates text for flashcards.' },
           { role: 'user', content: prompt },
         ],
         temperature: 0.7,
-        max_tokens: 1500,
+        max_tokens: 500,
       },
       {
         headers: {
@@ -53,8 +50,3 @@ async function parseFlashCards(text) {
 }
 
 module.exports = { parseFlashCards };
-
-// Start the Express server
-app.listen(port, () => {
-  console.log(`Flashcard parsing server running on http://localhost:${port}`);
-});

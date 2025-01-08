@@ -111,5 +111,5 @@ app.post('/saveandexit', (req, res) => {
 
 
 app.listen(port, () => {
-    console.log(`scan server on http://localhost:${port}`);
+    console.log(`handle add scan server on http://localhost:${port}`);
   });

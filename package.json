@@ -8,6 +8,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@google-cloud/vision": "^4.3.2",
+    "axios": "^1.7.9",
     "cors": "^2.8.5",
     "cra-template": "1.2.0",
     "dotenv": "^16.4.7",
@@ -23,8 +24,8 @@
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run server2\" \"npm run server3\" \"npm run client\" ",
     "server": "nodemon src/backend/handleAddScan.js",
-    "server2": "nodemon src/backend/parse.js",
-    "server3": "nodemon src/backend/display.js",
+    "server2": "nodemon src/backend/display.js",
+    "server3": "nodemon src/backend/createFlashCards",
     "client": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

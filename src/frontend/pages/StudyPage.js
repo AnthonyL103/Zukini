@@ -1,5 +1,6 @@
 import React from 'react';
 import StudyMenu from '../StudyMenu';
+import AddFlashCards from '../AddFlashCards';
 import { useNavigate } from 'react-router-dom';
 import { useScan } from '../ScanContext';
 
@@ -20,12 +21,20 @@ const Study = () => {
     );
   }
 
-  const { scanname, text, date } = currentScan; // Destructure the scan data
+  const { filepath, scanname, text, date } = currentScan; // Destructure the scan data
   
-  const goToCards = () => {
-    navigate('/cards');
-  };
+  const handleGenerateFlashcards = async () => {
+    try {
+      const flashcards = await AddFlashCards({ filepath, scanname, text, date });
+      console.log('Generated Flashcards:', flashcards);
 
+      // Navigate to the Cards page with generated flashcards
+    } catch (error) {
+      console.error('Error generating flashcards:', error);
+      alert('Failed to generate flashcards. Please try again.');
+    }
+  };
+  
   const goToTest = () => {
     navigate('/test');
   };
@@ -38,7 +47,7 @@ const Study = () => {
         <h2>Notes:</h2>
         <p>{text}</p>
       </div>
-      <StudyMenu onCardsClick={goToCards} onTestClick={goToTest}/> {/* Your existing study menu component */}
+      <StudyMenu onCardsClick={handleGenerateFlashcards} onTestClick={goToTest}/> 
     </div>
   );
 };

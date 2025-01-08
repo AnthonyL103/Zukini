@@ -12,7 +12,7 @@ const Scan = ({ filepath, scanname, text, date, onDelete }) => {
   };
   const handleStudy = () => {
     // Set the current scan in context
-    setCurrentScan({ scanname, text, date });
+    setCurrentScan({ filepath, scanname, text, date });
     // Navigate to the study page
     navigate('/study');
   };
@@ -23,7 +23,7 @@ const Scan = ({ filepath, scanname, text, date, onDelete }) => {
       <span>{text}</span>
       <div className="scan-footer">
         <small>{date}</small>
-        <div class="action-btn">
+        <div className="action-btn">
         <button className="study-button" onClick={handleStudy}>
           Study
         </button>

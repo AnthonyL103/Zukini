@@ -1,9 +1,5 @@
 const vision = require('@google-cloud/vision');
-const express = require('express');
 const path = require('path');
-const fs = require('fs');
-const port = process.env.PORT || 0;
-const app = express();
 
 const client = new vision.ImageAnnotatorClient({
     keyFilename: path.join(__dirname, 'credentials.json'), // Path to your Google Cloud credentials JSON file
@@ -28,7 +24,3 @@ const client = new vision.ImageAnnotatorClient({
   }
   
   module.exports = { parseTextFromFile };
-
-  app.listen(port, () => {
-    console.log(`Parse server running on http://localhost:${port}`);
-  });

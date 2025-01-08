@@ -201,7 +201,7 @@ const AddScan = ({onAddScan})  => {
         </div>
       </div>
   
-      {/* Modal Container */}
+      
     <div className={`parsedTextmodal-container ${showModal ? "show" : ""}`}>
     {showModal && (
     <div className="parsedText-modal">
