@@ -1,8 +1,7 @@
 const axios = require('axios');
 // Load environment variables (if using dotenv for the OpenAI API key)
 //require('dotenv').config({ path: './apikey.env' });
-const OPENAI_API_KEY = "sk-svcacct-LqFPY8ZKEzmmd65EkuN7reD88ZlPaooQU3OfHXhnFm5WhOrlxiY0hXsI9QOUj-oHU0qT3BlbkFJiUEMA2a56IrUTEKbhFtWje_4JynHR4rmLRS2DOlXYhAlIk_o2N72-QYOF06DVfu78rAA";
-
+const OPENAI_API_KEY = "";
 async function parseFlashCards(text) {
   try {
     console.log('Using OpenAI API Key:', OPENAI_API_KEY ? 'Key Loaded' : 'Key Missing');
