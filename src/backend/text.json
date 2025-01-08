@@ -10,5 +10,11 @@
     "scanname": "test 1",
     "text": "Language closure properties\n•Regular language\nUnion, concatenation, Kleene star (complete) [Lec 8]\nComplement, intersection (“redundant”) [Lec 4]\n• Context-free language\n•\nUnion, concatenation, Kleene star [Lec 17]\nNOT closed under complement, intersection",
     "date": "1/6/2025"
+  },
+  {
+    "filepath": "/Users/anthonyli/react-noteletapp/src/backend/uploads/1736369455155-Screenshot 2024-12-10 at 2.34.04â¯PM.png",
+    "scanname": "calvin chan",
+    "text": "Deterministic Finite Automaton (DFA):\nA DFA has a single unique computation path for each input string.\n1. Formal Definition: A DFA is a 5-tuple (Q, Σ, 8, 90, F):\nQ: A finite set of states.\n•\nΣ: The alphabet (finite set of input symbols).\n•\n¿ : Q × Σ → Q: The transition function, which maps a state and an input symbol to a\nsingle next state.\nqo: The initial state (‰ EQ).\nF: A set of accepting states (F C Q).\n2. Key Characteristics:\n•\n.\nFor each state and input symbol, there is exactly one transition to a next state.\nAt any given time, the DFA is in a single state.\nThe DFA always \"knows\" where to go, as the next state is uniquely determined.",
+    "date": "1/8/2025"
   }
 ]
