@@ -16,5 +16,11 @@
     "scanname": "calvin chan",
     "text": "Deterministic Finite Automaton (DFA):\nA DFA has a single unique computation path for each input string.\n1. Formal Definition: A DFA is a 5-tuple (Q, Σ, 8, 90, F):\nQ: A finite set of states.\n•\nΣ: The alphabet (finite set of input symbols).\n•\n¿ : Q × Σ → Q: The transition function, which maps a state and an input symbol to a\nsingle next state.\nqo: The initial state (‰ EQ).\nF: A set of accepting states (F C Q).\n2. Key Characteristics:\n•\n.\nFor each state and input symbol, there is exactly one transition to a next state.\nAt any given time, the DFA is in a single state.\nThe DFA always \"knows\" where to go, as the next state is uniquely determined.",
     "date": "1/8/2025"
+  },
+  {
+    "filepath": "/Users/anthonyli/react-noteletapp/src/backend/uploads/1736557994816-Screenshot 2024-12-10 at 2.34.34â¯PM.png",
+    "scanname": "test2",
+    "text": "Nondeterministic Finite Automaton (NFA):\nAn NFA allows multiple computation paths for the same input string, including the use of epsilon (\n€) transitions (transitions without consuming input).\n1. Formal Definition: An NFA is a 5-tuple (Q, Σ, 8, 90, F):\nQ: A finite set of states.\n•\nΣ: The alphabet (finite set of input symbols).\n•\n¿ : Q × (Σ U {e}) → 2º: The transition function, which maps a state and an input\nsymbol (or €) to a set of possible next states.\nqo: The initial state (ɖo Є Q).\nF: A set of accepting states (F ≤ Q).\n2. Key Characteristics:\n•\n•\n•\nFor each state and input symbol, there may be multiple possible next states (or none at\nall).\nThe NFA can \"guess\" which path to take, effectively exploring multiple paths\nsimultaneously.\nEpsilon (e) transitions allow the automaton to change states without consuming any\ninput.",
+    "date": "1/10/2025"
   }
 ]
