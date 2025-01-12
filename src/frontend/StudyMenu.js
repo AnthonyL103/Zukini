@@ -1,6 +1,6 @@
 import React from 'react';
-import { ReadOutlined, CopyOutlined } from '@ant-design/icons';
-const StudyMenu = ({onCardsClick, onTestClick}) => {
+import { ReadOutlined, CopyOutlined, SwitcherOutlined } from '@ant-design/icons';
+const StudyMenu = ({onCardsClick, onTestClick, onSwitchScanClick}) => {
     
   return (
     <div className="studynavbar">
@@ -15,6 +15,12 @@ const StudyMenu = ({onCardsClick, onTestClick}) => {
         <ReadOutlined />
         </span>
         <span className="link-title">Test</span>
+      </a>
+      <a className="link" onClick={onSwitchScanClick}>
+        <span className="link-icon">
+        <SwitcherOutlined />
+        </span>
+        <span className="link-title">Switch</span>
       </a>
     </div>
   );

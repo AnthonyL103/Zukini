@@ -411,6 +411,8 @@ textarea:focus{
     height: 100%; /* Allow it to grow naturally */
     overflow-y: auto; 
     text-align: center;
+    overflow: hidden;
+    flex-direction: column;
     
   }
   
@@ -425,12 +427,13 @@ textarea:focus{
     color: rgb(51, 51, 51);
   }
   
-  .fcmodal-button-wrapper {
+  .fcmodal-content-footer {
     width: 100%;
     display: flex;
     align-items:center;
     justify-content: space-between;
     gap: 20px;
+    margin-top: auto;
   }
   
   .fcmodal-button {
@@ -448,7 +451,7 @@ textarea:focus{
   
   .fcmodal-button.save {
     background-color: #ececec;
-    color: rgb(34, 34, 34);
+    color: rgb(34, 34, 34); 
   }
   
   .fcmodal-button.back:hover {

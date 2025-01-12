@@ -61,35 +61,33 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose }) => {
 
   return (
     <>
-      <div className={`fcmodal-container ${showModal ? "show" : ""}`}>
-        {showModal && (
-            <div className="fcmodal-content">
-                <FlashCardList
-                    flashcards={flashcards}
-                    setClearVisibleFlashcards={(clearFn) => {
-                    clearVisibleFlashcardsRef = clearFn; // Store the clear function
-                }}
-                />
-            <div className="button-wrapper">
-            <button
-                className="fcmodal-button back"
-                onClick={closefcmodal}
-            >
-            Done
-            </button>
-            <button
-                className="fcmodal-button save"
-                
-            >
-            Save and Exit
-            </button>
-            </div>
+        <div className={`fcmodal-container ${showModal ? "show" : ""}`}>
+            {showModal && (
+                <div className="fcmodal-content">
+                    <FlashCardList
+                        flashcards={flashcards}
+                        setClearVisibleFlashcards={(clearFn) => {
+                            clearVisibleFlashcardsRef = clearFn; // Store the clear function
+                        }}
+                    />
+                    <div className="fcmodal-content-footer">
+                        <button
+                            className="fcmodal-button back"
+                            onClick={closefcmodal}
+                        >
+                            Done
+                        </button>
+                        <button
+                            className="fcmodal-button save"
+                        >
+                            Save and Exit
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
-  )}
-</div>
     </>
-  );
+);
 };
-
 
 export default AddFlashCards;

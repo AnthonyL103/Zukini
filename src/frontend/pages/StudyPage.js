@@ -14,7 +14,7 @@ const Study = () => {
       <div className="container">
         <h1>Study</h1>
         <p>No scan selected. Please go back and choose a scan. Or a previous study</p>
-        <button onClick={() => navigate(-1)}>Go Back</button>
+        <button className="study-button" onClick={() => navigate(-1)}>Go Back</button>
       </div>
     );
   }
@@ -29,6 +29,10 @@ const Study = () => {
   const handleCloseFlashcards = () => {
     setShowFlashCards(false); // Close modal and reset
   };
+  
+  const goToSwitchScan =() => {
+    navigate('/files');
+  }
 
   const goToTest = () => {
     navigate('/test');
@@ -42,7 +46,7 @@ const Study = () => {
         <h2>Notes:</h2>
         <p>{text}</p>
       </div>
-      <StudyMenu onCardsClick={handleGenerateFlashcards} onTestClick={goToTest} />
+      <StudyMenu onCardsClick={handleGenerateFlashcards} onTestClick={goToTest} onSwitchScanClick={goToSwitchScan} />
       {showFlashCards && (
         <AddFlashCards
           filepath={filepath}

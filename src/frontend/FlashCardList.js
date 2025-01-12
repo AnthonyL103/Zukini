@@ -7,20 +7,20 @@ const FlashcardList = ({setClearVisibleFlashcards, flashcards = [] }) => {
     useEffect(() => {
         if (flashcards.length > 0) {
             let currentIndex = 0;
-            
+    
             const interval = setInterval(() => {
-                if (currentIndex < flashcards.length - 1) {
-                    setVisibleFlashcards((prev) => [...prev, flashcards[currentIndex]]);
-                    console.log('Adding flashcard:', flashcards[currentIndex]); 
-                    currentIndex++;
-                } else {
+                setVisibleFlashcards((prev) => [...prev, flashcards[currentIndex]]);
+                console.log('Adding flashcard:', currentIndex, flashcards.length); 
+                currentIndex++;
+                if (currentIndex >= flashcards.length-1) {
                     clearInterval(interval); // Stop the interval when all flashcards are displayed
                 }
             }, 400); 
-
+            console.log("made it");
             return () => clearInterval(interval); 
         }
     }, [flashcards]);
+    
     
     useEffect(() => {
         if (setClearVisibleFlashcards) {
@@ -33,7 +33,7 @@ const FlashcardList = ({setClearVisibleFlashcards, flashcards = [] }) => {
 
     return (
         <div className="card-grid">
-            {visibleFlashcards.map((flashcard) => (
+            {flashcards.map((flashcard) => (
                 <Flashcard flashcard={flashcard} key={flashcard.id} />
             ))}
         </div>
