@@ -1,10 +1,11 @@
 const axios = require('axios');
 // Load environment variables (if using dotenv for the OpenAI API key)
 //require('dotenv').config({ path: './apikey.env' });
-const OPENAI_API_KEY = "";
+require('dotenv').config();
+const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
+console.log('Using OpenAI API Key:', OPENAI_API_KEY);
 async function parseFlashCards(text) {
   try {
-    console.log('Using OpenAI API Key:', OPENAI_API_KEY ? 'Key Loaded' : 'Key Missing');
     // Define the prompt
     const prompt = `
       Generate educational flashcards from Notestext. Use this format:

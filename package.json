@@ -11,15 +11,18 @@
     "axios": "^1.7.9",
     "cors": "^2.8.5",
     "cra-template": "1.2.0",
-    "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "formidable": "^3.5.2",
     "jquery": "^3.7.1",
     "multer": "^1.4.5-lts.1",
+    "pg": "^8.13.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.4.0",
     "react-router-dom": "^6.28.1",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "sequelize": "^6.37.5",
+    "sqlite3": "^5.1.7"
   },
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run server2\" \"npm run server3\" \"npm run client\" ",
@@ -51,6 +54,7 @@
   },
   "devDependencies": {
     "concurrently": "^9.1.0",
+    "dotenv": "^16.4.7",
     "html-webpack-plugin": "^5.6.3",
     "nodemon": "^3.1.9",
     "style-loader": "^4.0.0",

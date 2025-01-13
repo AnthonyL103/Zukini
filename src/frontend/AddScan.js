@@ -61,7 +61,7 @@ const AddScan = ({onAddScan})  => {
         setParsedText(parseResult.text); // Update the parsed text
         setShowModal(true); // Show modal with parsed text
     
-        console.log('File parsed successfully:', parseResult.text);
+        console.log('File parsed successfully:');
       } catch (error) {
         console.error('Error in handleSubmit:', error);
       }

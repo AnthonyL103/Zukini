@@ -1,26 +1,8 @@
 [
   {
-    "filepath": "C:\\Users\\reddi\\NoteLetApp\\src\\backend\\uploads\\1736034039667-Capture23.PNG",
-    "scanname": "test 1",
-    "text": "USPS.COM®\nSign in | Shipping History | Manage Your Mail | Customer Service\nUSPS-Click-N-ShipⓇ Payment Confirmation\nThanks for shipping with us, ANTHONY L LI!\nAdditional information regarding your label(s) can be found in your Shipping History. From your Shipping History you can\nShip Again, track your package, or request a refund.\nClick-N-ShipⓇ Payment Details\nAcct #: 169174129\nTransaction Number: 486540261\nTransaction Date/Time: 03/16/2020 04:11 PM CDT\nTransaction Amount: $51.55\nPayment Method: PayPal®\nPriority Mail International®\nMedium Flat Rate Box\nCJ 176 436 297 US (Sequence Number 1 of 1)\nScheduled Delivery Date: 03/24/2020\nShipped to:\nANTHONY LI\nGRAILED\n21 TOWNHOUSE CRESENT\nBRAMPTON, ONTARIO\nCANADA L8W 3C3\nLearn more about requesting a refund onlinehere.",
-    "date": "1/4/2025"
-  },
-  {
-    "filepath": "/Users/anthonyli/react-noteletapp/src/backend/uploads/1736189572845-Screenshot 2024-12-11 at 12.41.57â¯PM.png",
-    "scanname": "test 1",
-    "text": "Language closure properties\n•Regular language\nUnion, concatenation, Kleene star (complete) [Lec 8]\nComplement, intersection (“redundant”) [Lec 4]\n• Context-free language\n•\nUnion, concatenation, Kleene star [Lec 17]\nNOT closed under complement, intersection",
-    "date": "1/6/2025"
-  },
-  {
-    "filepath": "/Users/anthonyli/react-noteletapp/src/backend/uploads/1736369455155-Screenshot 2024-12-10 at 2.34.04â¯PM.png",
-    "scanname": "calvin chan",
-    "text": "Deterministic Finite Automaton (DFA):\nA DFA has a single unique computation path for each input string.\n1. Formal Definition: A DFA is a 5-tuple (Q, Σ, 8, 90, F):\nQ: A finite set of states.\n•\nΣ: The alphabet (finite set of input symbols).\n•\n¿ : Q × Σ → Q: The transition function, which maps a state and an input symbol to a\nsingle next state.\nqo: The initial state (‰ EQ).\nF: A set of accepting states (F C Q).\n2. Key Characteristics:\n•\n.\nFor each state and input symbol, there is exactly one transition to a next state.\nAt any given time, the DFA is in a single state.\nThe DFA always \"knows\" where to go, as the next state is uniquely determined.",
-    "date": "1/8/2025"
-  },
-  {
-    "filepath": "/Users/anthonyli/react-noteletapp/src/backend/uploads/1736557994816-Screenshot 2024-12-10 at 2.34.34â¯PM.png",
+    "filepath": "uploads/Screenshot 2024-12-20 at 9.21.55 PM.png",
     "scanname": "test2",
-    "text": "Nondeterministic Finite Automaton (NFA):\nAn NFA allows multiple computation paths for the same input string, including the use of epsilon (\n€) transitions (transitions without consuming input).\n1. Formal Definition: An NFA is a 5-tuple (Q, Σ, 8, 90, F):\nQ: A finite set of states.\n•\nΣ: The alphabet (finite set of input symbols).\n•\n¿ : Q × (Σ U {e}) → 2º: The transition function, which maps a state and an input\nsymbol (or €) to a set of possible next states.\nqo: The initial state (ɖo Є Q).\nF: A set of accepting states (F ≤ Q).\n2. Key Characteristics:\n•\n•\n•\nFor each state and input symbol, there may be multiple possible next states (or none at\nall).\nThe NFA can \"guess\" which path to take, effectively exploring multiple paths\nsimultaneously.\nEpsilon (e) transitions allow the automaton to change states without consuming any\ninput.",
-    "date": "1/10/2025"
+    "text": "Oct 29 by 11:59pm\nGroup Assignments\nFall 2024\nGA2\nHome\nDiscussions\nAnnouncements\nSyllabus\nGrades\nMedia Gallery\nNameCoach\n80 / 100\nPA3\nNov 14 by 11:59pm\nPractice Assignments\nNov 14 at\n8:52am\n100/100\nGA3\nNov 21 by 11:59pm\nGroup Assignments\n46 / 100\n7\nPA4\nDec 3 by 11:59pm\nPractice Assignments\nDec 4 at\n9:33am\nlate\n100/100\nGA4\nDec 5 by 11:59pm\nGroup Assignments\nDec 5 at\n7:01pm\nFinal\nExams\nMidterm\nExams\nGroup Assignments\nPractice\nAssignments\nExams\nTotal\n100/100\n88 / 100\n44 / 100\n☑\n☑\n1\nCalculate based only on\ngraded assignments\nYou can view your grades based\non What-If scores so that you\nknow how grades will be affected\nby upcoming or resubmitted\nassignments. You can test scores\nfor an assignment that already\nincludes a score, or an assignment\nthat has yet to be graded.\n80.25%\n321.00 / 400.00\n100%\n400.00/400.00\n66%\n132.00/200.00\n75.1%",
+    "date": "1/13/2025"
   }
 ]
