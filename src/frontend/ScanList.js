@@ -1,15 +1,18 @@
 import Scan from './Scan';
 import AddScan from './AddScan';
 
-const ScanList = ({ scans, onDelete, index, onAddScan}) => {
+
+const ScanList = ({ scans, onDelete, onAddScan}) => {
   return (
+    
     <div className="scan-list">
       {scans.map((scan) => (
+        
         <Scan
-          key = {scan.filepath}
+          scankey={scan.scankey}
           filepath={scan.filepath}
           scanname={scan.scanname}
-          text={scan.text}
+          text={scan.value}
           date={scan.date}
           onDelete={onDelete}
         />

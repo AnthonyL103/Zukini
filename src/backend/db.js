@@ -7,7 +7,7 @@ const sequelize = new Sequelize({
   storage: path.join(__dirname, 'database.sqlite'), // SQLite database file
 });
 
-const File = sequelize.define('File', {
+const UploadFile = sequelize.define('UploadFile', {
   filename: {
     type: DataTypes.STRING, // Store the original file name
     allowNull: false,
@@ -22,6 +22,27 @@ const File = sequelize.define('File', {
   },
 });
 
+const ParsedTextEntries = sequelize.define('ParsedTextEntries', {
+    scankey: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    filepath: {
+      type: DataTypes.STRING, // Adjust as needed for your JSON structure
+      allowNull: false,
+    },
+    scanname: {
+      type: DataTypes.STRING, // JSONB for structured JSON data (PostgreSQL) or JSON (MySQL)
+      allowNull: false,
+    },
+    value: {
+      type: DataTypes.TEXT,
+    },
+    date: {
+      type: DataTypes.STRING,
+    }
+  });
+
 (async () => {
   try {
     await sequelize.authenticate();
@@ -33,4 +54,4 @@ const File = sequelize.define('File', {
   }
 })();
 
-module.exports = { sequelize, File };
+module.exports = { sequelize, UploadFile, ParsedTextEntries };

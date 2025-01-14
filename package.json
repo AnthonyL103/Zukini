@@ -22,7 +22,8 @@
     "react-router-dom": "^6.28.1",
     "react-scripts": "^5.0.1",
     "sequelize": "^6.37.5",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "uuid": "^11.0.5"
   },
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run server2\" \"npm run server3\" \"npm run client\" ",

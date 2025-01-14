@@ -24,8 +24,9 @@ const FilesPage = () => {
     fetchScans();
   }, []);
   
-  const displayModal = (filepath) => {
-    setScanToDelete(filepath); // Set the scan to delete
+  const displayModal = (key) => {
+    setScanToDelete(key); // Set the scan to delete
+    console.log(" reckey",key);
     setShowModal(true); // Show the modal
   };
 
@@ -41,7 +42,7 @@ const FilesPage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ filepath: scanToDelete }),
+        body: JSON.stringify({ key: scanToDelete }),
       });
       console.log(response);
 

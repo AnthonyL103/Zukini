@@ -24,5 +24,36 @@ const client = new vision.ImageAnnotatorClient({
       throw error; 
     }
   }
+  async function parseTextFromPDF(buffer) {
+    try {
+      // Create the request for document text detection
+      const request = {
+        inputConfig: {
+          content: buffer.toString('base64'), // PDF must be base64, so we swicth the buffer 
+          mimeType: 'application/pdf',
+        },
+        features: [
+          {
+            type: 'DOCUMENT_TEXT_DETECTION',
+          },
+        ],
+      };
   
-  module.exports = { parseTextFromBuffer };
+      // Perform text detection
+      const [response] = await client.batchAnnotateFiles({ requests: [request] });
+  
+      // Extract the text from the response
+      const result = response.responses[0].responses[0].fullTextAnnotation;
+  
+      if (result && result.text) {
+        return result.text; 
+      } else {
+        return 'No text detected.';
+      }
+    } catch (error) {
+      console.error('Error during PDF text parsing:', error);
+      throw error;
+    }
+  }
+  
+  module.exports = { parseTextFromBuffer, parseTextFromPDF };

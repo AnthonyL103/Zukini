@@ -1,4 +1,6 @@
 import {useState, useEffect, useRef} from 'react';
+import { v4 as uuidv4 } from 'uuid';
+
 
 const AddScan = ({onAddScan})  => {
     const [showModal, setShowModal] = useState(false);
@@ -10,7 +12,7 @@ const AddScan = ({onAddScan})  => {
     const [saveEnabled, setSaveEnabled] = useState(false);
     const [currDate, setCurrDate] = useState("");
     const [scanName, setScanName] = useState("");
-    
+        
     const handleFileChange = (e) => {
         setFile(e.target.files[0]); // Update the state with the selected file
     };
@@ -103,7 +105,10 @@ const AddScan = ({onAddScan})  => {
     const onsave = async () => {
       try {
         // Prepare the data as JSON
+        const key = uuidv4();
+        console.log("currkey", key);
         const payload = {
+          scankey: key,
           filePath: currFile, // Send the current file path
           scanName,
           parsedText, // Send the parsed text
@@ -119,15 +124,14 @@ const AddScan = ({onAddScan})  => {
           },
           body: JSON.stringify(payload), // Convert the payload to JSON
         });
-    
+        console.log("key", key);
         if (onsaveresponse.ok) {
-          const responseData = await onsaveresponse.json();
-          console.log('Successfully saved:', responseData);
           if (onAddScan) {
             onAddScan({
+              scankey: key,
               filepath: currFile,
               scanname: scanName,
-              text: parsedText,
+              value: parsedText,
               date: currDate,
             });
           }
@@ -187,7 +191,7 @@ const AddScan = ({onAddScan})  => {
        <div>
         <input
           type="file"
-          accept="image/*"
+          accept="image/*,application/pdf" 
           onChange={handleFileChange}
           ref={fileInputRef}
           required
