@@ -51,7 +51,7 @@ const FilesPage = () => {
       }
 
       // Update the state to remove the deleted scan
-      setScans((prevScans) => prevScans.filter((scan) => scan.filepath !== scanToDelete));
+      setScans((prevScans) => prevScans.filter((scan) => scan.scankey !== scanToDelete));
       console.log('Scan deleted successfully:', scanToDelete);
       setShowModal(false);
     } catch (error) {

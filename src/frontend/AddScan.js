@@ -167,7 +167,7 @@ const AddScan = ({onAddScan})  => {
               } else {
                   clearInterval(interval); // Stop the interval when all words are displayed
               }
-          }, 100); 
+          }, 50); 
           return () => clearInterval(interval); // Cleanup interval on modal close
       }
   }, [showModal, parsedText]);
