@@ -20,7 +20,6 @@ const Scan = ({ scankey, filepath, scanname, text, date, onDelete }) => {
   };
   return (
     <div className="scan">
-      <div className="scan-content">
       <span><strong>Scan name:</strong> {scanname}</span>
       <br />
       <span>key:{scankey}</span>
@@ -35,7 +34,6 @@ const Scan = ({ scankey, filepath, scanname, text, date, onDelete }) => {
           Delete
         </button>
         </div>
-      </div>
       </div>
     </div>
   );

@@ -26,10 +26,11 @@
     "uuid": "^11.0.5"
   },
   "scripts": {
-    "start": "concurrently \"npm run server\" \"npm run server2\" \"npm run server3\" \"npm run client\" ",
+    "start": "concurrently \"npm run server\" \"npm run server2\" \"npm run server3\" \"npm run server4\" \"npm run client\" ",
     "server": "nodemon src/backend/handleAddScan.js",
     "server2": "nodemon src/backend/display.js",
     "server3": "nodemon src/backend/createFlashCards",
+    "server4": "nodemon src/backend/createMockTests",
     "client": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

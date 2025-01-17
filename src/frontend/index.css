@@ -23,7 +23,7 @@ code {
 .scan-list{
     display: grid;
     grid-gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(300, 2fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 
 .scan.new{
@@ -114,19 +114,11 @@ textarea:focus{
     border-radius: 10px;
     padding: 1rem;
     min-height: 170px;
-    max-height: 30%;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     justify-content: space-between;
     position: relative; 
-}
-
-.scan-content {
-    flex: 1; 
-    overflow-y: auto; 
-    padding-right: 10px; /* Add space for the scrollbar */
-    margin-bottom: 0.5rem; /* Ensure some spacing from footer */
 }
 
 
