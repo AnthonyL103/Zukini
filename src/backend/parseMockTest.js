@@ -6,10 +6,13 @@ const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
 async function createMockTests(text) {
     try {
         const prompt = `
-        Generate mock test questions (question, response format or muliple choice format) and answers from NotesText. Use this format:
+        Generate multiple test questions and have at least 2 choices each from NotesText. Use this format:
             question: [Question],
+            answer: [Answer]
+            answer: [Answer]
             answer: [Answer],
-            question: [Question],
+            question: [Question],s
+            answer: [Answer]
             answer: [Answer]
         
         NotesText:

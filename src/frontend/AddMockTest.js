@@ -1,7 +1,10 @@
 import React, { useState, useEffect, use } from 'react';
+import QuestionsList from './QuestionsList';
 const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
     const [questions, setQuestions] = useState("");
     const [showModal, setShowModal] = useState(false);
+    
+    let clearVisibleQuestionsRef = null;
     
     useEffect(() => {
         const generateMockTestQuestions = async () => {
@@ -19,18 +22,22 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
                 }
                 
                 const result = await response.json();
+                console.log("result",result.text);
                 
                 // Parse the result.text into question-answer pairs
                 const parsedQuestions = [];
-                const lines = result.text.split('Question:').filter(line => line.trim() !== ''); // Split by "Question:"
+                const lines = result.text.split("question:").filter(line => line.trim() !== ''); // Split by "Question:"
                 
                 for (const line of lines) {
-                    const [questionPart, answerPart] = line.split('Answer:'); // Split into question and answer
-                    if (questionPart && answerPart) {
+                    const [questionPart, ...answerParts] = line.split("answer:"); // Split into question and answer
+                    if (questionPart && answerParts.length > 0) {
+                        const answers = answerParts
+                            .map(answer => answer.trim())
+                            .filter(answer => answer !=="");
                         parsedQuestions.push({
-                            id: `${parsedQuestions.length}-${Date.now()}`, // Generate a unique ID
-                            question: questionPart.trim(), // Trim spaces from the question
-                            answer: answerPart.trim(), // Trim spaces from the answer
+                            id: `${parsedQuestions.length}-${Date.now()}`,
+                            question: questionPart.trim(),
+                            answers: answers,
                         });
                     }
                 }
@@ -51,6 +58,8 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
         setShowModal(false);
         setQuestions("");
         onClose();
+        if (clearVisibleQuestionsRef) clearVisibleQuestionsRef();
+        onClose();
     };
     
     return (
@@ -58,7 +67,12 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
             <div className={`fcmodal-container ${showModal ? "show" : ""}`}>
                 {showModal && (
                     <div className="fcmodal-content">
-                        <text>{questions}</text>
+                        <QuestionsList
+                            questions={questions}
+                            setClearVisibleQuestions={(clearQn) => {
+                                clearVisibleQuestionsRef = clearQn;
+                            }}
+                        />
                         <div className="fcmodal-content-footer">
                             <button
                                 className="fcmodal-button back"
