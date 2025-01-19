@@ -6,12 +6,15 @@ const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
 async function createMockTests(text) {
     try {
         const prompt = `
-        Generate multiple test questions and have at least 2 choices each from NotesText. Use this format:
+        Generate multiple test questions that have at least 2 choices each from NotesText with only one right answer. 
+        Make sure that the right answer is the one that is generated first.
+        
+         Use this format:
             question: [Question],
             answer: [Answer]
             answer: [Answer]
             answer: [Answer],
-            question: [Question],s
+            question: [Question],
             answer: [Answer]
             answer: [Answer]
         

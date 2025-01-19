@@ -32,7 +32,7 @@ const QuestionsList = ({setClearVisibleQuestions, questions = [] }) => {
     
 
     return (
-        <div className="questions-temp">
+        <div className="questions-grid">
             {questions.map((question) => (
                 <Question question={question} key={question.id} />
             ))}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect} from 'react';
 import QuestionsList from './QuestionsList';
 const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
     const [questions, setQuestions] = useState("");
@@ -38,6 +38,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
                             id: `${parsedQuestions.length}-${Date.now()}`,
                             question: questionPart.trim(),
                             answers: answers,
+                            rightAnswer: answers[0],
                         });
                     }
                 }
