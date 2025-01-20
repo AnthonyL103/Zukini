@@ -1,11 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Question = ({ question, key }) => { 
     const [isCorrect, setIsCorrect] = useState(null); 
-
+    
+    useEffect(() => {
+        // Reset the answer state when a new question is loaded
+        setIsCorrect(null);
+    }, [question]);
+    
     const handleAnswerChange = (answer) => {
-        setIsCorrect(answer === question.rightAnswer); 
+        if (isCorrect !== null) {
+            return; 
+        }
+        const trimmedAnswer = answer.trim();
+        const trimmedCorrectAnswer = question.rightAnswer.trim();
+    
+        if (String(trimmedAnswer) === String(trimmedCorrectAnswer)) {
+            console.log("here");
+            setIsCorrect(true); 
+        } else {
+            setIsCorrect(false);
+        }
+    
+        console.log('Answer:', trimmedAnswer, 'Correct:', trimmedCorrectAnswer);
     };
+    
+    useEffect(() => {
+        console.log('Updated isCorrect state:', isCorrect);
+    }, [isCorrect]);
 
     return (
         <div className="radio-input">
@@ -18,20 +40,15 @@ const Question = ({ question, key }) => {
                 <div key={index} className="radio-option">
                     <input
                         type="radio"
-                        id={`value-${index}`}
+                        id={`value-${index}-${key}`}
                         value={answer}
-                        onChange={() => handleAnswerChange(answer)} // Update state on change
+                        onChange={() => handleAnswerChange(answer)} 
+                        disabled={isCorrect !== null}
+                        className={answer === question.rightAnswer ? 'correct-answer' : 'incorrect-answer'}
                     />
                     <label htmlFor={`value-${index}`}>{answer}</label>
                 </div>
             ))}
-
-            {isCorrect === true && (
-                <span className="result success">Congratulations! That's correct.</span>
-            )}
-            {isCorrect === false && (
-                <span className="result error">Oops! That's incorrect.</span>
-            )}
         </div>
     );
 };

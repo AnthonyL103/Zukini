@@ -23,6 +23,7 @@
     "react-scripts": "^5.0.1",
     "sequelize": "^6.37.5",
     "sqlite3": "^5.1.7",
+    "swiper": "^11.2.1",
     "uuid": "^11.0.5"
   },
   "scripts": {

@@ -9,7 +9,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
     useEffect(() => {
         const generateMockTestQuestions = async () => {
             try {
-                const response = await fetch('http://localhost:5004/callparseMockTests', {
+                const response = await fetch('http://localhost:5005/callparseMockTests', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
                 {showModal && (
                     <div className="fcmodal-content">
                         <QuestionsList
-                            questions={questions}
+                            questions={questions}ac
                             setClearVisibleQuestions={(clearQn) => {
                                 clearVisibleQuestionsRef = clearQn;
                             }}

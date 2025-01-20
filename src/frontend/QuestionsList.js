@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Question from './Question';
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+
 
 const QuestionsList = ({setClearVisibleQuestions, questions = [] }) => {
     const [visibleQuestions, setVisibleQuestions] = useState([]); 
@@ -33,9 +36,21 @@ const QuestionsList = ({setClearVisibleQuestions, questions = [] }) => {
 
     return (
         <div className="questions-grid">
-            {questions.map((question) => (
-                <Question question={question} key={question.id} />
-            ))}
+            {questions.length > 0 ? (
+                <Swiper
+                spaceBetween={50}
+                slidesPerView={1}
+            >
+                {questions.map((question) => (
+                    <SwiperSlide key={question.id}>
+                        <Question question={question} />
+                    </SwiperSlide>
+                ))}
+            </Swiper>
+            ) : (
+                <p>Loading questions</p>
+                
+            )}
         </div>
     );
 };
