@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const Question = ({ question, key }) => { 
+const Question = ({ question, key}) => { 
     const [isCorrect, setIsCorrect] = useState(null); 
     
     useEffect(() => {
@@ -33,7 +33,7 @@ const Question = ({ question, key }) => {
         <div className="radio-input">
             <div className="info">
                 <span className="question">{question.question}</span>
-                <span className="steps">3/10</span> 
+                <span className="steps">{question.number}/{question.total}</span> 
             </div>
 
             {question.answers.map((answer, index) => (

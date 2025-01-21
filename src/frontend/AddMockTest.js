@@ -24,24 +24,29 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
                 const result = await response.json();
                 console.log("result",result.text);
                 
-                // Parse the result.text into question-answer pairs
-                const parsedQuestions = [];
-                const lines = result.text.split("question:").filter(line => line.trim() !== ''); // Split by "Question:"
                 
-                for (const line of lines) {
-                    const [questionPart, ...answerParts] = line.split("answer:"); // Split into question and answer
+                const parsedQuestions = [];
+                const lines = result.text.split("question:").filter(line => line.trim() !== ''); 
+                
+                for (let index = 0; index < lines.length; index++) {
+                    const line = lines[index];
+                    const [questionPart, ...answerParts] = line.split("answer:"); 
                     if (questionPart && answerParts.length > 0) {
                         const answers = answerParts
                             .map(answer => answer.trim())
-                            .filter(answer => answer !=="");
+                            .filter(answer => answer !== "");
+                        
                         parsedQuestions.push({
-                            id: `${parsedQuestions.length}-${Date.now()}`,
-                            question: questionPart.trim(),
-                            answers: answers,
-                            rightAnswer: answers[0],
+                            id: `${parsedQuestions.length}-${Date.now()}`, 
+                            number: index + 1, 
+                            total: lines.length,
+                            question: questionPart.trim(), 
+                            answers: answers, 
+                            rightAnswer: answers[0], 
                         });
                     }
                 }
+                
                 
                 setQuestions(parsedQuestions);
                 console.log("here",parsedQuestions);
@@ -69,7 +74,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
                 {showModal && (
                     <div className="fcmodal-content">
                         <QuestionsList
-                            questions={questions}ac
+                            questions={questions}
                             setClearVisibleQuestions={(clearQn) => {
                                 clearVisibleQuestionsRef = clearQn;
                             }}

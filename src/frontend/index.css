@@ -414,7 +414,7 @@ textarea:focus{
     height: 100%; /* Allow it to grow naturally */
     overflow-y: auto; 
     text-align: center;
-    overflow: hidden;
+    overflow: auto;
     flex-direction: column;
     
   }
@@ -512,15 +512,12 @@ textarea:focus{
 
 .questions-grid {
     display: flex;
-    flex-wrap: nowrap; 
-    align-items: center;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    align-items: left;
     gap: 1rem;
-    padding: 1rem;
-    overflow-x: auto; /* Enable horizontal scrolling */
-    overflow-y: hidden; /* Prevent vertical overflow */
-    scroll-behavior: smooth; /* Smooth scrolling effect */
-    -webkit-overflow-scrolling: touch; /* Better scrolling on mobile devices */
-    max-width: 100%; /* Ensure the container doesn't exceed the viewport width */
+    padding: 2rem;
+    overflow: auto;
 }
 
 .radio-input input {
@@ -531,7 +528,7 @@ textarea:focus{
     display: flex;
     flex-direction: column;
     padding: 12px;
-    background: #fff;
+    background: #ffffff;
     color: #000;
     border-radius: 10px;
     border-color: #000;
@@ -546,10 +543,11 @@ textarea:focus{
   }
   
   .question {
-    color: rgb(49, 49, 49);
+    color: rgb(4, 4, 4);
     font-size: 1rem;
     line-height: 1rem;
     font-weight: 800;
+    padding: 1px;
   }
   
   .steps {
@@ -564,21 +562,21 @@ textarea:focus{
   
   .radio-input  label {
     display: flex;
-    background-color: #fff;
+    background-color: #fef68a;
     padding: 14px;
     margin: 8px 0 0 0;
     font-size: 13px;
     font-weight: 600;
     border-radius: 10px;
     cursor: pointer;
-    border: 1px solid rgba(187, 187, 187, 0.164);
+    border: 1px solid rgba(9, 9, 9, 0.164);
     color: #000;
     transition: .3s ease;
   }
   
   .radio-input  label:hover {
-    background-color: rgba(24, 24, 24, 0.13);
-    border: 1px solid #bbb;
+    background-color: #67d7cc;
+    border: 1px solid #090909;
   }
   
   .result {
@@ -589,12 +587,12 @@ textarea:focus{
     transition: display .4s ease;
   }
   
-.radio-input input.correct-answer:checked + label {
+.radio-input input.correct-answer {
     border-color: rgb(22, 245, 22);
     color: rgb(16, 184, 16);
 }
 
-.radio-input input.incorrect-answer:checked + label {
+.radio-input input.incorrect-answer {
     border-color: red;
     color: red;
 }
