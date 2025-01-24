@@ -587,13 +587,26 @@ textarea:focus{
     transition: display .4s ease;
   }
   
-.radio-input input.correct-answer {
-    border-color: rgb(22, 245, 22);
-    color: rgb(16, 184, 16);
+  .radio-option.highlight {
+    background-color: #cce5ff;  
+    border-color: #0a0a0a;      
+    }
+  .radio-input input:checked + label {
+    border-color: #050505;
+    background-color: #67d7cc;
+  }
+
+.submit-button {
+    width: 100%;
+    padding: 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(9, 9, 9, 0.164);
+    background-color: #67d7cc;
+    cursor: pointer;
 }
 
-.radio-input input.incorrect-answer {
-    border-color: red;
-    color: red;
-}
-  
+.submit-button:hover {
+    background-color: #fef68a;
+    cursor: pointer;
+    
+  }

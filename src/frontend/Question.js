@@ -1,34 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
-const Question = ({ question, key}) => { 
-    const [isCorrect, setIsCorrect] = useState(null); 
-    
-    useEffect(() => {
-        // Reset the answer state when a new question is loaded
-        setIsCorrect(null);
-    }, [question]);
+const Question = ({ question, key, updateChosenAnswer}) => { 
+    const [chosen, setChosen] = useState(question.chosen || null);
     
     const handleAnswerChange = (answer) => {
-        if (isCorrect !== null) {
-            return; 
-        }
-        const trimmedAnswer = answer.trim();
-        const trimmedCorrectAnswer = question.rightAnswer.trim();
-    
-        if (String(trimmedAnswer) === String(trimmedCorrectAnswer)) {
-            console.log("here");
-            setIsCorrect(true); 
-        } else {
-            setIsCorrect(false);
-        }
-    
-        console.log('Answer:', trimmedAnswer, 'Correct:', trimmedCorrectAnswer);
+        console.log("Hello");
+        setChosen(answer);
+        updateChosenAnswer(question.number, answer);
     };
     
-    useEffect(() => {
-        console.log('Updated isCorrect state:', isCorrect);
-    }, [isCorrect]);
-
     return (
         <div className="radio-input">
             <div className="info">
@@ -37,18 +17,20 @@ const Question = ({ question, key}) => {
             </div>
 
             {question.answers.map((answer, index) => (
-                <div key={index} className="radio-option">
+                //using react fragment instead, and didn't work before because radio options were missing name attribute 
+                <React.Fragment key={index}>
                     <input
                         type="radio"
-                        id={`value-${index}-${key}`}
+                        id={`value-${index}-${question.number}`}
+                        name={`question-${question.number}`}
                         value={answer}
-                        onChange={() => handleAnswerChange(answer)} 
-                        disabled={isCorrect !== null}
-                        className={answer === question.rightAnswer ? 'correct-answer' : 'incorrect-answer'}
+                        checked={chosen === answer}
+                        onChange={() => handleAnswerChange(answer)}
                     />
-                    <label htmlFor={`value-${index}`}>{answer}</label>
-                </div>
+                    <label htmlFor={`value-${index}-${question.number}`}>{answer}</label>
+                </React.Fragment>
             ))}
+
         </div>
     );
 };

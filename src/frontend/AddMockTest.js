@@ -24,6 +24,15 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
                 const result = await response.json();
                 console.log("result",result.text);
                 
+                const ScrambleAnswers = (answers) => {
+                    let currentIndex = answers.length;
+                    while (currentIndex != 0) {
+                        let randomIndex = Math.floor(Math.random() * currentIndex);
+                        currentIndex--;
+                        [answers[currentIndex], answers[randomIndex]] = [answers[randomIndex], answers[currentIndex]];
+                    }
+                    return answers;
+                };
                 
                 const parsedQuestions = [];
                 const lines = result.text.split("question:").filter(line => line.trim() !== ''); 
@@ -42,10 +51,16 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
                             total: lines.length,
                             question: questionPart.trim(), 
                             answers: answers, 
-                            rightAnswer: answers[0], 
+                            rightAnswer: answers[0],
+                            chosenAnswer: null,
                         });
+                        
+                        parsedQuestions[parsedQuestions.length - 1].answers = ScrambleAnswers(parsedQuestions[parsedQuestions.length - 1].answers);
+                        
                     }
                 }
+                
+                
                 
                 
                 setQuestions(parsedQuestions);
