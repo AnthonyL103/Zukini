@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import StudyMenu from '../StudyMenu';
+import PastStudy from '../PastStudy';
 import AddFlashCards from '../AddFlashCards';
 import AddMockTest from '../AddMockTest';
 import { useNavigate } from 'react-router-dom';

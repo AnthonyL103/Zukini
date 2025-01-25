@@ -124,7 +124,6 @@ const AddScan = ({onAddScan})  => {
           },
           body: JSON.stringify(payload), // Convert the payload to JSON
         });
-        console.log("key", key);
         if (onsaveresponse.ok) {
           if (onAddScan) {
             onAddScan({

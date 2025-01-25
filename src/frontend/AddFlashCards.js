@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import FlashCardList from './FlashCardList';
+import { v4 as uuidv4 } from 'uuid';
 const AddFlashCards = ({ filepath, scanname, text, date, onClose }) => {
-  const [flashcards, setFlashcards] = useState("");
+  const [flashcards, setFlashcards] = useState([]);
   const [showModal, setShowModal] = useState(false);
   
   let clearVisibleFlashcardsRef = null; 
@@ -58,6 +59,38 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose }) => {
     if (clearVisibleFlashcardsRef) clearVisibleFlashcardsRef();
     onClose(); 
   };
+  
+  const handleSave = async () => {
+    // Save the flashcards to the database
+    try {
+        const key = uuidv4();
+        console.log("currkey", key);
+        const payload = {
+            flashcardkey: key,
+            filePath: filepath,
+            scanName: scanname,
+            FlashCardtext: flashcards,
+            currDate: date,
+        }
+        const onsaveresponse = await fetch('http://localhost:5003/saveFlashCards', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+        if (onsaveresponse.ok) {
+            console.log('Flashcards saved successfully');
+        } else {    
+          console.error('Failed to save flashcards');
+        }
+    } catch (error) {
+        console.error('Error saving flashcards:', error);
+        alert('Failed to save flashcards');
+    }
+    
+    closefcmodal();
+  };
 
   return (
     <>
@@ -79,6 +112,7 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose }) => {
                         </button>
                         <button
                             className="fcmodal-button save"
+                            onClick={handleSave}
                         >
                             Save and Exit
                         </button>

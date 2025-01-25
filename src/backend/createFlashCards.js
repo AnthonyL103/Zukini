@@ -2,12 +2,29 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const { parseFlashCards } = require('./parseFlashCards');
-
+const { FlashCardEntries } = require('./db');
 const app = express();
 app.use(express.json());
 const port = 5003;
 
 app.use(cors());
+
+async function appendflashCardToDB(newEntry) {
+  try {
+    // Insert the new entry into the database
+    await FlashCardEntries.create({
+      flashcardkey: newEntry.flashcardkey,
+      filepath: newEntry.filepath,
+      scanname: newEntry.scanname,
+      flashcards: newEntry.flashcardtext,
+      date: newEntry.date,
+    });
+
+    console.log('New flashcard entry appended to the database');
+  } catch (error) {
+    console.error('Error appending to the database:', error);
+  }
+}
   
 app.post('/callparseFlashCards', async (req, res) => {
   const { scanname, text, date } = req.body; // Destructure scanname, text, and date
@@ -35,24 +52,32 @@ app.post('/callparseFlashCards', async (req, res) => {
 });
 
 
-app.post('/saveFlashCards', (req, res) => {
-  const { filePath, scanName, FlashCardtext, currDate } = req.body; // Extract variables
+app.post('/saveFlashCards', async (req, res) => {
+  const { flashcardkey, filePath, scanName, FlashCardtext, currDate } = req.body; // Extract variables
 
   if (!filePath || !FlashCardtext) {
     return res.status(400).json({ message: 'filePath and FlashCardtext are required' });
   }
 
   const newEntry = {
+    flashcardkey: flashcardkey,
     filepath: filePath,
     scanname: scanName,
-    text: FlashCardtext,
+    flashcardtext: FlashCardtext,
     date: currDate,
   };
-
+  
+  try {
+    await appendflashCardToDB(newEntry);
+    
+  } catch (error) {
+    console.error('Error saving FlashCards:', error);
+    return res.status(500).json({ message: 'Failed to save FlashCards to the database ' });
+  }
   // Append the new entry to the JSON file
-  appendToJsonFile(newEntry);
+  
 
-  res.json({ message: 'Data saved successfully', newEntry });
+  res.json({ message: 'FlashCards saved successfully', newEntry });
 });
 
 

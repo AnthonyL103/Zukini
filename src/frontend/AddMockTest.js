@@ -1,7 +1,9 @@
 import React, { useState, useEffect} from 'react';
 import QuestionsList from './QuestionsList';
+import { v4 as uuidv4 } from 'uuid';
+
 const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
-    const [questions, setQuestions] = useState("");
+    const [questions, setQuestions] = useState([]);
     const [showModal, setShowModal] = useState(false);
     
     let clearVisibleQuestionsRef = null;
@@ -83,6 +85,37 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
         onClose();
     };
     
+    const handleSave = async () => {
+        // Save the flashcards to the database
+        try {
+            const key = uuidv4();
+            console.log("currkey", key);
+            const payload = {
+                mocktestkey: key,
+                filePath: filepath,
+                scanName: scanname,
+                questionstext: questions,
+                currDate: date,
+            }
+            const onsaveresponse = await fetch('http://localhost:5005/saveMockTest', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(payload),
+            });
+            if (onsaveresponse.ok) {
+              console.log('Mocktests Saved successfully');
+            } else {    
+              console.error('Failed to save flashcards');
+            }
+        } catch (error) {
+            console.error('Error saving flashcards:', error);
+            alert('Failed to save flashcards');
+        }
+        closemtmodal();
+    };
+    
     return (
         <>
             <div className={`fcmodal-container ${showModal ? "show" : ""}`}>
@@ -103,6 +136,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
                             </button>
                             <button
                                 className="fcmodal-button save"
+                                onClick={handleSave}
                             >
                                 Save and Exit
                             </button>

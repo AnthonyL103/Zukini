@@ -40,8 +40,50 @@ const ParsedTextEntries = sequelize.define('ParsedTextEntries', {
     },
     date: {
       type: DataTypes.STRING,
-    }
+    },
   });
+  
+const FlashCardEntries = sequelize.define('FlashCardEntries', {
+    flashcardkey: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    filepath: {
+        type: DataTypes.STRING, 
+        allowNull: false,
+    },
+    scanname: {
+        type: DataTypes.STRING, 
+        allowNull: false,
+    },
+    flashcards: {
+        type: DataTypes.STRING,
+    },
+    date: {
+        type: DataTypes.STRING,
+    },
+});
+
+const MockTestEntries = sequelize.define('MockTestEntries', {
+    mocktestkey: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    filepath: {
+        type: DataTypes.STRING, 
+        allowNull: false,
+    },
+    scanname: {
+        type: DataTypes.STRING, 
+        allowNull: false,
+    },
+    questions: {
+        type: DataTypes.STRING,
+    },
+    date: {
+        type: DataTypes.STRING,
+    },
+});
 
 (async () => {
   try {
@@ -54,4 +96,4 @@ const ParsedTextEntries = sequelize.define('ParsedTextEntries', {
   }
 })();
 
-module.exports = { sequelize, UploadFile, ParsedTextEntries };
+module.exports = { sequelize, UploadFile, ParsedTextEntries, FlashCardEntries, MockTestEntries };

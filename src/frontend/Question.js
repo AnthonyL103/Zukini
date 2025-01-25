@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 
 const Question = ({ question, key, updateChosenAnswer}) => { 
     const [chosen, setChosen] = useState(question.chosen || null);
