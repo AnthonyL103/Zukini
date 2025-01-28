@@ -1,11 +1,20 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const path = require('path');
+require('dotenv').config();
 
 //right now I am storing locally but in the future it will be really easy to attacch to a cloud service 
-const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: path.join(__dirname, 'database.sqlite'), // SQLite database file
-});
+const sequelize = new Sequelize('postgres', process.env.DB_USER, process.env.DB_PASSWORD, {
+    host: process.env.DB_HOST, 
+    dialect: 'postgres',       
+    port: 5432,                
+    logging: false,
+    dialectOptions: {
+      ssl: {
+        require: true,            
+        rejectUnauthorized: false, 
+      },
+    },
+  });
 
 const UploadFile = sequelize.define('UploadFile', {
   filename: {
@@ -57,7 +66,7 @@ const FlashCardEntries = sequelize.define('FlashCardEntries', {
         allowNull: false,
     },
     flashcards: {
-        type: DataTypes.STRING,
+        type: DataTypes.JSONB,
     },
     date: {
         type: DataTypes.STRING,
@@ -78,7 +87,7 @@ const MockTestEntries = sequelize.define('MockTestEntries', {
         allowNull: false,
     },
     questions: {
-        type: DataTypes.STRING,
+        type: DataTypes.JSONB,
     },
     date: {
         type: DataTypes.STRING,
