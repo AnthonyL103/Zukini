@@ -1,9 +1,54 @@
 import SocialMediaLinks from '../socialmenu'; 
+import { useState} from 'react';
 
 const Home = () => {
+    const [showLoginModal, setShowLoginModal] = useState(false);
+    const [showSignUpModal, setShowSignUpModal] = useState(false);
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const handleSignUp = () => {
+        setShowSignUpModal(true);
+    };
+    const handleLogIn = () => {
+        setShowLoginModal(true);
+    };
+    const handleLoggedIn = () => {
+        setShowLoginModal(false);
+    };
+    const closeSignUpModal = (e) => {
+        e.preventDefault(); 
+
+        if (password !== confirmPassword) {
+            setErrorMessage("Passwords do not match");
+            return;
+        }
+
+        setErrorMessage(""); 
+        setShowSignUpModal(false);
+        setPassword("");
+        setConfirmPassword("");
+        alert("Account created successfully!");
+    };
     return (
         <div className="container">
+            <div className= "header-wrapper">
             <h1>Welcome to the Home Page!</h1>
+            <div className= "account-wrapper">
+            <button className="signupbutton" onClick={handleSignUp}>Sign Up 
+                <div className="arrow-wrapper">
+                    <div className="arrow"></div>
+
+                </div>
+            </button>
+            <button className="loginbutton" onClick={handleLogIn}>Log in 
+                <div className="arrow-wrapper">
+                    <div className="arrow"></div>
+
+                </div>
+            </button>
+            </div>
+            </div>
             
             <h2><strong>About:</strong></h2>
             <p>
@@ -41,7 +86,7 @@ const Home = () => {
             <p>
                 <strong>3. View Saved Notes:</strong><br />
                 Once saved, your file and the parsed text will appear in a yellow box on the Files page. 
-                Now you're ready to start studying!
+                Now you're ready to start studying! (still in development)
             </p>
 
             <p>
@@ -60,6 +105,46 @@ const Home = () => {
 
             <p><strong>Happy studying!</strong></p>
             <SocialMediaLinks />
+            <div className={`loginmodal-container ${showLoginModal ? "show" : ""}`}>
+            {showLoginModal && (
+                <form className="loginform" onSubmit={handleLoggedIn}>
+                    <p className="loginform-title">Sign in to your account</p>
+                    <div className="logininput-container">
+                        <input type="email" placeholder="Enter email" required/>
+                        <span></span>
+                    </div>
+                    <div className="logininput-container">
+                        <input type="password" placeholder="Enter password" required/>
+                    </div>
+                    <button type="submit" className="loginsubmit">
+                        Sign in
+                    </button>
+                </form>
+            )}
+        </div>
+        <div className={`loginmodal-container ${showSignUpModal ? "show" : ""}`}>
+            {showSignUpModal && (
+                <form className="signupform" onSubmit={closeSignUpModal}>
+                    <p className="signupform-title">Create an account</p>
+                    <div className="signupinput-container">
+                        <input type="text" placeholder="Enter email" required/>
+                        <span></span>
+                    </div>
+                    <div className="signupinput-container">
+                        <input type="password" placeholder="Enter password" required value={password}
+                            onChange={(e) => setPassword(e.target.value)}/>
+                    </div>
+                    <div className="signupinput-container">
+                        <input type="password" placeholder="Enter password again" required value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}/>
+                    </div>
+                    {errorMessage && <p className="error-message">{errorMessage}</p>}
+                    <button type="signupsubmit" className="signupsubmit">
+                        Sign up
+                    </button>
+                </form>
+            )}
+        </div>
         </div>
     );
 };

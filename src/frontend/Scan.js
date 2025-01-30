@@ -22,7 +22,6 @@ const Scan = ({ scankey, filepath, scanname, text, date, onDelete }) => {
     <div className="scan">
       <span><strong>Scan name:</strong> {scanname}</span>
       <br />
-      <span>key:{scankey}</span>
       <span>{text}</span>
       <div className="scan-footer">
         <small>{date}</small>

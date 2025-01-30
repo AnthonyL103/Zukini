@@ -196,7 +196,7 @@ const AddScan = ({onAddScan})  => {
           required
         />
        </div>
-          <button type="submit">Upload and Scan</button>
+          <button className = "save"type="submit">Upload and Scan</button>
        </form>
   
         <div className="scan-footer">

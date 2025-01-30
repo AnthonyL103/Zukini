@@ -26,7 +26,7 @@ const FilesPage = () => {
   
   const displayModal = (key) => {
     setScanToDelete(key); // Set the scan to delete
-    console.log(" reckey",key);
+    //console.log(" reckey",key);
     setShowModal(true); // Show the modal
   };
 

@@ -45,7 +45,7 @@ textarea:focus{
 .save{
     background-color: #e1e1e1;
     border: none;
-    border-radius: 15px;
+    border-radius: 5px;
     padding: 5px 10px 5px 10px;
     
 }
@@ -63,7 +63,7 @@ textarea:focus{
 .study-button{
   background-color: #e1e1e1;
   border: none;
-  border-radius: 15px;
+  border-radius: 5px;
   padding: 5px 10px 5px 10px;
   
 }
@@ -77,7 +77,7 @@ textarea:focus{
 .del-button{
   background-color: #9b3232;
   border: none;
-  border-radius: 15px;
+  border-radius: 5px;
   padding: 5px 10px 5px 10px;
   
 }
@@ -111,7 +111,7 @@ textarea:focus{
 
 .scan{
     background-color: #fef68a;
-    border-radius: 10px;
+    border-radius: 5px;
     padding: 1rem;
     min-height: 170px;
     display: flex;
@@ -276,7 +276,7 @@ textarea:focus{
     border: 0 !important;
     width: 40px;
     height: 40px;
-    border-radius: 50%;
+    border-radius: 5px;
     background-color: transparent;
     display: flex;
     align-items: center;
@@ -312,7 +312,7 @@ textarea:focus{
     display: flex;
     align-items: center;
     justify-content: space-around;
-    border-radius: 15px;
+    border-radius: 5px;
     box-shadow: 0 10px 25px 0 rgba(#000, 0.075);
     
   }
@@ -323,7 +323,7 @@ textarea:focus{
     align-items: center;
     width: 70px;
     height: 50px;
-    border-radius: 8px;
+    border-radius: 5px;
     position: relative;
     z-index: 1;
     overflow: hidden;
@@ -336,7 +336,7 @@ textarea:focus{
       z-index: -1;
       content: "";
       display: block;
-      border-radius: 8px;
+      border-radius: 5px;
       width: 100%;
       height: 100%;
       top: 0;
@@ -405,7 +405,7 @@ textarea:focus{
   
   .fcmodal-content {
     background-color: #fff;
-    border-radius: 8px;
+    border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     padding: 25px 50px;
     max-width: 90%;
@@ -480,7 +480,7 @@ textarea:focus{
     justify-content: space-between;
     align-items: center;
     position: relative;
-    border-radius: 10px;
+    border-radius: 5px;
     padding: 1rem;
     background-color: #fef68a;
     transform-style: preserve-3d;
@@ -530,7 +530,7 @@ textarea:focus{
     padding: 12px;
     background: #ffffff;
     color: #000;
-    border-radius: 10px;
+    border-radius: 5px;
     border-color: #000;
     width: 320px;
   }
@@ -554,7 +554,7 @@ textarea:focus{
     background-color: rgb(0, 0, 0);
     padding: 4px;
     color: #fff;
-    border-radius: 4px;
+    border-radius: 5px;
     font-size: 12px;
     line-height: 12px;
     font-weight: 600;
@@ -567,7 +567,7 @@ textarea:focus{
     margin: 8px 0 0 0;
     font-size: 13px;
     font-weight: 600;
-    border-radius: 10px;
+    border-radius: 5px;
     cursor: pointer;
     border: 1px solid rgba(9, 9, 9, 0.164);
     color: #000;
@@ -599,7 +599,7 @@ textarea:focus{
 .submit-button {
     width: 100%;
     padding: 8px;
-    border-radius: 10px;
+    border-radius: 5px;
     border: 1px solid rgba(9, 9, 9, 0.164);
     background-color: #67d7cc;
     cursor: pointer;
@@ -612,11 +612,10 @@ textarea:focus{
   }
   
   .socialcard {
-    width: 90%;
     height: fit-content;
     background-color: #67d7cc;
     display: flex;
-    border-radius: 7px;
+    border-radius: 5px;
     align-items: center;
     justify-content: center;
     padding: 25px;
@@ -684,4 +683,289 @@ textarea:focus{
       transform: translateY(0);
       opacity: 1;
     }
+  }
+  .header-wrapper {
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .account-wrapper {
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .signupbutton {
+    --primary-color: #fef68a;
+    --secondary-color: #000000;
+    --hover-color: #67d7cc;
+    --arrow-width: 10px;
+    --arrow-stroke: 2px;
+    box-sizing: border-box;
+    border: 0;
+    border-radius: 5px;
+    color: var(--secondary-color);
+    padding: 1em 1.8em;
+    background: var(--primary-color);
+    display: flex;
+    transition: 0.2s background;
+    align-items: center;
+    gap: 0.6em;
+    font-weight: bold;
+  }
+  
+  .signupbutton .arrow-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .signupbutton .arrow {
+    margin-top: 1px;
+    width: var(--arrow-width);
+    background: var(--primary-color);
+    height: var(--arrow-stroke);
+    position: relative;
+    transition: 0.2s;
+  }
+  
+  .signupbutton .arrow::before {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    border: solid var(--secondary-color);
+    border-width: 0 var(--arrow-stroke) var(--arrow-stroke) 0;
+    display: inline-block;
+    top: -3px;
+    right: 3px;
+    transition: 0.2s;
+    padding: 3px;
+    transform: rotate(-45deg);
+  }
+  
+  .signupbutton:hover {
+    background-color: var(--hover-color);
+  }
+  
+  .signupbutton:hover .arrow {
+    background: var(--secondary-color);
+  }
+  
+  .signupbutton:hover .arrow:before {
+    right: 0;
+  }
+  
+  .loginbutton {
+    --primary-color: #67d7cc;
+    --secondary-color: #000000;
+    --hover-color: #fef68a;
+    --arrow-width: 10px;
+    --arrow-stroke: 2px;
+    box-sizing: border-box;
+    border: 0;
+    border-radius: 5px;
+    color: var(--secondary-color);
+    padding: 1em 1.8em;
+    background: var(--primary-color);
+    display: flex;
+    transition: 0.2s background;
+    align-items: center;
+    gap: 0.6em;
+    font-weight: bold;
+  }
+  
+  .loginbutton .arrow-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .loginbutton .arrow {
+    margin-top: 1px;
+    width: var(--arrow-width);
+    background: var(--primary-color);
+    height: var(--arrow-stroke);
+    position: relative;
+    transition: 0.2s;
+  }
+  
+  .loginbutton .arrow::before {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    border: solid var(--secondary-color);
+    border-width: 0 var(--arrow-stroke) var(--arrow-stroke) 0;
+    display: inline-block;
+    top: -3px;
+    right: 3px;
+    transition: 0.2s;
+    padding: 3px;
+    transform: rotate(-45deg);
+  }
+  
+  .loginbutton:hover {
+    background-color: var(--hover-color);
+  }
+  
+  .loginbutton:hover .arrow {
+    background: var(--secondary-color);
+  }
+  
+  .loginbutton:hover .arrow:before {
+    right: 0;
+  }
+  
+  /* for log in */
+  
+  
+.loginmodal-container {
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    opacity: 0;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw
+  }
+  
+.loginmodal-container.show {
+    pointer-events: auto;
+    opacity: 1;
+}
+
+.loginform {
+    background-color: rgb(255, 250, 250);
+    width: 600px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 30px 50px;
+    max-width: 100%;
+    text-align: center;
+  }
+  
+  .loginform-title {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 600;
+    text-align: center;
+    color: #000;
+  }
+  
+  .logininput-container {
+    position: relative;
+    width: 100%;
+  }
+  
+  .logininput-container input, .form button {
+    outline: none;
+    border: 1px solid #e5e7eb;
+    margin: 8px 0;
+  }
+  
+  .logininput-container input {
+    background-color: #fff;
+    padding: 1rem;
+    padding-right: 3rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    width: 85%;
+    border-radius: 5px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  }
+  
+  .loginsubmit {
+    display: block;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    background-color: #67d7cc;
+    color: #060606;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: bold;
+    width: 100%;
+    border-radius: 5px;
+    border: none;
+    text-transform: uppercase;
+  }
+  
+  .loginsubmit:hover {
+    background-color: #fef68a;
+    cursor: pointer;
+  }
+  
+
+.signupform {
+    background-color: rgb(255, 250, 250);
+    width: 600px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 30px 50px;
+    max-width: 100%;
+    text-align: center;
+  }
+  
+  .signupform-title {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 600;
+    text-align: center;
+    color: #000;
+  }
+  
+  .signupinput-container {
+    position: relative;
+    width: 100%;
+  }
+  
+  .signupinput-container input, .form button {
+    outline: none;
+    border: 1px solid #e5e7eb;
+    margin: 8px 0;
+  }
+  
+  .signupinput-container input {
+    background-color: #fff;
+    padding: 1rem;
+    padding-right: 3rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    width: 85%;
+    border-radius: 5px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  }
+  
+  .signupsubmit {
+    display: block;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    background-color: #67d7cc;
+    color: #060606;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: bold;
+    width: 100%;
+    border-radius: 5px;
+    border: none;
+    text-transform: uppercase;
+  }
+  
+  .signupsubmit:hover {
+    background-color: #fef68a;
+    cursor: pointer;
+  }
+  
+  .error-message {
+    color: red;
   }

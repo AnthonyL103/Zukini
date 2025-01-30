@@ -7,9 +7,9 @@ import { useNavigate } from 'react-router-dom';
 import { useScan } from '../ScanContext';
 
 const Study = () => {
-  const { currentScan } = useScan(); // Access global state for the current scan
-  const navigate = useNavigate();
-  const [showFlashCards, setShowFlashCards] = useState(false); // State to control rendering AddFlashCards
+const { currentScan, setCurrentScan } = useScan(); // Access global state for the current scan
+const navigate = useNavigate();
+const [showFlashCards, setShowFlashCards] = useState(false); // State to control rendering AddFlashCards
 const [showMockTests, setShowMockTests] = useState(false); // State to control rendering AddFlashCards
 
   if (!currentScan) {
@@ -42,6 +42,9 @@ const [showMockTests, setShowMockTests] = useState(false); // State to control r
   };
   
   const goToSwitchScan =() => {
+    //clear curr scan
+    setCurrentScan(null);
+    localStorage.removeItem('currentScan');
     navigate('/files');
   }
 
