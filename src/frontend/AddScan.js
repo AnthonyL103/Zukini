@@ -32,34 +32,14 @@ const AddScan = ({onAddScan})  => {
     
       try {
         // Step 1: Upload the file
-        const uploadResponse = await fetch('http://localhost:5002/upload', {
-          method: 'POST',
-          body: formData,
-        });
-    
-        if (!uploadResponse.ok) {
-          throw new Error('Failed to upload the file');
-        }
-    
-        const uploadResult = await uploadResponse.json();
-        const filePath = uploadResult.filePath;
-         // Get the file path from the upload response
-        const currDate = uploadResult.uploadDate;
-        setCurrFile(filePath);
-        setCurrDate(currDate);
-        console.log('File uploaded successfully:', filePath);
-    
-        // Step 2: Automatically parse the uploaded file
         const parseResponse = await fetch('http://localhost:5002/callparse', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json', // Specify JSON content type
-          },
-          body: JSON.stringify({ filePath }), // Properly send filePath as JSON
+            method: 'POST',
+            body: formData, // Send file directly
         });
-        
-    
         const parseResult = await parseResponse.json();
+        // Get the file path from the upload response
+        setCurrDate(parseResult.date);
+        setCurrFile(parseResult.filePath);
         setParsedText(parseResult.text); // Update the parsed text
         setShowModal(true); // Show modal with parsed text
     
