@@ -32,7 +32,7 @@ const AddScan = ({onAddScan})  => {
     
       try {
         // Step 1: Upload the file
-        const parseResponse = await fetch('http://localhost:5002/callparse', {
+        const parseResponse = await fetch('http://3.83.224.99:5002/callparse', {
             method: 'POST',
             body: formData, // Send file directly
         });
@@ -59,7 +59,7 @@ const AddScan = ({onAddScan})  => {
     const handleReScan = async () => {
       handleCloseModal();
       try {
-        const parseResponse = await fetch('http://localhost:5002/callparse', {
+        const parseResponse = await fetch('http://3.83.224.99:5002/callparse', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json', // Specify JSON content type
@@ -97,7 +97,7 @@ const AddScan = ({onAddScan})  => {
         };
     
         // Sending the POST request with JSON
-        const onsaveresponse = await fetch('http://localhost:5002/saveandexit', {
+        const onsaveresponse = await fetch('http://3.83.224.99:5002/saveandexit', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json', // Specify JSON content type

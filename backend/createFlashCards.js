@@ -82,6 +82,6 @@ app.post('/saveFlashCards', async (req, res) => {
 
 
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0',() => {
   console.log(`create flash card server on ${port}`);
 });

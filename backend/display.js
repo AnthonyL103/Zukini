@@ -46,4 +46,4 @@ app.post('/deleteScan', async (req, res) => {
   });
   
   // Start the server
-  app.listen(PORT, () => console.log(`Display server running on port ${PORT}`));
+  app.listen(PORT, '0.0.0.0', () => console.log(`Display server running on port ${PORT}`));

@@ -9,7 +9,7 @@ const FilesPage = () => {
   useEffect(() => {
     const fetchScans = async () => {
       try {
-        const response = await fetch('http://localhost:5001/displayscans');
+        const response = await fetch('http://3.83.224.99:5001/displayscans');
         if (!response.ok) {
           throw new Error('Failed to fetch scans');
         }
@@ -37,7 +37,7 @@ const FilesPage = () => {
 
   const handleDeleteScan = async () => {
     try {
-      const response = await fetch('http://localhost:5001/deleteScan', {
+      const response = await fetch('http://3.83.224.99:5001/deleteScan', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
