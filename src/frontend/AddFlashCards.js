@@ -10,7 +10,7 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose }) => {
   useEffect(() => {
     const generateFlashcards = async () => {
       try {
-        const response = await fetch('http://3.83.224.99:5003/callparseFlashCards', {
+        const response = await fetch('http://35.87.31.240:5003/callparseFlashCards', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose }) => {
             FlashCardtext: flashcards,
             currDate: date,
         }
-        const onsaveresponse = await fetch('http://3.83.224.99:5003/saveFlashCards', {
+        const onsaveresponse = await fetch('http://35.87.31.240:5003/saveFlashCards', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
