@@ -4,10 +4,10 @@
   "main": "createFlashCards.js",
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run server2\" \"npm run server3\" \"npm run server4\" ",
-    "server": "nodemon src/backend/handleAddScan.js",
-    "server2": "nodemon src/backend/display.js",
-    "server3": "nodemon src/backend/createFlashCards",
-    "server4": "nodemon src/backend/createMockTests"
+    "server": "nodemon /handleAddScan.js",
+    "server2": "nodemon /display.js",
+    "server3": "nodemon /createFlashCards.js",
+    "server4": "nodemon /createMockTests.js"
   },
   "keywords": [],
   "author": "",
