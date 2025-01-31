@@ -80,5 +80,5 @@ app.post('/saveMockTest', async (req, res) => {
   });
 
 app.listen(port, () => {
-    console.log(`create mock tests server on http://localhost:${port}`);
+    console.log(`create mock tests server on ${port}`);
 });
