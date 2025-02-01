@@ -54,9 +54,8 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose }) => {
 
   const closefcmodal = () => {
     setShowModal(false);
-    setFlashcards("");
+    setFlashcards([]);
     //Pass flag as component to tell flashcardlist to clear its setvisible array 
-    if (clearVisibleFlashcardsRef) clearVisibleFlashcardsRef();
     onClose(); 
   };
   
@@ -99,9 +98,6 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose }) => {
                 <div className="fcmodal-content">
                     <FlashCardList
                         flashcards={flashcards}
-                        setClearVisibleFlashcards={(clearFn) => {
-                            clearVisibleFlashcardsRef = clearFn; // Store the clear function
-                        }}
                     />
                     <div className="fcmodal-content-footer">
                         <button

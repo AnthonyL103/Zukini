@@ -6,8 +6,6 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
     const [questions, setQuestions] = useState([]);
     const [showModal, setShowModal] = useState(false);
     
-    let clearVisibleQuestionsRef = null;
-    
     useEffect(() => {
         const generateMockTestQuestions = async () => {
             try {
@@ -28,7 +26,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
                 
                 const ScrambleAnswers = (answers) => {
                     let currentIndex = answers.length;
-                    while (currentIndex != 0) {
+                    while (currentIndex !== 0) {
                         let randomIndex = Math.floor(Math.random() * currentIndex);
                         currentIndex--;
                         [answers[currentIndex], answers[randomIndex]] = [answers[randomIndex], answers[currentIndex]];
@@ -79,9 +77,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
     
     const closemtmodal = () => {
         setShowModal(false);
-        setQuestions("");
-        onClose();
-        if (clearVisibleQuestionsRef) clearVisibleQuestionsRef();
+        setQuestions([]);
         onClose();
     };
     
@@ -123,9 +119,6 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
                     <div className="fcmodal-content">
                         <QuestionsList
                             questions={questions}
-                            setClearVisibleQuestions={(clearQn) => {
-                                clearVisibleQuestionsRef = clearQn;
-                            }}
                         />
                         <div className="fcmodal-content-footer">
                             <button

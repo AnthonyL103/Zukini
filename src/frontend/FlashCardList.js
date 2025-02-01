@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Flashcard from './FlashCard';
 
-const FlashcardList = ({setClearVisibleFlashcards, flashcards = [] }) => {
+const FlashcardList = ({ flashcards = [] }) => {
     const [visibleFlashcards, setVisibleFlashcards] = useState([]); 
     
     useEffect(() => {
@@ -21,14 +21,6 @@ const FlashcardList = ({setClearVisibleFlashcards, flashcards = [] }) => {
         }
     }, [flashcards]);
     
-    
-    useEffect(() => {
-        if (setClearVisibleFlashcards) {
-          setClearVisibleFlashcards(() => () => {
-            setVisibleFlashcards([]); // Clear visible flashcards when triggered
-          });
-        }
-      }, [setClearVisibleFlashcards]);
     
 
     return (
