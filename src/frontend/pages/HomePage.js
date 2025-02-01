@@ -7,25 +7,72 @@ const Home = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+    const [email, setEmail] = useState("");
     const handleSignUp = () => {
         setShowSignUpModal(true);
+        setErrorMessage("");
     };
     const handleLogIn = () => {
         setShowLoginModal(true);
+        setErrorMessage("");
     };
-    const handleLoggedIn = () => {
-        setShowLoginModal(false);
+    const handleLoggedIn = async (e) => {
+        e.preventDefault();
+        
+        try {
+            const response = await fetch("http://35.87.31.240:5006/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    Email: email,
+                    Password: password,
+                }),
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                setShowLoginModal(false);
+            } else {
+                setErrorMessage("User doesn't exist");
+                return;
+            }
+        } catch (error) {
+            console.log("Error loggin in");
+        }
+        setErrorMessage("");
+        setEmail("");
+        setPassword("");
     };
-    const closeSignUpModal = (e) => {
+    
+    const closeSignUpModal = async (e) => {
         e.preventDefault(); 
 
         if (password !== confirmPassword) {
             setErrorMessage("Passwords do not match");
             return;
         }
+        try {
+            const response = await fetch("http://35.87.31.240:5006/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    Email: email,
+                    Password: password,
+                }),
+            });
 
+            const data = await response.json();
+
+            if (data.success) {
+                setShowSignUpModal(false);
+            } 
+        } catch (error) {
+            console.log("Error signing up");
+        }
+        
         setErrorMessage(""); 
-        setShowSignUpModal(false);
+        setEmail("");
         setPassword("");
         setConfirmPassword("");
         alert("Account created successfully!");
@@ -110,12 +157,14 @@ const Home = () => {
                 <form className="loginform" onSubmit={handleLoggedIn}>
                     <p className="loginform-title">Sign in to your account</p>
                     <div className="logininput-container">
-                        <input type="email" placeholder="Enter email" required/>
-                        <span></span>
+                        <input type="email" placeholder="Enter email" required
+                        onChange={(e) => setEmail(e.target.value)}/>
                     </div>
                     <div className="logininput-container">
-                        <input type="password" placeholder="Enter password" required/>
+                        <input type="password" placeholder="Enter password" required
+                        onChange={(e) => setPassword(e.target.value)}/>
                     </div>
+                    {errorMessage && <p className="error-message">{errorMessage}</p>}
                     <button type="submit" className="loginsubmit">
                         Sign in
                     </button>
@@ -127,8 +176,8 @@ const Home = () => {
                 <form className="signupform" onSubmit={closeSignUpModal}>
                     <p className="signupform-title">Create an account</p>
                     <div className="signupinput-container">
-                        <input type="text" placeholder="Enter email" required/>
-                        <span></span>
+                        <input type="text" placeholder="Enter email" required
+                        onChange={(e) => setEmail(e.target.value)}/>
                     </div>
                     <div className="signupinput-container">
                         <input type="password" placeholder="Enter password" required value={password}

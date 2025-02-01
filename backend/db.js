@@ -23,17 +23,12 @@ const sequelize = new Sequelize('postgres', process.env.DB_USER, process.env.DB_
     },
   });
 
-  /*
+
 const userinfos = sequelize.define('userinfos', {
     id: {
-        type: DataTypes.UUID, // Unique user ID
-        defaultValue: Sequelize.UUIDV4,
-        primaryKey: true,
-    },
-    username: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
+        primaryKey: true,
     },
     email: {
         type: DataTypes.STRING,
@@ -50,43 +45,17 @@ const userinfos = sequelize.define('userinfos', {
     },
    },
     {  
-        freezeTableName: false, // Prevent Sequelize from pluralizing table names
+        freezeTableName: false, 
     }
 );
-*/
-/*
-const UploadFile = sequelize.define('UploadFile', {
-  filename: {
-    type: DataTypes.STRING, // Store the original file name
-    allowNull: false,
-  },
-  content: {
-    type: DataTypes.BLOB, // Store binary data (images, PDFs, etc.)
-    allowNull: false,
-  },
-  uploadDate: {
-    type: DataTypes.DATE, // Store the upload date
-    allowNull: false,
-  },
-  /*
-  userId: {
-    type: DataTypes.UUID,
-    allowNull: false,
-    references: {
-        model: userinfos, // References the Users table
-        key: 'id',    // Refers to the id column in the Users table
-      },
-    },
-    
-});
-*/
+
 const ParsedTextEntries = sequelize.define('ParsedTextEntries', {
     scankey: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     filepath: {
-      type: DataTypes.STRING, // Adjust as needed for your JSON structure
+      type: DataTypes.STRING, 
       allowNull: false,
     },
     scanname: {
@@ -99,15 +68,16 @@ const ParsedTextEntries = sequelize.define('ParsedTextEntries', {
     date: {
       type: DataTypes.STRING,
     },
-    /*
-    userId: {
-        type: DataTypes.UUID,
+    userid: {
+        type: DataTypes.STRING,  
         allowNull: false,
         references: {
-            model: userinfos, // References the Users table
-            key: 'id',    // Refers to the id column in the Users table
+            model: userinfos, 
+            key: 'id',        
         },
-    },*/
+        onDelete: 'CASCADE',
+    }
+    
     
   });
   
@@ -130,15 +100,15 @@ const FlashCardEntries = sequelize.define('FlashCardEntries', {
     date: {
         type: DataTypes.STRING,
     },
-    /*
-    userId: {
-        type: DataTypes.UUID,
+    userid: {
+        type: DataTypes.STRING,  
         allowNull: false,
         references: {
-            model: userinfos, // References the Users table
-            key: 'id',    // Refers to the id column in the Users table
+            model: userinfos, 
+            key: 'id',        
         },
-    },*/
+        onDelete: 'CASCADE',
+    }
 });
 
 const MockTestEntries = sequelize.define('MockTestEntries', {
@@ -160,30 +130,25 @@ const MockTestEntries = sequelize.define('MockTestEntries', {
     date: {
         type: DataTypes.STRING,
     },
-    /*
-    userId: {
-        type: DataTypes.UUID,
+    userid: {
+        type: DataTypes.STRING,  
         allowNull: false,
         references: {
-            model: userinfos, // References the Users table
-            key: 'id',    // Refers to the id column in the Users table
+            model: userinfos, 
+            key: 'id',        
         },
-    },
-    */
+        onDelete: 'CASCADE',
+    }
 });
-/*
-userinfos.hasMany(UploadFile, { foreignKey: 'userId', onDelete: 'CASCADE' });
-UploadFile.belongsTo(userinfos, { foreignKey: 'userId' });
 
-userinfos.hasMany(ParsedTextEntries, { foreignKey: 'userId', onDelete: 'CASCADE' });
-ParsedTextEntries.belongsTo(userinfos, { foreignKey: 'userId' });
+userinfos.hasMany(ParsedTextEntries, { foreignKey: 'userid', onDelete: 'CASCADE' });
+ParsedTextEntries.belongsTo(userinfos, { foreignKey: 'userid' });
 
-userinfos.hasMany(FlashCardEntries, { foreignKey: 'userId', onDelete: 'CASCADE' });
-FlashCardEntries.belongsTo(userinfos, { foreignKey: 'userId' });
+userinfos.hasMany(FlashCardEntries, { foreignKey: 'userid', onDelete: 'CASCADE' });
+FlashCardEntries.belongsTo(userinfos, { foreignKey: 'userid' });
 
-userinfos.hasMany(MockTestEntries, { foreignKey: 'userId', onDelete: 'CASCADE' });
-MockTestEntries.belongsTo(userinfos, { foreignKey: 'userId' });
-*/
+userinfos.hasMany(MockTestEntries, { foreignKey: 'userid', onDelete: 'CASCADE' });
+MockTestEntries.belongsTo(userinfos, { foreignKey: 'userid' });
 
 (async () => {
     try {
@@ -216,4 +181,4 @@ if (!process.listenerCount('SIGINT')) {
 }
 
 
-module.exports = { sequelize, ParsedTextEntries, FlashCardEntries, MockTestEntries};
+module.exports = { sequelize, userinfos, ParsedTextEntries, FlashCardEntries, MockTestEntries};

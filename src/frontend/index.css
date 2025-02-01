@@ -13,11 +13,12 @@ code {
 }
 
 .container {
-    max-width: 960px;
+    max-width: 1000px;
     margin-right: auto;
     margin-left: auto;
     padding-right: 15px;
     padding-left: 15px;
+    padding-bottom: 15px;
 }
 
 .scan-list{
@@ -114,9 +115,10 @@ textarea:focus{
     border-radius: 5px;
     padding: 1rem;
     min-height: 170px;
+    max-height: 500px;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: auto;
     justify-content: space-between;
     position: relative; 
 }
