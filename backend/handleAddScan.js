@@ -24,7 +24,8 @@ async function appendTextToDB(newEntry) {
         filepath: newEntry.filepath,      
         scanname: newEntry.scanname,
         value: newEntry.text,   
-        date: newEntry.date
+        date: newEntry.date,
+        userid: newEntry.userid,
       });
   
       console.log('New entry appended to the database');
@@ -33,49 +34,6 @@ async function appendTextToDB(newEntry) {
     }
   }
 
-/*
-//do it at router level for scalability
-router.post('/upload', async (req, res) => {
-    try {
-      //use formidable as we aren't using multer to process form anymore, and multer didn't allow for buffers
-
-      const form = new formidable.IncomingForm();
-      
-      form.parse(req, async (err, fields, files) => {
-        if (err) {
-          console.error('Error parsing form:', err);
-          return res.status(400).json({ error: 'Failed to parse form data' });
-        }
-        
-        // Access the uploaded file by indexing, as formidable expects multiple files, and also fields is expected as well
-        //even if it is empty when processing form data
-        const uploadedFile = files.file[0]; // 'file' matches the FormData key from the frontend
-        if (!uploadedFile) {
-          return res.status(400).json({ error: 'No file uploaded' });
-        }
-    
-        // Read the file contents
-        const fileContent = fs.readFileSync(uploadedFile.filepath); // Read file as a Buffer
-  
-        // Save file metadata and content to the database
-        const now = new Date();
-        const uploadDate = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`;
-  
-        // Respond with success
-        res.json({
-          message: 'File uploaded successfully!',
-          filePath: `uploads/${uploadedFile.originalFilename}`, 
-          uploadDate: uploadDate,
-        });
-      });
-    } catch (error) {
-      console.error('Error handling file upload:', error);
-      res.status(500).json({ error: 'Failed to upload file.' });
-    }
-  });
-  
-module.exports = router;
-*/
 
 
 router.post('/callparse', async (req, res) => {
@@ -127,7 +85,7 @@ module.exports = router;
 
 
 app.post('/saveandexit', async (req, res) => {
-  const {scankey, filePath, scanName, parsedText, currDate } = req.body; // Extract filePath and parsedText from the JSON body
+  const {scankey, filePath, scanName, parsedText, currDate, userId } = req.body; // Extract filePath and parsedText from the JSON body
 
   if (!filePath || !parsedText) {
     return res.status(400).json({ message: 'filePath and parsedText are required' });
@@ -140,6 +98,7 @@ app.post('/saveandexit', async (req, res) => {
     scanname: scanName,
     text: parsedText,
     date: currDate,
+    userid: userId,
   };
 
   // Append to JSON file immediately

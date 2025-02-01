@@ -5,9 +5,11 @@ import FilesPage from './pages/FilesPage';
 import HomePage from './pages/HomePage';
 import StudyPage from './pages/StudyPage';
 import ShopPage from './pages/ShopPage';
+import { UserProvider } from './UserContext';
 
 const App = () => {
   return (
+    <UserProvider>
     <Router>
       <Navbar /> {/* Always visible */}
       <Routes>
@@ -17,6 +19,7 @@ const App = () => {
         <Route path="/shop" element={<ShopPage />} />
       </Routes>
     </Router>
+    </UserProvider>
   );
 };
 

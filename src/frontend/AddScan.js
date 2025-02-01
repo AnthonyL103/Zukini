@@ -1,5 +1,6 @@
 import {useState, useEffect, useRef} from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { useUser } from './UserContext';
 
 
 const AddScan = ({onAddScan})  => {
@@ -12,6 +13,7 @@ const AddScan = ({onAddScan})  => {
     const [saveEnabled, setSaveEnabled] = useState(false);
     const [currDate, setCurrDate] = useState("");
     const [scanName, setScanName] = useState("");
+    const { userId } = useUser();
         
     const handleFileChange = (e) => {
         setFile(e.target.files[0]); // Update the state with the selected file
@@ -112,6 +114,7 @@ const AddScan = ({onAddScan})  => {
               scanname: scanName,
               value: parsedText,
               date: currDate,
+              userId: userId,
             });
           }
     

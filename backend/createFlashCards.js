@@ -18,6 +18,7 @@ async function appendflashCardToDB(newEntry) {
       scanname: newEntry.scanname,
       flashcards: newEntry.flashcardtext,
       date: newEntry.date,
+      userid: newEntry.userid,
     });
 
     console.log('New flashcard entry appended to the database');
@@ -53,7 +54,7 @@ app.post('/callparseFlashCards', async (req, res) => {
 
 
 app.post('/saveFlashCards', async (req, res) => {
-  const { flashcardkey, filePath, scanName, FlashCardtext, currDate } = req.body; // Extract variables
+  const { flashcardkey, filePath, scanName, FlashCardtext, currDate, userId } = req.body; // Extract variables
 
   if (!filePath || !FlashCardtext) {
     return res.status(400).json({ message: 'filePath and FlashCardtext are required' });
@@ -65,6 +66,7 @@ app.post('/saveFlashCards', async (req, res) => {
     scanname: scanName,
     flashcardtext: FlashCardtext,
     date: currDate,
+    userid: userId,
   };
   
   try {

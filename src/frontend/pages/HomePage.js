@@ -1,7 +1,8 @@
 import SocialMediaLinks from '../socialmenu'; 
 import { useState} from 'react';
-
+import { useUser } from '../UserContext';
 const Home = () => {
+    const { userId, setUserId } = useUser();
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showSignUpModal, setShowSignUpModal] = useState(false);
     const [password, setPassword] = useState("");
@@ -32,6 +33,8 @@ const Home = () => {
             const data = await response.json();
             
             if (data.success) {
+                setUserId(data.userId);
+                localStorage.setItem("userId", data.userId);
                 setShowLoginModal(false);
             } else {
                 setErrorMessage("User doesn't exist");

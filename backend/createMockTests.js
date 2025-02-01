@@ -17,6 +17,7 @@ async function appendmocktestToDB(newEntry) {
         scanname: newEntry.scanname,
         questions: newEntry.questions,
         date: newEntry.date,
+        userid: newEntry.userid,
       });
   
       console.log('New mocktest entry appended to the database');
@@ -51,7 +52,7 @@ app.post('/callparseMockTests', async (req, res) => {
 });
 
 app.post('/saveMockTest', async (req, res) => {
-    const { mocktestkey, filePath, scanName, questionstext, currDate } = req.body; // Extract variables
+    const { mocktestkey, filePath, scanName, questionstext, currDate, userId } = req.body; // Extract variables
   
     if (!filePath || !questionstext) {
       return res.status(400).json({ message: 'filePath and FlashCardtext are required' });
@@ -63,6 +64,7 @@ app.post('/saveMockTest', async (req, res) => {
       scanname: scanName,
       questions: questionstext,
       date: currDate,
+      userid: userId,
     };
     
     try {

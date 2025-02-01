@@ -1,10 +1,12 @@
 import React, { useState, useEffect} from 'react';
 import QuestionsList from './QuestionsList';
+import { useUser } from './UserContext';
 import { v4 as uuidv4 } from 'uuid';
 
 const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
     const [questions, setQuestions] = useState([]);
     const [showModal, setShowModal] = useState(false);
+    const { userId } = useUser();
     
     useEffect(() => {
         const generateMockTestQuestions = async () => {
@@ -92,6 +94,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
                 scanName: scanname,
                 questionstext: questions,
                 currDate: date,
+                userId: userId,
             }
             const onsaveresponse = await fetch('http://35.87.31.240:5005/saveMockTest', {
               method: 'POST',

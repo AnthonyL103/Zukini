@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import FlashCardList from './FlashCardList';
+import { useUser } from './UserContext';
 import { v4 as uuidv4 } from 'uuid';
+
 const AddFlashCards = ({ filepath, scanname, text, date, onClose }) => {
   const [flashcards, setFlashcards] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  
-  let clearVisibleFlashcardsRef = null; 
+  const { userId } = useUser();
   
   useEffect(() => {
     const generateFlashcards = async () => {
@@ -70,6 +71,7 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose }) => {
             scanName: scanname,
             FlashCardtext: flashcards,
             currDate: date,
+            userId: userId,
         }
         const onsaveresponse = await fetch('http://35.87.31.240:5003/saveFlashCards', {
           method: 'POST',
