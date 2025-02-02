@@ -30,6 +30,7 @@ async function appendTextToDB(newEntry) {
   
       console.log('New entry appended to the database');
     } catch (error) {
+      console.log(newEntry.scankey, newEntry.filepath, newEntry.scanname, newEntry.text, newEntry.date, newEntry.userid);
       console.error('Error appending to the database:', error);
     }
   }
