@@ -21,7 +21,7 @@ const Home = () => {
         e.preventDefault();
         
         try {
-            const response = await fetch("http://52.54.98.30:5006/login", {
+            const response = await fetch("http://18.236.227.203:5006/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -56,7 +56,7 @@ const Home = () => {
             return;
         }
         try {
-            const response = await fetch("http://52.54.98.30:5006/signup", {
+            const response = await fetch("http://18.236.227.203:5006/signup", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

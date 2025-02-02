@@ -11,7 +11,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
     useEffect(() => {
         const generateMockTestQuestions = async () => {
             try {
-                const response = await fetch('http://52.54.98.30:5005/callparseMockTests', {
+                const response = await fetch('http://18.236.227.203:5005/callparseMockTests', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -96,7 +96,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
                 currDate: date,
                 userId: userId,
             }
-            const onsaveresponse = await fetch('http://52.54.98.30:5005/saveMockTest', {
+            const onsaveresponse = await fetch('http://18.236.227.203:5005/saveMockTest', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
