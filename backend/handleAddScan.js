@@ -18,6 +18,7 @@ app.use(cors());
 
 async function appendTextToDB(newEntry) {
     try {
+        console.log(newEntry.scankey, newEntry.filepath, newEntry.scanname, newEntry.text, newEntry.date, newEntry.userid);
       // Insert the new entry into the database
       await ParsedTextEntries.create({
         scankey: newEntry.scankey,
