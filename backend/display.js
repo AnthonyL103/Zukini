@@ -10,8 +10,16 @@ app.use(express.json());
 
 // Display scans (GET /displayscans)
 app.get('/displayscans', async (req, res) => {
+    const { userId } = req.query;
+    if (!userId) {
+        console.log(userId);
+        return res.status(400).json({ error: 'User ID is null' });
+    }
     try {
-      const scans = await ParsedTextEntries.findAll(); // Retrieve all entries from the database
+      const scans = await ParsedTextEntries.findAll({
+        where: { userid: userId }
+      }); // Retrieve all entries from the database
+      
       res.json(scans); // Send the data as JSON
     } catch (error) {
       console.error('Error retrieving scans from database:', error);
@@ -30,7 +38,12 @@ app.post('/deleteScan', async (req, res) => {
   
     try {
       // Delete the scan with the matching filepath
-      const result = await ParsedTextEntries.destroy({ where: { scankey: key } });
+      const result = await ParsedTextEntries.destroy({ 
+        where: {
+        scankey: key,
+        userid: userId
+        } 
+    });
   
       if (result === 0) {
         // No rows were deleted

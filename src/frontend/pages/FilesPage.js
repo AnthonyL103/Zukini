@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
 import ScanList from '../ScanList.js';
-
+import { useUser } from '../UserContext';
 const FilesPage = () => {
   const [scans, setScans] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [scanToDelete, setScanToDelete] = useState(null); 
+  const { userId } = useUser();
 
   useEffect(() => {
     const fetchScans = async () => {
       try {
-        const response = await fetch('http://18.236.227.203:5001/displayscans');
+        const response = await fetch('http://18.236.227.203:5001/displayscans?userId=${userId}');
         if (!response.ok) {
           throw new Error('Failed to fetch scans');
         }
@@ -22,7 +23,7 @@ const FilesPage = () => {
     };
 
     fetchScans();
-  }, []);
+  }, [userId]);
   
   const displayModal = (key) => {
     setScanToDelete(key); // Set the scan to delete
@@ -42,7 +43,7 @@ const FilesPage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ key: scanToDelete }),
+        body: JSON.stringify({ userId, key: scanToDelete }),
       });
       console.log(response);
 
