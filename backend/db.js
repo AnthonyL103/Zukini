@@ -155,10 +155,10 @@ MockTestEntries.belongsTo(userinfos, { foreignKey: 'userid' });
       await sequelize.authenticate();
       console.log('Database connected successfully!');
   
-      await userinfos.sync({ force: true });
-      await ParsedTextEntries.sync({ force: true });
-      await FlashCardEntries.sync({ force: true });
-      await MockTestEntries.sync({ force: true });
+      await userinfos.sync({ force: false });
+      await ParsedTextEntries.sync({ force: false });
+      await FlashCardEntries.sync({ force: false });
+      await MockTestEntries.sync({ force: false });
     /*
     await userinfos.sync({ force: true });
     
