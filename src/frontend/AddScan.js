@@ -95,6 +95,7 @@ const AddScan = ({onAddScan})  => {
           scanName,
           parsedText, // Send the parsed text
           currDate,
+          userId: userId,
           
         };
     

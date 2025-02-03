@@ -5,6 +5,7 @@ import AddFlashCards from '../AddFlashCards';
 import AddMockTest from '../AddMockTest';
 import { useNavigate } from 'react-router-dom';
 import { useScan } from '../ScanContext';
+import Authentication from '../Authentication';
 
 const Study = () => {
 const { currentScan, setCurrentScan } = useScan(); // Access global state for the current scan
@@ -51,7 +52,11 @@ const [showMockTests, setShowMockTests] = useState(false); // State to control r
   //showflash cards is the condition representing if we should render addflashcards.js or not
   return (
     <div className="container">
-      <h1>Study: {scanname}</h1>
+        <div className="header-wrapper">
+            <h1>Study: {scanname}</h1>
+            <Authentication/>
+        </div>
+      
       <p><strong>Date:</strong> {date}</p>
       <div>
         <h2>Notes:</h2>

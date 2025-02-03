@@ -1,7 +1,12 @@
+import Authentication from '../Authentication';
+
 const Shop = () => {
     return (
         <div className="container">
-            <h1>Shop</h1>
+            <div className="header-wrapper">
+                <h1>Welcome to the Shop Page!</h1>
+                <Authentication/>
+            </div>
         </div>
     )
 };

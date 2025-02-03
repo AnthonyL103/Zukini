@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import ScanList from '../ScanList.js';
 import { useUser } from '../UserContext';
+import Authentication from '../Authentication';
+
 const FilesPage = () => {
   const [scans, setScans] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -68,7 +70,12 @@ const FilesPage = () => {
 
   return (
     <div className="container">
-      <h1>Scans</h1>
+      <div className="container">
+            <div className="header-wrapper">
+                <h1>Scans</h1>
+                <Authentication/>
+            </div>
+        </div>
       <ScanList scans={scans} onDelete={displayModal} onAddScan={handleAddScan} />
       <div className={`deleteWarn-container ${showModal ? "show" : ""}`}>
         {showModal && (

@@ -1,105 +1,14 @@
-import SocialMediaLinks from '../socialmenu'; 
-import { useState} from 'react';
-import { useUser } from '../UserContext';
+import SocialMediaLinks from '../socialmenu';
+import Authentication from '../Authentication';
+
 const Home = () => {
-    const { userId, setUserId } = useUser();
-    const [showLoginModal, setShowLoginModal] = useState(false);
-    const [showSignUpModal, setShowSignUpModal] = useState(false);
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
-    const [email, setEmail] = useState("");
-    const handleSignUp = () => {
-        setShowSignUpModal(true);
-        setErrorMessage("");
-    };
-    const handleLogIn = () => {
-        setShowLoginModal(true);
-        setErrorMessage("");
-    };
-    const handleLoggedIn = async (e) => {
-        e.preventDefault();
-        
-        try {
-            const response = await fetch("http://18.236.227.203:5006/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    Email: email,
-                    Password: password,
-                }),
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                setUserId(data.userId);
-                localStorage.setItem("userId", data.userId);
-                setShowLoginModal(false);
-            } else {
-                setErrorMessage("User doesn't exist");
-                return;
-            }
-        } catch (error) {
-            console.log("Error loggin in");
-        }
-        setErrorMessage("");
-        setEmail("");
-        setPassword("");
-    };
-    
-    const closeSignUpModal = async (e) => {
-        e.preventDefault(); 
-
-        if (password !== confirmPassword) {
-            setErrorMessage("Passwords do not match");
-            return;
-        }
-        try {
-            const response = await fetch("http://18.236.227.203:5006/signup", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    Email: email,
-                    Password: password,
-                }),
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                setShowSignUpModal(false);
-            } 
-        } catch (error) {
-            console.log("Error signing up");
-        }
-        
-        setErrorMessage(""); 
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
-        alert("Account created successfully!");
-    };
     return (
         <div className="container">
-            <div className= "header-wrapper">
-            <h1>Welcome to the Home Page!</h1>
-            <div className= "account-wrapper">
-            <button className="signupbutton" onClick={handleSignUp}>Sign Up 
-                <div className="arrow-wrapper">
-                    <div className="arrow"></div>
-
-                </div>
-            </button>
-            <button className="loginbutton" onClick={handleLogIn}>Log in 
-                <div className="arrow-wrapper">
-                    <div className="arrow"></div>
-
-                </div>
-            </button>
+            <div className="header-wrapper">
+                <h1>Welcome to the Home Page!</h1>
+                <Authentication/>
             </div>
-            </div>
-            
+
             <h2><strong>About:</strong></h2>
             <p>
                 Hi, my name is Anthony! Thank you for visiting and choosing Notelet. 
@@ -154,52 +63,10 @@ const Home = () => {
             </p>
 
             <p><strong>Happy studying!</strong></p>
+            
             <SocialMediaLinks />
-            <div className={`loginmodal-container ${showLoginModal ? "show" : ""}`}>
-            {showLoginModal && (
-                <form className="loginform" onSubmit={handleLoggedIn}>
-                    <p className="loginform-title">Sign in to your account</p>
-                    <div className="logininput-container">
-                        <input type="email" placeholder="Enter email" required
-                        onChange={(e) => setEmail(e.target.value)}/>
-                    </div>
-                    <div className="logininput-container">
-                        <input type="password" placeholder="Enter password" required
-                        onChange={(e) => setPassword(e.target.value)}/>
-                    </div>
-                    {errorMessage && <p className="error-message">{errorMessage}</p>}
-                    <button type="submit" className="loginsubmit">
-                        Sign in
-                    </button>
-                </form>
-            )}
-        </div>
-        <div className={`loginmodal-container ${showSignUpModal ? "show" : ""}`}>
-            {showSignUpModal && (
-                <form className="signupform" onSubmit={closeSignUpModal}>
-                    <p className="signupform-title">Create an account</p>
-                    <div className="signupinput-container">
-                        <input type="text" placeholder="Enter email" required
-                        onChange={(e) => setEmail(e.target.value)}/>
-                    </div>
-                    <div className="signupinput-container">
-                        <input type="password" placeholder="Enter password" required value={password}
-                            onChange={(e) => setPassword(e.target.value)}/>
-                    </div>
-                    <div className="signupinput-container">
-                        <input type="password" placeholder="Enter password again" required value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}/>
-                    </div>
-                    {errorMessage && <p className="error-message">{errorMessage}</p>}
-                    <button type="signupsubmit" className="signupsubmit">
-                        Sign up
-                    </button>
-                </form>
-            )}
-        </div>
         </div>
     );
 };
-
 
 export default Home;

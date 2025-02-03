@@ -18,7 +18,7 @@ app.use(cors());
 
 async function appendTextToDB(newEntry) {
     try {
-        console.log(newEntry.scankey, newEntry.filepath, newEntry.scanname, newEntry.text, newEntry.date, newEntry.userid);
+        
       // Insert the new entry into the database
       await ParsedTextEntries.create({
         scankey: newEntry.scankey,
@@ -31,7 +31,6 @@ async function appendTextToDB(newEntry) {
   
       console.log('New entry appended to the database');
     } catch (error) {
-      console.log(newEntry.scankey, newEntry.filepath, newEntry.scanname, newEntry.text, newEntry.date, newEntry.userid);
       console.error('Error appending to the database:', error);
     }
   }
@@ -94,6 +93,7 @@ app.post('/saveandexit', async (req, res) => {
   }
   //console.log("key", scankey);
   // Create a new entry with the filePath and parsedText
+  console.log(userId);
   const newEntry = {
     scankey: scankey,
     filepath: filePath,
