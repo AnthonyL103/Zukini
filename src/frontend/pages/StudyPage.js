@@ -81,6 +81,7 @@ const [showMockTests, setShowMockTests] = useState(false); // State to control r
           onClose={handleCloseMocktests}
         />
         )}
+    <PastStudy />
     </div>
   );
 };

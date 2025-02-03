@@ -1,5 +1,5 @@
 const express = require('express');
-const { ParsedTextEntries } = require('./db');
+const { ParsedTextEntries, FlashCardEntries, MockTestEntries } = require('./db');
 const cors = require('cors');
 const PORT = 5001;
 
@@ -26,6 +26,42 @@ app.get('/displayscans', async (req, res) => {
       res.status(500).json({ error: 'Failed to retrieve scans data.' });
     }
   });
+
+app.get('/displayflashcards', async (req, res) => {
+    const { userId } = req.query;
+    if (!userId) {
+        console.log(userId);
+        return res.status(400).json({ error: 'User ID is null' });
+    }
+    try {
+      const PastFC = await FlashCardEntries.findAll({
+       where: { userid: userId }
+      }); // Retrieve all entries from the database
+      
+      res.json(PastFC); // Send the data as JSON
+    } catch (error) {
+      console.error('Error retrieving scans from database:', error);
+      res.status(500).json({ error: 'Failed to retrieve scans data.' });
+    }
+});
+
+app.get('/displaymocktests', async (req, res) => {
+    const { userId } = req.query;
+    if (!userId) {
+        console.log(userId);
+        return res.status(400).json({ error: 'User ID is null' });
+    }
+    try {
+      const PastMT = await MockTestEntries.findAll({
+       where: { userid: userId }
+      }); // Retrieve all entries from the database
+      
+      res.json(PastMT); // Send the data as JSON
+    } catch (error) {
+      console.error('Error retrieving scans from database:', error);
+      res.status(500).json({ error: 'Failed to retrieve scans data.' });
+    }
+});
   
 // Delete a scan (POST /deleteScan)
 app.post('/deleteScan', async (req, res) => {
@@ -33,7 +69,7 @@ app.post('/deleteScan', async (req, res) => {
     console.log("backend", key);
   
     if (!key) {
-      return res.status(400).json({ error: 'Filepath not sent' });
+      return res.status(400).json({ error: 'key not sent' });
     }
   
     try {
@@ -58,5 +94,66 @@ app.post('/deleteScan', async (req, res) => {
     }
   });
   
+   
+
+app.post('/deleteFC', async (req, res) => {
+    const { key, userId} = req.body;
+    console.log("backend", key);
+  
+    if (!key) {
+      return res.status(400).json({ error: 'key not sent' });
+    }
+  
+    try {
+      // Delete the scan with the matching filepath
+      const result = await FlashCardEntries.destroy({ 
+        where: {
+        flashcardkey: key,
+        userid: userId
+        } 
+    });
+  
+      if (result === 0) {
+        // No rows were deleted
+        return res.status(404).json({ error: 'fc not found' });
+      }
+  
+      console.log(`Deleted fc with key: ${key}`);
+      res.status(200).json({ message: 'fc deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting fc from database:', error);
+      res.status(500).json({ error: 'Failed to delete fc.' });
+    }
+  });
+  
+  app.post('/deleteMT', async (req, res) => {
+    const { key, userId} = req.body;
+    console.log("backend", key);
+  
+    if (!key) {
+      return res.status(400).json({ error: 'key not sent' });
+    }
+  
+    try {
+      // Delete the scan with the matching filepath
+      const result = await MockTestEntries.destroy({ 
+        where: {
+        mocktestkey: key,
+        userid: userId
+        } 
+    });
+  
+      if (result === 0) {
+        // No rows were deleted
+        return res.status(404).json({ error: 'mt not found' });
+      }
+  
+      console.log(`Deleted mt with key: ${key}`);
+      res.status(200).json({ message: 'mt deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting mt from database:', error);
+      res.status(500).json({ error: 'Failed to delete mt.' });
+    }
+  });
   // Start the server
   app.listen(PORT, '0.0.0.0', () => console.log(`Display server running on port ${PORT}`));

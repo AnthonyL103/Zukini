@@ -70,12 +70,11 @@ const FilesPage = () => {
 
   return (
     <div className="container">
-      <div className="container">
-            <div className="header-wrapper">
-                <h1>Scans</h1>
-                <Authentication/>
-            </div>
+        <div className="header-wrapper">
+            <h1>Scans</h1>
+            <Authentication/>
         </div>
+        
       <ScanList scans={scans} onDelete={displayModal} onAddScan={handleAddScan} />
       <div className={`deleteWarn-container ${showModal ? "show" : ""}`}>
         {showModal && (
