@@ -3,7 +3,7 @@
 
 const FCentry = ({ flashcardkey, filepath, scanname, date, entryType, displayModal }) => {
   const handleDelete = () => {
-        displayModal(flashcardkey, entryType);
+    displayModal(flashcardkey, entryType);
   };
   
   return (

@@ -94,9 +94,9 @@ const FilesPage = () => {
             No
             </button>
         </div>
+        </div>
+        )}
     </div>
-    )}
-</div>
 </div>
   );
 };

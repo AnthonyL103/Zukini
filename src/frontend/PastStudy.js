@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react'
 import { useUser } from './UserContext';
+import MTentry from './MTentry';
 import FCentry from './FCentry';
-
 const PastStudy = () => {
     const [FCentries, setFCentries] = useState([]);
     const [MTentries, setMTentries] = useState([]);
@@ -45,9 +45,11 @@ const PastStudy = () => {
     }, [userId])
     
     const displayModal = (key, type) => {
+        console.log("made it");
         setEntryToDelete(key);
         setEntryType(type);
         setShowModal(true);
+        console.log(showModal);
     };
 
     const handleCloseModal = () => {
@@ -58,15 +60,21 @@ const PastStudy = () => {
 
     const handleDeleteEntry = async () => {
         try {
-            const endpoint =
-                entryType === "flashcard"
-                    ? "http://18.236.227.203:5001/deleteFC"
-                    : "http://18.236.227.203:5001/deleteMT";
+            let endpoint = "";
+            
+            if (entryType === "flashcard") {
+                endpoint = "http://18.236.227.203:5001/deleteFC";
+            } else if (entryType === "mocktest") {
+                endpoint = "http://18.236.227.203:5001/deleteMT";
+            } else {
+                console.error("Unknown entry type:", entryType);
+                return; 
+            }
 
             const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ key: entryToDelete }),
+                body: JSON.stringify({ userId: userId, key: entryToDelete }),
             });
 
             if (!response.ok) {
@@ -88,7 +96,7 @@ const PastStudy = () => {
     
     return (
         <div className="container">
-           <h2>Past Flashcards</h2>
+           <h2>Past Flashcards:</h2>
             <div className="FCentries-list">
                 {FCentries.map((entry) => (
                     <FCentry
@@ -102,23 +110,43 @@ const PastStudy = () => {
                     />
                 ))}
             </div>
-            {showModal && (
-                <div className="deleteWarn-container">
-                    <div className="deleteWarn-modal">
-                        <h2 className="deleteWarn-heading">Are you sure?</h2>
-                        <div className="deleteWarnbutton-wrapper">
-                            <button className="deletWarn-button yes" onClick={handleDeleteEntry}>
-                                Yes
-                            </button>
-                            <button className="deletWarn-button cancel" onClick={handleCloseModal}>
-                                No
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <h2>Past Mocktests:</h2>
+            <div className="MTentries-list">
+                {MTentries.map((entry) => (
+                    <MTentry
+                        key={entry.mocktestkey}
+                        flashcardkey={entry.mocktestkey}
+                        filepath={entry.filepath}
+                        scanname={entry.scanname}
+                        date={entry.date}
+                        entryType="mocktest"
+                        displayModal={displayModal}
+                    />
+                ))}
+            </div>
+        <div className={`deleteWarn-container ${showModal ? "show" : ""}`}>
+        {showModal && (
+        <div className="deleteWarn-modal">
+        <h2 className="deleteWarn-heading">Are you Sure?</h2>
+        <div className="deleteWarnbutton-wrapper">
+            <button
+            className="deletWarn-button yes" // Updated to match CSS
+            onClick={handleDeleteEntry}
+            >
+            Yes
+            </button>
+            <button
+            className="deletWarn-button cancel" // Updated to match CSS
+            onClick={handleCloseModal}
+            >
+            No
+            </button>
         </div>
-    );
+        </div>
+        )}
+    </div>
+</div>
+);
     
     
 }
