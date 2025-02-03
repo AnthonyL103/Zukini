@@ -17,7 +17,7 @@ app.get('/displayscans', async (req, res) => {
     }
     try {
       const scans = await ParsedTextEntries.findAll({
-       
+       where: { userid: userId }
       }); // Retrieve all entries from the database
       
       res.json(scans); // Send the data as JSON

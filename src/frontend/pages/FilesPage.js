@@ -12,7 +12,7 @@ const FilesPage = () => {
   useEffect(() => {
     const fetchScans = async () => {
       try {
-        const response = await fetch('http://18.236.227.203:5001/displayscans?userId=${userId}');
+        const response = await fetch(`http://18.236.227.203:5001/displayscans?userId=${userId}`);;
         if (!response.ok) {
           throw new Error('Failed to fetch scans');
         }
