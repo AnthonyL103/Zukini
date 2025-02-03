@@ -29,7 +29,7 @@ app.get('/displayscans', async (req, res) => {
   
 // Delete a scan (POST /deleteScan)
 app.post('/deleteScan', async (req, res) => {
-    const { key } = req.body;
+    const { key, userId} = req.body;
     console.log("backend", key);
   
     if (!key) {
