@@ -14,7 +14,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
         if (Past) {
             setQuestions(prevMT);
             setShowModal(true);
-            return
+            return;
         }
         const generateMockTestQuestions = async () => {
             try {
@@ -82,7 +82,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
         };
         
         generateMockTestQuestions();
-    }, [scanname, text, date]);
+    }, [Past, prevMT, scanname, text, date]);
     
     const closemtmodal = () => {
         setShowModal(false);
@@ -170,70 +170,57 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
     
     return (
         <>
-            <div className={`fcmodal-container ${showModal ? "show" : ""}`}>
-                {showModal && (
-                    <div className="fcmodal-content">
-                        <QuestionsList
-                            questions={questions}
-                        />
-                        <div className="fcmodal-content-footer">
-                        {Past ? (
-                            // Display different button for past scan
-                            <>
-                                <button
-                                    className="fcmodal-button back"
-                                    onClick={closeprevmtmodal}
-                                >
-                                    Done
-                                </button>
-                                <button
-                                    className="fcmodal-button delete"
-                                    onClick={deletemtmodalprev}
-                                >
-                                    Delete
-                                </button>
-                            </>
-                        ) : (
-                            // Default buttons for newly generated flashcards
-                            <>
-                                <button
-                                    className="fcmodal-button back"
-                                    onClick={closemtmodal}
-                                >
-                                    Done
-                                </button>
-                                <button
-                                    className="fcmodal-button save"
-                                    onClick={showNameModal}
-                                >
-                                    Save and Exit
-                                </button>
-                            </>
-                        )}
-                        </div>
-                        <div className={`EnterName-container ${showMTNameModal ? "show" : ""}`}>
-                        {showMTNameModal && (
-                            <div className="EnterName-modal">
-                                <h2 className="EnterName-heading">Enter Mocktest Name</h2>
-                                <input
-                                type="text"
-                                className="input"
-                                placeholder="Enter name..."
-                                value={MTName}
-                                onChange={(e) => setMTName(e.target.value)}
-                                />
-                                <div className="EnterNamebutton-wrapper">
-                                <button className="EnterName-button" onClick={confirmNameAndSave}>
-                                    Confirm
-                                </button> 
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                    </div>
-                )}
+    <div className={`fcmodal-container ${showModal ? "show" : ""}`}>
+        {showModal && (
+            <div className="fcmodal-content">
+                <QuestionsList questions={questions} />
+                <div className="fcmodal-content-footer">
+                    {Past ? (
+                        <>
+                            <button className="fcmodal-button back" onClick={closeprevmtmodal}>
+                                Done
+                            </button>
+                            <button className="fcmodal-button delete" onClick={deletemtmodalprev}>
+                                Delete
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <button className="fcmodal-button back" onClick={closemtmodal}>
+                                Done
+                            </button>
+                            <button className="fcmodal-button save" onClick={showNameModal}>
+                                Save and Exit
+                            </button>
+                        </>
+                    )}
+                </div>
             </div>
-        </>
+        )}
+    </div>
+
+        {/* Move this outside */}
+        {showMTNameModal && (
+            <div className="EnterName-container show">
+                <div className="EnterName-modal">
+                    <h2 className="EnterName-heading">Enter Mocktest Name</h2>
+                    <input
+                        type="text"
+                        className="input"
+                        placeholder="Enter name..."
+                        value={MTName}
+                        onChange={(e) => setMTName(e.target.value)}
+                    />
+                    <div className="EnterNamebutton-wrapper">
+                        <button className="EnterName-button" onClick={confirmNameAndSave}>
+                            Confirm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
+    </>
+
     );
     };
     

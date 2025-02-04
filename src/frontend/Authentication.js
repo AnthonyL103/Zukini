@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useUser } from './UserContext';
+import { useScan } from './ScanContext';
 
 const Authentication = () => {
+    const { currentScan, setCurrentScan } = useScan();
     const { userId, setUserId } = useUser();
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showSignUpModal, setShowSignUpModal] = useState(false);
@@ -59,6 +61,8 @@ const Authentication = () => {
     };
 
     const handleLogout = () => {
+        setCurrentScan(null);
+        localStorage.removeItem('currentScan');
         setUserId(null);
         localStorage.removeItem("userId");
     };

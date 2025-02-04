@@ -136,6 +136,7 @@ const PastStudy = ({NewMTEntry, NewFCEntry}) => {
                         filepath={entry.filepath}
                         scanname={entry.scanname}
                         Questions={entry.questions}
+                        MTName={entry.mtsessionname}
                         date={entry.date}
                         entryType="mocktest"
                         displayModal={displayModal}

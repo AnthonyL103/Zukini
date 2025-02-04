@@ -15,7 +15,7 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC
     if (Past) {
         setFlashcards(prevFC);
         setShowModal(true);
-        return 
+        return;
     }
     const generateFlashcards = async () => {
       try {
@@ -58,7 +58,7 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC
     };
   
     generateFlashcards();
-  }, [scanname, text, date]);
+  }, [Past, prevFC, scanname, text, date]);
   
   
 
@@ -153,69 +153,54 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC
         <div className={`fcmodal-container ${showModal ? "show" : ""}`}>
             {showModal && (
                 <div className="fcmodal-content">
-                    <FlashCardList
-                        flashcards={flashcards}
-                    />
+                    <FlashCardList flashcards={flashcards} />
                     <div className="fcmodal-content-footer">
                         {Past ? (
-                            // Display different button for past scan
                             <>
-                                <button
-                                    className="fcmodal-button back"
-                                    onClick={closeprevfcmodal}
-                                >
+                                <button className="fcmodal-button back" onClick={closeprevfcmodal}>
                                     Done
                                 </button>
-                                <button
-                                    className="fcmodal-button delete"
-                                    onClick={deletefcmodalprev}
-                                >
+                                <button className="fcmodal-button delete" onClick={deletefcmodalprev}>
                                     Delete
                                 </button>
                             </>
                         ) : (
-                            // Default buttons for newly generated flashcards
                             <>
-                                <button
-                                    className="fcmodal-button back"
-                                    onClick={closefcmodal}
-                                >
+                                <button className="fcmodal-button back" onClick={closefcmodal}>
                                     Done
                                 </button>
-                                <button
-                                    className="fcmodal-button save"
-                                    onClick={showNameModal}
-                                >
+                                <button className="fcmodal-button save" onClick={showNameModal}>
                                     Save and Exit
                                 </button>
                             </>
                         )}
                     </div>
-                    <div className={`EnterName-container ${showFCNameModal ? "show" : ""}`}>
-                        {showFCNameModal && (
-                            <div className="EnterName-modal">
-                                <h2 className="EnterName-heading">Enter Flashcard Set Name</h2>
-                                <input
-                                type="text"
-                                className="input"
-                                placeholder="Enter name..."
-                                value={FCName}
-                                onChange={(e) => setFCName(e.target.value)}
-                                />
-                                <div className="EnterNamebutton-wrapper">
-                                <button className="EnterName-button" onClick={confirmNameAndSave}>
-                                    Confirm
-                                </button> 
-                                </div>
-                            </div>
-                        )}
-                    </div>
                 </div>
             )}
         </div>
-    </>
-);
 
+        {/* Move the name input modal outside */}
+        {showFCNameModal && (
+            <div className="EnterName-container show">
+                <div className="EnterName-modal">
+                    <h2 className="EnterName-heading">Enter Flashcard Set Name</h2>
+                    <input
+                        type="text"
+                        className="input"
+                        placeholder="Enter name..."
+                        value={FCName}
+                        onChange={(e) => setFCName(e.target.value)}
+                    />
+                    <div className="EnterNamebutton-wrapper">
+                        <button className="EnterName-button" onClick={confirmNameAndSave}>
+                            Confirm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
+    </>
+  );
 };
 
 export default AddFlashCards;
