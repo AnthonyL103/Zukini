@@ -3,12 +3,18 @@ import FlashCardList from './FlashCardList';
 import { useUser } from './UserContext';
 import { v4 as uuidv4 } from 'uuid';
 
-const AddFlashCards = ({ filepath, scanname, text, date, onClose }) => {
+const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC, onClosePrevFC, onAddFlashCard, Past, prevFC }) => {
   const [flashcards, setFlashcards] = useState([]);
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(Past);
   const { userId } = useUser();
-  
+
+
   useEffect(() => {
+    if (Past) {
+        setFlashcards(prevFC);
+        setShowModal(true);
+        return 
+    }
     const generateFlashcards = async () => {
       try {
         const response = await fetch('http://18.236.227.203:5003/callparseFlashCards', {
@@ -52,12 +58,27 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose }) => {
     generateFlashcards();
   }, [scanname, text, date]);
   
+  
 
   const closefcmodal = () => {
+    //Pass flag as component to tell flashcardlist to clear its setvisible array 
+    onClose();
     setShowModal(false);
     setFlashcards([]);
+  };
+  
+  const closeprevfcmodal = () => {
+    onClosePrevFC();
     //Pass flag as component to tell flashcardlist to clear its setvisible array 
-    onClose(); 
+    setShowModal(false);
+    setFlashcards([]);
+  };
+  
+  const deletefcmodalprev = () => {
+    //Pass flag as component to tell flashcardlist to clear its setvisible array 
+    onDeletePrevFC(); 
+    setShowModal(false);
+    setFlashcards([]);
   };
   
   const handleSave = async () => {
@@ -82,6 +103,16 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose }) => {
         });
         if (onsaveresponse.ok) {
             console.log('Flashcards saved successfully');
+            if (onAddFlashCard) {
+                const newEntry = {
+                    flashcardkey: key,
+                    filepath: filepath,
+                    scanname: scanname,
+                    flashcards: flashcards,
+                    date: date
+                }
+                onAddFlashCard(newEntry);
+            }
         } else {    
           console.error('Failed to save flashcards');
         }
@@ -102,24 +133,46 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose }) => {
                         flashcards={flashcards}
                     />
                     <div className="fcmodal-content-footer">
-                        <button
-                            className="fcmodal-button back"
-                            onClick={closefcmodal}
-                        >
-                            Done
-                        </button>
-                        <button
-                            className="fcmodal-button save"
-                            onClick={handleSave}
-                        >
-                            Save and Exit
-                        </button>
+                        {Past ? (
+                            // Display different button for past scan
+                            <>
+                                <button
+                                    className="fcmodal-button back"
+                                    onClick={closeprevfcmodal}
+                                >
+                                    Done
+                                </button>
+                                <button
+                                    className="fcmodal-button delete"
+                                    onClick={deletefcmodalprev}
+                                >
+                                    Delete
+                                </button>
+                            </>
+                        ) : (
+                            // Default buttons for newly generated flashcards
+                            <>
+                                <button
+                                    className="fcmodal-button back"
+                                    onClick={closefcmodal}
+                                >
+                                    Done
+                                </button>
+                                <button
+                                    className="fcmodal-button save"
+                                    onClick={handleSave}
+                                >
+                                    Save and Exit
+                                </button>
+                            </>
+                        )}
                     </div>
                 </div>
             )}
         </div>
     </>
 );
+
 };
 
 export default AddFlashCards;

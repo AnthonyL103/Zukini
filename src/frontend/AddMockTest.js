@@ -3,12 +3,17 @@ import QuestionsList from './QuestionsList';
 import { useUser } from './UserContext';
 import { v4 as uuidv4 } from 'uuid';
 
-const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
+const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, onClosePrevMT, onAddMockTest, Past, prevMT }) => {
     const [questions, setQuestions] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const { userId } = useUser();
     
     useEffect(() => {
+        if (Past) {
+            setQuestions(prevMT);
+            setShowModal(true);
+            return
+        }
         const generateMockTestQuestions = async () => {
             try {
                 const response = await fetch('http://18.236.227.203:5005/callparseMockTests', {
@@ -83,6 +88,20 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
         onClose();
     };
     
+    const closeprevmtmodal = () => {
+        onClosePrevMT();
+        //Pass flag as component to tell flashcardlist to clear its setvisible array 
+        setShowModal(false);
+        setQuestions([]);
+      };
+      
+    const deletemtmodalprev = () => {
+        //Pass flag as component to tell flashcardlist to clear its setvisible array 
+        onDeletePrevMT(); 
+        setShowModal(false);
+        setQuestions([]);
+      };
+      
     const handleSave = async () => {
         // Save the flashcards to the database
         try {
@@ -104,7 +123,18 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
               body: JSON.stringify(payload),
             });
             if (onsaveresponse.ok) {
-              console.log('Mocktests Saved successfully');
+                console.log('Mock test saved successfully');
+                if (onAddMockTest) {
+                    const newEntry = {
+                        mocktestkey: key,
+                        filepath:filepath,
+                        scanname: scanname,
+                        questions: questions,
+                        date: date,
+                    }
+                    onAddMockTest(newEntry);
+                }
+
             } else {    
               console.error('Failed to save flashcards');
             }
@@ -124,18 +154,39 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose }) => {
                             questions={questions}
                         />
                         <div className="fcmodal-content-footer">
-                            <button
-                                className="fcmodal-button back"
-                                onClick={closemtmodal}
-                            >
-                                Done
-                            </button>
-                            <button
-                                className="fcmodal-button save"
-                                onClick={handleSave}
-                            >
-                                Save and Exit
-                            </button>
+                        {Past ? (
+                            // Display different button for past scan
+                            <>
+                                <button
+                                    className="fcmodal-button back"
+                                    onClick={closeprevmtmodal}
+                                >
+                                    Done
+                                </button>
+                                <button
+                                    className="fcmodal-button delete"
+                                    onClick={deletemtmodalprev}
+                                >
+                                    Delete
+                                </button>
+                            </>
+                        ) : (
+                            // Default buttons for newly generated flashcards
+                            <>
+                                <button
+                                    className="fcmodal-button back"
+                                    onClick={closemtmodal}
+                                >
+                                    Done
+                                </button>
+                                <button
+                                    className="fcmodal-button save"
+                                    onClick={handleSave}
+                                >
+                                    Save and Exit
+                                </button>
+                            </>
+                        )}
                         </div>
                     </div>
                 )}

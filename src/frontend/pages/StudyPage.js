@@ -12,6 +12,8 @@ const { currentScan, setCurrentScan } = useScan(); // Access global state for th
 const navigate = useNavigate();
 const [showFlashCards, setShowFlashCards] = useState(false); // State to control rendering AddFlashCards
 const [showMockTests, setShowMockTests] = useState(false); // State to control rendering AddFlashCards
+const [NewMTEntry, setNewMTEntry, ] = useState(null)
+const [NewFCEntry, setNewFCEntry, ] = useState(null)
 
   if (!currentScan) {
     return (
@@ -19,7 +21,9 @@ const [showMockTests, setShowMockTests] = useState(false); // State to control r
         <h1>Study</h1>
         <p>No scan selected. Please go back and choose a scan. Or a previous study</p>
         <button className="study-button" onClick={() => navigate(-1)}>Go Back</button>
+        <PastStudy />
       </div>
+      
     );
   }
 
@@ -48,6 +52,13 @@ const [showMockTests, setShowMockTests] = useState(false); // State to control r
     localStorage.removeItem('currentScan');
     navigate('/files');
   }
+  
+  const onAddMockTest =(payload) => {
+    setNewMTEntry(payload);
+  };
+  const onAddFlashCard =(payload) => {
+    setNewFCEntry(payload);
+  };
 
   //showflash cards is the condition representing if we should render addflashcards.js or not
   return (
@@ -70,6 +81,9 @@ const [showMockTests, setShowMockTests] = useState(false); // State to control r
           text={text}
           date={date}
           onClose={handleCloseFlashcards}
+          onAddFlashCard={onAddFlashCard}
+          Past={false}
+          prevFC={null}
         />
       )}
       {showMockTests && (
@@ -79,9 +93,12 @@ const [showMockTests, setShowMockTests] = useState(false); // State to control r
           text={text}
           date={date}
           onClose={handleCloseMocktests}
+          onAddMockTest={onAddMockTest}
+          Past={false}
+          prevMT={null}
         />
         )}
-    <PastStudy />
+    <PastStudy NewMTEntry={NewMTEntry} NewFCEntry={NewFCEntry}/>
     </div>
   );
 };

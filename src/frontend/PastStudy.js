@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react'
 import { useUser } from './UserContext';
 import MTentry from './MTentry';
 import FCentry from './FCentry';
-const PastStudy = () => {
+const PastStudy = ({NewMTEntry, NewFCEntry}) => {
     const [FCentries, setFCentries] = useState([]);
     const [MTentries, setMTentries] = useState([]);
     const [entryToDelete, setEntryToDelete] = useState(null);
@@ -44,13 +44,28 @@ const PastStudy = () => {
         fetchMT();
     }, [userId])
     
+    useEffect(() => {
+        if (NewMTEntry) {
+            setMTentries((prev) => [...prev, NewMTEntry]);
+        }
+    }, [NewMTEntry]);
+    
+    useEffect(() => {
+        if (NewFCEntry) {
+            setFCentries((prev) => [...prev, NewFCEntry]);
+        }
+    }, [NewFCEntry]);
+
+    
     const displayModal = (key, type) => {
         console.log("made it");
         setEntryToDelete(key);
         setEntryType(type);
         setShowModal(true);
-        console.log(showModal);
+        console.log(key);
     };
+    
+    
 
     const handleCloseModal = () => {
         setShowModal(false);
@@ -104,6 +119,7 @@ const PastStudy = () => {
                         flashcardkey={entry.flashcardkey}
                         filepath={entry.filepath}
                         scanname={entry.scanname}
+                        FlashCards= {entry.flashcards}
                         date={entry.date}
                         entryType="flashcard"
                         displayModal={displayModal}
@@ -115,15 +131,18 @@ const PastStudy = () => {
                 {MTentries.map((entry) => (
                     <MTentry
                         key={entry.mocktestkey}
-                        flashcardkey={entry.mocktestkey}
+                        mocktestkey={entry.mocktestkey}
                         filepath={entry.filepath}
                         scanname={entry.scanname}
+                        Questions={entry.questions}
                         date={entry.date}
                         entryType="mocktest"
                         displayModal={displayModal}
                     />
                 ))}
+                
             </div>
+        
         <div className={`deleteWarn-container ${showModal ? "show" : ""}`}>
         {showModal && (
         <div className="deleteWarn-modal">

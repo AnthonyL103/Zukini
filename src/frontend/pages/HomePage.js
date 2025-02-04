@@ -58,7 +58,7 @@ const Home = () => {
             <p>
                 <strong>5. Save Your Progress:</strong><br />
                 If you’re done studying but want to revisit your content later, be sure to press "Save." Your study 
-                session will be stored at the bottom of the Study p age, where you can click it anytime to pick up where 
+                session will be stored at the bottom of the Study page, where you can click it anytime to pick up where 
                 you left off.
             </p>
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Question from './Question';
 
 const QuestionsList = ({questions = [] }) => {
@@ -28,14 +28,16 @@ const QuestionsList = ({questions = [] }) => {
                     updateChosenAnswer={updateChosenAnswer}
                 />
                 ))}
-                {finalscore !== null && (
-                    <div>
-                        <h3>Score: {finalscore} / {allQuestions.length}</h3>
+                <div className="MTbuttonwrapper">
+                    <div className="results">
+                    <h3>Results: {finalscore !== null ? `${finalscore} / ${allQuestions.length}` : "Pending..."}</h3>
                     </div>
-                )}
-            <button onClick={handleSubmit} className="submit-button">
-                Submit
-            </button>
+
+                    <button onClick={handleSubmit} className="submit-button">
+                    Submit
+                </button>
+                </div>
+                
         </div>
         
     );

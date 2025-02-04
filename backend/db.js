@@ -94,6 +94,10 @@ const FlashCardEntries = sequelize.define('FlashCardEntries', {
         type: DataTypes.STRING, 
         allowNull: false,
     },
+    fcsessionname: {
+        type: DataTypes.STRING, 
+        allowNull: false,
+    },
     flashcards: {
         type: DataTypes.JSONB,
     },
@@ -121,6 +125,10 @@ const MockTestEntries = sequelize.define('MockTestEntries', {
         allowNull: false,
     },
     scanname: {
+        type: DataTypes.STRING, 
+        allowNull: false,
+    },
+    mtsessionname: {
         type: DataTypes.STRING, 
         allowNull: false,
     },
