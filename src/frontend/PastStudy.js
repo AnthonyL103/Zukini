@@ -120,6 +120,7 @@ const PastStudy = ({NewMTEntry, NewFCEntry}) => {
                         filepath={entry.filepath}
                         scanname={entry.scanname}
                         FlashCards= {entry.flashcards}
+                        FCName = {entry.fcsessionname}
                         date={entry.date}
                         entryType="flashcard"
                         displayModal={displayModal}

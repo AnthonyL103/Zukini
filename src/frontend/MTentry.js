@@ -2,7 +2,7 @@
 import {useState} from "react";
 import AddMockTest from "./AddMockTest";
 
-const MTentry = ({ mocktestkey, filepath, Questions, scanname, date, entryType, displayModal }) => {
+const MTentry = ({ mocktestkey, filepath, Questions, MTName, scanname, date, entryType, displayModal }) => {
     const [showStudyModal, setShowStudyModal] = useState(false);
     const handleDelete = () => {
       displayModal(mocktestkey, entryType);
@@ -21,7 +21,8 @@ const MTentry = ({ mocktestkey, filepath, Questions, scanname, date, entryType, 
     
     return (
       <div className="MTentry">
-        <span><strong>Mock Test study name:</strong> {scanname}</span>
+        <span><strong>Mock Test scan name:</strong> {scanname}</span>
+        <span><strong>Mock Test study name:</strong> {MTName}</span>
         <br />
         <div className="MTentry-footer">
           <small>{date}</small>

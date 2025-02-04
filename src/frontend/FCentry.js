@@ -2,7 +2,7 @@
 import AddFlashCards from "./AddFlashCards";
 import {useState} from "react";
 
-const FCentry = ({ flashcardkey, filepath, FlashCards, scanname, date, entryType, displayModal }) => {
+const FCentry = ({ flashcardkey, filepath, FlashCards, FCName, scanname, date, entryType, displayModal }) => {
   const [showStudyModal, setShowStudyModal] = useState(false);
   const handleDelete = () => {
     displayModal(flashcardkey, entryType);
@@ -21,7 +21,8 @@ const FCentry = ({ flashcardkey, filepath, FlashCards, scanname, date, entryType
   
   return (
     <div className="FCentry">
-      <span><strong>Flashcard study name:</strong> {scanname}</span>
+      <span><strong>Flashcard scan name:</strong> {scanname}</span>
+      <span><strong>Flashcard study name:</strong> {FCName}</span>
       <br />
       <div className="FCentry-footer">
         <small>{date}</small>

@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC, onClosePrevFC, onAddFlashCard, Past, prevFC }) => {
   const [flashcards, setFlashcards] = useState([]);
   const [showModal, setShowModal] = useState(Past);
+  const [showFCNameModal, setShowFCNameModal] = useState(false);
+  const [FCName, setFCName] = useState("");
   const { userId } = useUser();
 
 
@@ -81,8 +83,28 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC
     setFlashcards([]);
   };
   
+  const showNameModal = () => {
+    setShowModal(false);
+    setShowFCNameModal(true);
+  }
+  
+  const closeNameModal = () => {
+    setFCName("");
+    setShowFCNameModal(false);
+  }
+  const confirmNameAndSave = () => {
+    if (!FCName.trim()) {
+      alert("Please enter a name for the flashcard set.");
+      return;
+    }
+
+    handleSave();
+    closeNameModal();
+};
+  
   const handleSave = async () => {
     // Save the flashcards to the database
+    showNameModal();
     try {
         const key = uuidv4();
         console.log("currkey", key);
@@ -91,6 +113,7 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC
             filePath: filepath,
             scanName: scanname,
             FlashCardtext: flashcards,
+            FCsession: FCName,
             currDate: date,
             userId: userId,
         }
@@ -108,6 +131,7 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC
                     flashcardkey: key,
                     filepath: filepath,
                     scanname: scanname,
+                    fcsessionname: FCName,
                     flashcards: flashcards,
                     date: date
                 }
@@ -160,11 +184,30 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC
                                 </button>
                                 <button
                                     className="fcmodal-button save"
-                                    onClick={handleSave}
+                                    onClick={showNameModal}
                                 >
                                     Save and Exit
                                 </button>
                             </>
+                        )}
+                    </div>
+                    <div className={`EnterName-container ${showFCNameModal ? "show" : ""}`}>
+                        {showFCNameModal && (
+                            <div className="EnterName-modal">
+                                <h2 className="EnterName-heading">Enter Flashcard Set Name</h2>
+                                <input
+                                type="text"
+                                className="input"
+                                placeholder="Enter name..."
+                                value={FCName}
+                                onChange={(e) => setFCName(e.target.value)}
+                                />
+                                <div className="EnterNamebutton-wrapper">
+                                <button className="EnterName-button" onClick={confirmNameAndSave}>
+                                    Confirm
+                                </button> 
+                                </div>
+                            </div>
                         )}
                     </div>
                 </div>

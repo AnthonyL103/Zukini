@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, onClosePrevMT, onAddMockTest, Past, prevMT }) => {
     const [questions, setQuestions] = useState([]);
     const [showModal, setShowModal] = useState(false);
+    const [showMTNameModal, setShowMTNameModal] = useState(false);
+    const [MTName, setMTName] = useState("");
     const { userId } = useUser();
     
     useEffect(() => {
@@ -102,6 +104,25 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
         setQuestions([]);
       };
       
+    const showNameModal = () => {
+        setShowModal(false);
+        setShowMTNameModal(true);
+      }
+      
+    const closeNameModal = () => {
+        setMTName("");
+        setShowMTNameModal(false);
+      }
+    const confirmNameAndSave = () => {
+        if (!MTName.trim()) {
+          alert("Please enter a name for the flashcard set.");
+          return;
+        }
+    
+        handleSave();
+        closeNameModal();
+    };
+      
     const handleSave = async () => {
         // Save the flashcards to the database
         try {
@@ -112,6 +133,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
                 filePath: filepath,
                 scanName: scanname,
                 questionstext: questions,
+                MTsessionname: MTName,
                 currDate: date,
                 userId: userId,
             }
@@ -129,6 +151,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
                         mocktestkey: key,
                         filepath:filepath,
                         scanname: scanname,
+                        mtsessionname: MTName,
                         questions: questions,
                         date: date,
                     }
@@ -181,13 +204,32 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
                                 </button>
                                 <button
                                     className="fcmodal-button save"
-                                    onClick={handleSave}
+                                    onClick={showNameModal}
                                 >
                                     Save and Exit
                                 </button>
                             </>
                         )}
                         </div>
+                        <div className={`EnterName-container ${showMTNameModal ? "show" : ""}`}>
+                        {showMTNameModal && (
+                            <div className="EnterName-modal">
+                                <h2 className="EnterName-heading">Enter Mocktest Name</h2>
+                                <input
+                                type="text"
+                                className="input"
+                                placeholder="Enter name..."
+                                value={MTName}
+                                onChange={(e) => setMTName(e.target.value)}
+                                />
+                                <div className="EnterNamebutton-wrapper">
+                                <button className="EnterName-button" onClick={confirmNameAndSave}>
+                                    Confirm
+                                </button> 
+                                </div>
+                            </div>
+                        )}
+                    </div>
                     </div>
                 )}
             </div>
