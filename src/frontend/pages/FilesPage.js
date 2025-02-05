@@ -81,17 +81,18 @@ const FilesPage = () => {
         <div className="deleteWarn-modal">
         <h2 className="deleteWarn-heading">Are you Sure?</h2>
         <div className="deleteWarnbutton-wrapper">
+            
             <button
-            className="deletWarn-button yes" // Updated to match CSS
-            onClick={handleDeleteScan}
-            >
-            Yes
-            </button>
-            <button
-            className="deletWarn-button cancel" // Updated to match CSS
+            className="deleteWarn-buttoncancel" // Updated to match CSS
             onClick={handleCloseModal}
             >
             No
+            </button>
+            <button
+            className="deleteWarn-button" // Updated to match CSS
+            onClick={handleDeleteScan}
+            >
+            Yes
             </button>
         </div>
         </div>

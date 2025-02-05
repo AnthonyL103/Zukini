@@ -30,8 +30,62 @@ code {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 
+.hiddenfileinput {
+    display: none;
+}
+
+.Uploadscancontainer {
+    padding-top: 15px;
+    padding-bottom:15px;
+    flex-direction: column;
+    display: flex;
+    gap: 15px;
+}
+  
+
+  
+/* From Uiverse.io by SpatexDEV */ 
+.fileinput {
+  border: none;
+  display: flex;
+  padding: 0.75rem 1.5rem;
+  background-color: #488aec;
+  color: #ffffff;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  text-transform: uppercase;
+  vertical-align: middle;
+  align-items: center;
+  border-radius: 0.5rem;
+  user-select: none;
+  gap: 0.75rem;
+  box-shadow:
+    0 4px 6px -1px #488aec31,
+    0 2px 4px -1px #488aec17;
+  transition: all 0.6s ease;
+}
+.fileinput:hover {
+    background-color: #ffffff;
+    color: hsl(0, 0%, 4%);
+    cursor: pointer;
+}
+  
+.fileinput:active {
+    background-color: #ffffff;
+    color: hsl(0, 0%, 3%);
+    transform: translateY(10px);
+    transition: 100ms;
+    cursor: pointer;
+}
+  
+
+
 .scan.new{
     background-color: #67d7cc;
+    
 }
 
 textarea{
@@ -47,7 +101,7 @@ textarea:focus{
 
 
 .save{
-    background-color: #e1e1e1;
+    background-color: #ffffff;
     border: none;
     border-radius: 5px;
     padding: 5px 10px 5px 10px;
@@ -61,45 +115,99 @@ textarea:focus{
 }
 
 .action_btn {
-  width: 200px;
-  display: inline;
+    padding-top: 15px;
+    padding-bottom:15px;
+    flex-direction: column;
+    display: flex;
+    gap: 15px;
 }
-.study-button{
-  background-color: #e1e1e1;
+
+.study-button {
+  width: 48%;
   border: none;
-  border-radius: 5px;
-  padding: 5px 10px 5px 10px;
-  
-}
-
-.study-button:hover {
-  background-color: #ededed;
+  display: flex;
+  padding: 0.75rem 1.5rem;
+  background-color: #488aec;
+  color: #ffffff;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 700;
+  text-align: center;
   cursor: pointer;
-  
+  text-transform: uppercase;
+  vertical-align: middle;
+  align-items: center;
+  border-radius: 0.5rem;
+  user-select: none;
+  gap: 0.75rem;
+  box-shadow:
+    0 4px 6px -1px #488aec31,
+    0 2px 4px -1px #488aec17;
+  transition: all 0.6s ease;
 }
-
-.del-button{
-  background-color: #9b3232;
+.study-button:hover:hover {
+    background-color: #f6f5f1;
+    color: hsl(0, 0%, 4%);
+    cursor: pointer;
+}
+  
+.study-button:active {
+    background-color: #f7f7f3;
+    color: hsl(0, 0%, 3%);
+    transform: translateY(10px);
+    transition: 100ms;
+    cursor: pointer;
+}
+  
+.del-button {
+  width: 48%;
   border: none;
-  border-radius: 5px;
-  padding: 5px 10px 5px 10px;
-  
-}
-
-.del-button:hover {
-  background-color: #ededed;
+  display: flex;
+  padding: 0.75rem 1.5rem;
+  background-color: #eb4408;
+  color: #ffffff;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 700;
+  text-align: center;
   cursor: pointer;
+  text-transform: uppercase;
+  vertical-align: middle;
+  align-items: center;
+  border-radius: 0.5rem;
+  user-select: none;
+  gap: 0.75rem;
+  box-shadow:
+    0 4px 6px -1px #488aec31,
+    0 2px 4px -1px #488aec17;
+  transition: all 0.6s ease;
+}
+.del-button:hover:hover {
+    background-color: #f9f9f5;
+    color: hsl(0, 0%, 4%);
+    cursor: pointer;
+}
   
+.del-button:active {
+    background-color: #faf9f5;
+    color: hsl(0, 0%, 3%);
+    transform: translateY(10px);
+    transition: 100ms;
+    cursor: pointer;
 }
 
 
+.scannameinput {
+    padding: 15px;
+    
+}
 .scanname {
     padding: 5px;
     border: 2px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
     color: #555;
-    width: 45%;
+    width:auto;
     outline: none;
   }
   
@@ -114,7 +222,7 @@ textarea:focus{
 
 
 .scan{
-    background-color: #fef68a;
+    background-color: #deded8;
     border-radius: 5px;
     padding: 1rem;
     min-height: 170px;
@@ -122,19 +230,18 @@ textarea:focus{
     display: flex;
     flex-direction: column;
     overflow: auto;
-    justify-content: space-between;
     position: relative; 
 }
 
 
 .scan-footer{
+    padding-top: 10px;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    justify-content:space-between;
 }
 
 .parsedTextmodal-container {
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0,d 0, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -172,7 +279,7 @@ textarea:focus{
     font-weight: 800;
   }
   .parsedText-para {
-    font-size: 1vw;
+    font-size: 1.5vw;
     font-weight: 400;
     color: rgb(51, 51, 51);
   }
@@ -184,28 +291,81 @@ textarea:focus{
     justify-content: space-between;
     gap: 20px;
   }
-  .parsedText-button {
-    width: 50%;
-    padding: 8px 0;
+  
+  
+.parsedText-buttonaccept {
+    width: 48%;
     border: none;
-    border-radius: 5px;
+    display: flex;
+    padding: 0.75rem 1.5rem;
+    background-color: #488aec;
+    color: #ffffff;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 700;
+    text-align: center;
     cursor: pointer;
+    text-transform: uppercase;
+    vertical-align: middle;
+    align-items: center;
+    border-radius: 0.5rem;
+    user-select: none;
+    gap: 0.75rem;
+    box-shadow:
+      0 4px 6px -1px #488aec31,
+      0 2px 4px -1px #488aec17;
+    transition: all 0.6s ease;
   }
-  .accept {
-    background-color: rgb(34, 34, 34);
-    color: white;
+  .parsedText-buttonaccept:hover {
+      background-color: #67d7cc;
+      color: hsl(0, 0%, 4%);
+      cursor: pointer;
   }
-  .Re-Scan {
-    background-color: #ececec;
-    color: rgb(34, 34, 34);
-  }
-  .accept:hover {
-    background-color: rgb(0, 0, 0);
-  }
-  .Re-Scan:hover {
-    background-color: #ddd;
+    
+  .parsedText-buttonaccept:active {
+      background-color: #67d7cc;
+      color: hsl(0, 0%, 3%);
+      transform: translateY(10px);
+      transition: 100ms;
+      cursor: pointer;
   }
   
+  .parsedText-buttonRe-Scan {
+    width: 48%;
+    border: none;
+    display: flex;
+    padding: 0.75rem 1.5rem;
+    background-color: #488aec;
+    color: #ffffff;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    text-transform: uppercase;
+    vertical-align: middle;
+    align-items: center;
+    border-radius: 0.5rem;
+    user-select: none;
+    gap: 0.75rem;
+    box-shadow:
+      0 4px 6px -1px #488aec31,
+      0 2px 4px -1px #488aec17;
+    transition: all 0.6s ease;
+  }
+  .parsedText-buttonRe-Scan:hover {
+      background-color: #67d7cc;
+      color: hsl(0, 0%, 4%);
+      cursor: pointer;
+  }
+    
+  .parsedText-buttonRe-Scan:active {
+      background-color: #67d7cc;
+      color: hsl(0, 0%, 3%);
+      transform: translateY(10px);
+      transition: 100ms;
+      cursor: pointer;
+  }
   
 .deleteWarn-container {
     background-color: rgba(0, 0, 0, 0.3);
@@ -239,7 +399,7 @@ textarea:focus{
 
   }
   .deleteWarn-heading {
-    color: rgb(241, 13, 13);
+    color: rgb(8, 7, 7);
     font-weight: 800;
   }
   .deleteWarnbutton-wrapper {
@@ -250,64 +410,86 @@ textarea:focus{
     justify-content: space-between;
     gap: 20px;
   }
-  .deletWarn-button {
-    width: 50%;
-    padding: 8px 0;
+  
+  
+.deleteWarn-buttoncancel {
     border: none;
-    border-radius: 5px;
+    width: 48%;
+    display: flex;
+    padding: 0.75rem 1.5rem;
+    background-color: #488aec;
+    color: #ffffff;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 700;
+    text-align: center;
     cursor: pointer;
+    text-transform: uppercase;
+    vertical-align: middle;
+    align-items: center;
+    border-radius: 0.5rem;
+    user-select: none;
+    gap: 0.75rem;
+    box-shadow:
+      0 4px 6px -1px #488aec31,
+      0 2px 4px -1px #488aec17;
+    transition: all 0.6s ease;
   }
-  .yes {
-    background-color: rgb(34, 34, 34);
-    color: white;
+  .deleteWarn-buttoncancel:hover:hover {
+      background-color: #67d7cc;
+      color: hsl(0, 0%, 4%);
+      cursor: pointer;
   }
-  .cancel {
-    background-color: #ececec;
-    color: rgb(34, 34, 34);
-  }
-  .yes:hover {
-    background-color: rgb(0, 0, 0);
-  }
-  .cancel:hover {
-    background-color: #ddd;
+    
+  .deleteWarn-buttoncancel:active {
+      background-color: #67d7cc;
+      color: hsl(0, 0%, 3%);
+      transform: translateY(10px);
+      transition: 100ms;
+      cursor: pointer;
   }
   
-  .navbar-container {
+  .deleteWarn-button {
+    width: 48%;
+    border: none;
     display: flex;
-    background-color: rgb(141, 138, 138);
-    width: 100%;
-    height: 60px;
-    align-items: center;
-    justify-content: space-around;
-  }
-
-  .navbutton {
-    outline: 0 !important;
-    border: 0 !important;
-    width: 40px;
-    height: 40px;
-    border-radius: 5px;
-    background-color: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    transition: all ease-in-out 0.3s;
+    padding: 0.75rem 1.5rem;
+    background-color: #eb4408;
+    color: #ffffff;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 700;
+    text-align: center;
     cursor: pointer;
+    text-transform: uppercase;
+    vertical-align: middle;
+    align-items: center;
+    border-radius: 0.5rem;
+    user-select: none;
+    gap: 0.75rem;
+    box-shadow:
+      0 4px 6px -1px #488aec31,
+      0 2px 4px -1px #488aec17;
+    transition: all 0.6s ease;
   }
-
-  .navbutton:hover {
-    transform: translateY(-3px);
+  .deleteWarn-button:hover:hover {
+      background-color: #67d7cc;
+      color: hsl(0, 0%, 4%);
+      cursor: pointer;
   }
-
-  .icon {
-    font-size: 20px;
+    
+  .deleteWarn-button:active {
+      background-color: #67d7cc;
+      color: hsl(0, 0%, 3%);
+      transform: translateY(10px);
+      transition: 100ms;
+      cursor: pointer;
   }
-
+  
 
   .navbar {
     padding: 0.5rem;
-    background-color:  #67d7cc;
+    background-color:  #67d7cc;;
     position: relative;
     display: flex;
     align-items: center;
@@ -317,7 +499,7 @@ textarea:focus{
   
   .studynavbar {
     padding: 0.5rem;
-    background-color:  #67d7cc;
+    background-color:  #67d7cc;;
     position: relative;
     display: flex;
     align-items: center;
@@ -340,7 +522,7 @@ textarea:focus{
     transform-origin: center left;
     transition: width 0.2s ease-in;
     text-decoration: none;
-    color: inherit;
+    color:#000000;
     &:before {
       position: absolute;
       z-index: -1;
@@ -353,7 +535,7 @@ textarea:focus{
       transform: translateX(100%);
       transition: transform 0.2s ease-in;
       transform-origin: center right;
-      background-color:  #fef68a;
+      background-color:  #ffffff;
     }
   
     &:hover,
@@ -499,7 +681,7 @@ textarea:focus{
     position: relative;
     border-radius: 5px;
     padding: 1rem;
-    background-color: #fef68a;
+    background-color: #67d7cc;
     transform-style: preserve-3d;
     height: 250px;
     cursor: pointer;
@@ -509,12 +691,17 @@ textarea:focus{
 
 .card:hover{
     box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.5);
-    background-color: #67d7cc;
+    background-color: #488aec;
+    color:#fcf8f8
 }
 
 .card.flip{
     --rotate-y: 180deg;
     background-color: #67d7cc;
+}
+.card.flip:hover{
+    --rotate-y: 180deg;
+    background-color: #488aec;
 }
 
 .card .front, .card .back{
@@ -525,7 +712,9 @@ textarea:focus{
 
 .card .back {
     transform: rotateY(180deg);
+    
 }
+
 
 .questions-grid {
     display: grid;
@@ -543,11 +732,12 @@ textarea:focus{
     display: flex;
     flex-direction: column;
     padding: 12px;
-    background: #aaaaa7;
+    background: #deded8;
     color: #000;
     border-radius: 5px;
     border-color: #000;
     width: 320px;
+    height: 275px;
   }
   
   .info {
@@ -577,7 +767,7 @@ textarea:focus{
   
   .radio-input  label {
     display: flex;
-    background-color: #fef68a;
+    background-color: #67d7cc;
     padding: 14px;
     margin: 8px 0 0 0;
     font-size: 13px;
@@ -591,7 +781,7 @@ textarea:focus{
   }
   
   .radio-input  label:hover {
-    background-color: #67d7cc;
+    background-color:#ffffff;
     border: 1px solid #090909;
   }
   
@@ -602,14 +792,14 @@ textarea:focus{
     }
   .radio-input input:checked + label {
     border-color: #050505;
-    background-color: #67d7cc;
+    background-color: #ffffff;
   }
   
 .MTbuttonwrapper {
     display:flex;
     flex-direction: column;
     justify-content: space-around;
-    background-color: #aaaaa7;
+    background-color: #deded8;
     padding: 14px;
     width: 320px;
     margin: 8px 0 0 0;
@@ -629,7 +819,7 @@ textarea:focus{
     padding: 17px 40px;
     border-radius: 5px;
     border: 1px solid rgba(9, 9, 9, 0.164);
-    background-color: #fef68a;
+    background-color: #67d7cc;
     box-shadow: rgb(0 0 0 / 5%) 0 0 8px;
     font-size: 25px;
     font-weight: 600;
@@ -637,13 +827,13 @@ textarea:focus{
   }
   
 .submit-button:hover {
-    background-color: #67d7cc;
+    background-color: #ffffff;
     color: hsl(0, 0%, 4%);
     cursor: pointer;
 }
   
 .submit-button:active {
-    background-color: #67d7cc;
+    background-color: #ffffff;
     color: hsl(0, 0%, 3%);
     transform: translateY(10px);
     transition: 100ms;
@@ -653,8 +843,6 @@ textarea:focus{
 .result {
     margin-top: 10px;
     font-weight: 600;
-    font-size: 12px;
-    display: none;
     transition: display .4s ease;
   }
   
@@ -675,7 +863,7 @@ textarea:focus{
   .socialContainer {
     width: 50%;
     height: 52px;
-    background-color: #fef68a;
+    background-color: #deded8;
     display: flex;
     border-radius: 5px;
     align-items: center;
@@ -748,8 +936,8 @@ textarea:focus{
     gap: 10px;
   }
   .signupbutton {
-    --primary-color: #fef68a;
-    --secondary-color: #000000;
+    --primary-color: #488aec;
+    --secondary-color: #ffffff;
     --hover-color: #67d7cc;
     --arrow-width: 10px;
     --arrow-stroke: 2px;
@@ -797,20 +985,22 @@ textarea:focus{
   
   .signupbutton:hover {
     background-color: var(--hover-color);
+    color:#000;
   }
   
   .signupbutton:hover .arrow {
-    background: var(--secondary-color);
+    background: #000;
   }
   
   .signupbutton:hover .arrow:before {
+    border-color: #000;
     right: 0;
   }
   
   .loginbutton {
-    --primary-color: #67d7cc;
-    --secondary-color: #000000;
-    --hover-color: #fef68a;
+    --primary-color: #488aec;
+    --secondary-color: #ffffff;
+    --hover-color: #67d7cc;
     --arrow-width: 10px;
     --arrow-stroke: 2px;
     box-sizing: border-box;
@@ -857,22 +1047,24 @@ textarea:focus{
   
   .loginbutton:hover {
     background-color: var(--hover-color);
+    color:#000;
   }
   
   .loginbutton:hover .arrow {
-    background: var(--secondary-color);
+    background: #000;
   }
   
   .loginbutton:hover .arrow:before {
+    border-color: #000;
     right: 0;
   }
   
   
   
   .logoutbutton {
-    --primary-color: #67d7cc;
-    --secondary-color: #000000;
-    --hover-color: #fef68a;
+    --primary-color: #488aec;
+    --secondary-color: #ffffff;
+    --hover-color: #67d7cc;
     --arrow-width: 10px;
     --arrow-stroke: 2px;
     box-sizing: border-box;
@@ -919,13 +1111,15 @@ textarea:focus{
   
   .logoutbutton:hover {
     background-color: var(--hover-color);
+    color:#000;
   }
   
   .logoutbutton:hover .arrow {
-    background: var(--secondary-color);
+    background: #000;
   }
   
   .logoutbutton:hover .arrow:before {
+    border-color: #000;
     right: 0;
   }
   
@@ -983,37 +1177,16 @@ textarea:focus{
   
   .logininput-container input {
     background-color: #fff;
-    padding: 1rem;
-    padding-right: 3rem;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #555;
     width: 85%;
-    border-radius: 5px;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    outline: none;
   }
   
-  .loginsubmit {
-    display: block;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
-    background-color: #67d7cc;
-    color: #060606;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-    font-weight: bold;
-    width: 100%;
-    border-radius: 5px;
-    border: none;
-    text-transform: uppercase;
-  }
-  
-  .loginsubmit:hover {
-    background-color: #fef68a;
-    cursor: pointer;
-  }
-  
+ 
 
 .signupform {
     background-color: rgb(255, 250, 250);
@@ -1044,15 +1217,17 @@ textarea:focus{
     margin: 8px 0;
   }
   
+  
   .signupinput-container input {
     background-color: #fff;
-    padding: 1rem;
-    padding-right: 3rem;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-    width: 85%;
+    padding: 10px;
+    border: 2px solid #ccc;
     border-radius: 5px;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    font-size: 16px;
+    color: #555;
+    width: 85%;
+    outline: none;
+    
   }
   
   .error-message {
@@ -1067,26 +1242,80 @@ textarea:focus{
     justify-content: space-between;
     gap: 20px;
   }
-  .authbuttonlogin-button {
-    width: 50%;
-    padding: 8px 0;
+  
+  .login-buttonsignin {
     border: none;
-    border-radius: 5px;
+    width: 48%;
+    display: flex;
+    padding: 0.75rem 1.5rem;
+    background-color: #488aec;
+    color: #ffffff;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 700;
+    text-align: center;
     cursor: pointer;
+    text-transform: uppercase;
+    vertical-align: middle;
+    align-items: center;
+    border-radius: 0.5rem;
+    user-select: none;
+    gap: 0.75rem;
+    box-shadow:
+      0 4px 6px -1px #488aec31,
+      0 2px 4px -1px #488aec17;
+    transition: all 0.6s ease;
   }
-  .signin {
-    background-color: rgb(34, 34, 34);
-    color: white;
+  .login-buttonsignin:hover {
+      background-color: #67d7cc;
+      color: hsl(0, 0%, 4%);
+      cursor: pointer;
   }
-  .close {
-    background-color: #ececec;
-    color: rgb(34, 34, 34);
+    
+  .login-buttonsignin:active {
+      background-color: #67d7cc;
+      color: hsl(0, 0%, 3%);
+      transform: translateY(10px);
+      transition: 100ms;
+      cursor: pointer;
   }
-  .signin:hover {
-    background-color: rgb(0, 0, 0);
+  
+  
+  .login-buttonclose {
+    border: none;
+    width: 48%;
+    display: flex;
+    padding: 0.75rem 1.5rem;
+    background-color: #eb4408;
+    color: #ffffff;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    text-transform: uppercase;
+    vertical-align: middle;
+    align-items: center;
+    border-radius: 0.5rem;
+    user-select: none;
+    gap: 0.75rem;
+    box-shadow:
+      0 4px 6px -1px #488aec31,
+      0 2px 4px -1px #488aec17;
+    transition: all 0.6s ease;
   }
-  .close:hover {
-    background-color: #ddd;
+  .login-buttonclose:hover {
+      background-color: #67d7cc;
+      color: hsl(0, 0%, 4%);
+      cursor: pointer;
+  }
+    
+  .login-buttonclose:active {
+      background-color: #67d7cc;
+      color: hsl(0, 0%, 3%);
+      transform: translateY(10px);
+      transition: 100ms;
+      cursor: pointer;
   }
   
    .authbuttonlogin-wrapper {
@@ -1097,27 +1326,7 @@ textarea:focus{
     justify-content: space-between;
     gap: 20px;
   }
-  .authbuttonlogin-button {
-    width: 50%;
-    padding: 8px 0;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  .signin {
-    background-color: rgb(34, 34, 34);
-    color: white;
-  }
-  .close {
-    background-color: #ececec;
-    color: rgb(34, 34, 34);
-  }
-  .signin:hover {
-    background-color: rgb(0, 0, 0);
-  }
-  .close:hover {
-    background-color: #ddd;
-  }
+  
   
 .FCentries-list{
     display: grid;
@@ -1127,7 +1336,7 @@ textarea:focus{
 
 
 .FCentry{
-    background-color: #fef68a;
+    background-color: #67d7cc;
     border-radius: 5px;
     padding: 1rem;
     min-height: 170px;
@@ -1155,7 +1364,7 @@ textarea:focus{
 
 
 .MTentry{
-    background-color: #fef68a;
+    background-color: #67d7cc;
     border-radius: 5px;
     padding: 1rem;
     min-height: 170px;

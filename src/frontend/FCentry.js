@@ -23,18 +23,16 @@ const FCentry = ({ flashcardkey, filepath, FlashCards, FCName, scanname, date, e
     <div className="FCentry">
       <span><strong>Flashcard scan name:</strong> {scanname}</span>
       <span><strong>Flashcard study name:</strong> {FCName}</span>
-      <br />
+      <span><strong>Date: <small>{date}</small></strong></span>
+      
       <div className="FCentry-footer">
-        <small>{date}</small>
-        <div className="action-btn">
         <button className="study-button" onClick={handleStudy}>
           Study
         </button>
         <button className = "del-button" onClick={handleDelete}>
           Delete
         </button>
-        </div>
-      </div>
+    </div>
       {showStudyModal && (
         <AddFlashCards
           filepath={filepath}

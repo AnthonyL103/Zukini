@@ -23,17 +23,15 @@ const MTentry = ({ mocktestkey, filepath, Questions, MTName, scanname, date, ent
       <div className="MTentry">
         <span><strong>Mock Test scan name:</strong> {scanname}</span>
         <span><strong>Mock Test study name:</strong> {MTName}</span>
-        <br />
+        <span><strong>Date: <small>{date}</small></strong></span>
+
         <div className="MTentry-footer">
-          <small>{date}</small>
-          <div className="action-btn">
           <button className="study-button" onClick={handleStudy} >
             Study
           </button>
           <button className = "del-button" onClick={handleDelete}>
             Delete
           </button>
-          </div>
         </div>
         {showStudyModal && (
         <AddMockTest

@@ -4,19 +4,27 @@ import { useUser } from './UserContext';
 
 
 const AddScan = ({onAddScan})  => {
+    const [lastFile, setLastFile] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [parsedText, setParsedText] = useState("");
     const [currFile, setCurrFile] = useState("");
     const [file, setFile] = useState(null);
     const [displayedText, setDisplayedText] = useState("");
-    const fileInputRef = useRef();
+    const fileInputRef = useRef(null);
     const [saveEnabled, setSaveEnabled] = useState(false);
     const [currDate, setCurrDate] = useState("");
     const [scanName, setScanName] = useState("");
     const { userId } = useUser();
+    const handleClick = () => {
+        fileInputRef.current.click();
+    };
         
     const handleFileChange = (e) => {
-        setFile(e.target.files[0]); // Update the state with the selected file
+        const selectedFile = e.target.files[0]
+        if (selectedFile) {
+            setFile(selectedFile);
+            setLastFile(selectedFile); // Store a copy for re-scanning
+        }
     };
     const handleScanNameChange = (e) => {
       setScanName(e.target.value); // Update scan name state
@@ -59,14 +67,20 @@ const AddScan = ({onAddScan})  => {
     };
 
     const handleReScan = async () => {
-      handleCloseModal();
+      setShowModal(false);
+      console.log("in rescan");
+      const fileToRescan = file || lastFile;
+      
+      if (!fileToRescan) {
+        console.error("No file available for re-scan");
+        return;
+      }
+      const formData = new FormData();
+      formData.append('file', fileToRescan); 
       try {
         const parseResponse = await fetch('http://18.236.227.203:5002/callparse', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json', // Specify JSON content type
-          },
-          body: JSON.stringify({ filePath: currFile }), // Send filePath as JSON
+          body: formData, // Send filePath as JSON
         });
     
         if (!parseResponse.ok) {
@@ -77,6 +91,7 @@ const AddScan = ({onAddScan})  => {
         setDisplayedText(""); // Clear displayed text for re-animation
         // Clear previous displayed text
         setParsedText(parseResult.text); // Update the parsed text
+        console.log(parseResult.text);
         setShowModal(true);
       } catch (error) {
         console.error('Error during re-scan:', error);
@@ -120,47 +135,59 @@ const AddScan = ({onAddScan})  => {
           }
     
           // Clear form data and states
-          setParsedText("");
+          setShowModal(false);
+
+            
+          setParsedText(""); // Reset parsed text **after** modal is closed
           setCurrFile("");
           setScanName("");
           setFile(null);
           setDisplayedText("");
           setSaveEnabled(false);
+
+               
+
+              
           if (fileInputRef.current) {
             fileInputRef.current.value = ""; // Clear the file input field visually
           }
         } else {
           console.error('Failed to save data');
         }
+        console.log("made it");
         
       } catch (error) {
         console.error('Error during saving:', error);
       }
+    
     };
 
     useEffect(() => {
-      if (showModal && parsedText) {
-          const words = parsedText.split(" ");
-          let currentIndex = 0;
-
-          const interval = setInterval(() => {
-              if (currentIndex < words.length) {
-                  setDisplayedText((prev) => (prev ? `${prev} ${words[currentIndex]}` : words[currentIndex]));
-                  currentIndex++;
-              } else {
-                  clearInterval(interval); // Stop the interval when all words are displayed
-              }
-          }, 50); 
-          return () => clearInterval(interval); // Cleanup interval on modal close
+        if (showModal && parsedText.trim() !== "") {
+            console.log(showModal, parsedText);
+            const words = parsedText.split(" ");
+            let currentIndex = -1; // Start at -1 to include the first word
+    
+            const interval = setInterval(() => {
+                currentIndex++; // Move index before using it
+    
+                if (currentIndex < words.length) {
+                    setDisplayedText((prev) =>
+                        prev ? `${prev} ${words[currentIndex]}` : words[currentIndex]
+                    );
+                } else {
+                    clearInterval(interval); // Stop when all words are displayed
+                }
+            }, 50);
       }
   }, [showModal, parsedText]);
     
   return (
     <>
       <div className="scan new">
+      <label htmlFor="scanName" className="Make-bold">Create a new scan:</label>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <div>
-        <label htmlFor="scanName" className="Make-bold">Create a new scan:</label>
+        <div className="Uploadscancontainer">
         <input
         type="text"
         className="scanname"
@@ -170,22 +197,24 @@ const AddScan = ({onAddScan})  => {
         placeholder="Enter scan name"
         required
         />
-       </div>
-       <div>
         <input
+          className="hiddenfileinput"
           type="file"
           accept="image/*,application/pdf" 
           onChange={handleFileChange}
           ref={fileInputRef}
           required
-        />
-       </div>
-          <button className = "save"type="submit">Upload and Scan</button>
-       </form>
-  
-        <div className="scan-footer">
-          <button className="save" onClick={onsave} disabled={!saveEnabled} >Save</button>
+        ></input>
+        
+        <button type="button" className="fileinput" onClick={handleClick}>
+        Upload File
+        </button>
+      
+        <button className ="fileinput"type="submit">Upload and Scan</button>
+        
+        <button className="fileinput" type="button" onClick={onsave} disabled={!saveEnabled} >Save</button>
         </div>
+       </form>
       </div>
   
       
@@ -196,13 +225,13 @@ const AddScan = ({onAddScan})  => {
       <p className="parsedText-para">{displayedText}</p>
       <div className="button-wrapper">
         <button
-          className="parsedText-button accept"
+          className="parsedText-buttonaccept"
           onClick={handleCloseModal}
         >
           Accept
         </button>
         <button
-          className="parsedText-button Re-Scan"
+          className="parsedText-buttonRe-Scan"
           onClick={handleReScan}
         >
           Re-Scan

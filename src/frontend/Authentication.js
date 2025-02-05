@@ -3,7 +3,7 @@ import { useUser } from './UserContext';
 import { useScan } from './ScanContext';
 
 const Authentication = () => {
-    const { currentScan, setCurrentScan } = useScan();
+    const { setCurrentScan } = useScan();
     const { userId, setUserId } = useUser();
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showSignUpModal, setShowSignUpModal] = useState(false);
@@ -69,6 +69,7 @@ const Authentication = () => {
     
     const handleclose = (e) => {
         e.preventDefault(); // Prevent form validation from triggering
+        setShowLoginModal(false);
         setShowSignUpModal(false);
         setErrorMessage("");
         setEmail("");
@@ -151,13 +152,13 @@ const Authentication = () => {
                         {errorMessage && <p className="error-message">{errorMessage}</p>}
                         <div className="authbuttonlogin-wrapper">
                             <button
-                            className="authbuttonlogin-button close"
+                            className="login-buttonclose"
                             onClick={handleclose}
                             >
                             Close
                             </button>
                             <button
-                            className="authbuttonlogin-button signin"
+                            className="login-buttonsignin"
                             onClick={handleLogIn}
                             >
                             Login
@@ -184,13 +185,13 @@ const Authentication = () => {
                         {errorMessage && <p className="error-message">{errorMessage}</p>}
                         <div className="authbuttonlogin-wrapper">
                             <button
-                            className="authbuttonlogin-button close"
+                            className="login-buttonclose"
                             onClick={handleclose}
                             >
                             Close
                             </button>
                             <button
-                            className="authbuttonlogin-button signin"
+                            className="login-buttonsignin"
                             onClick={handleSignUp}
                             >
                             Sign-Up

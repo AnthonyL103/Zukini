@@ -110,7 +110,7 @@ const PastStudy = ({NewMTEntry, NewFCEntry}) => {
     };
     
     return (
-        <div className="container">
+        <div>
            <h2>Past Flashcards:</h2>
             <div className="FCentries-list">
                 {FCentries.map((entry) => (
@@ -146,26 +146,26 @@ const PastStudy = ({NewMTEntry, NewFCEntry}) => {
             </div>
         
         <div className={`deleteWarn-container ${showModal ? "show" : ""}`}>
-        {showModal && (
-        <div className="deleteWarn-modal">
-        <h2 className="deleteWarn-heading">Are you Sure?</h2>
-        <div className="deleteWarnbutton-wrapper">
-            <button
-            className="deletWarn-button yes" // Updated to match CSS
-            onClick={handleDeleteEntry}
-            >
-            Yes
-            </button>
-            <button
-            className="deletWarn-button cancel" // Updated to match CSS
-            onClick={handleCloseModal}
-            >
-            No
-            </button>
+            {showModal && (
+            <div className="deleteWarn-modal">
+            <h2 className="deleteWarn-heading">Are you Sure?</h2>
+            <div className="deleteWarnbutton-wrapper">
+                <button
+                className="deleteWarn-button" // Updated to match CSS
+                onClick={handleDeleteEntry}
+                >
+                Yes
+                </button>
+                <button
+                className="deleteWarn-buttoncancel" // Updated to match CSS
+                onClick={handleCloseModal}
+                >
+                No
+                </button>
+                </div>
+            </div>
+            )}
         </div>
-        </div>
-        )}
-    </div>
 </div>
 );
     

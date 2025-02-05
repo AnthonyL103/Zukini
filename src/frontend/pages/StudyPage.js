@@ -18,7 +18,10 @@ const [NewFCEntry, setNewFCEntry, ] = useState(null)
   if (!currentScan) {
     return (
       <div className="container">
-        <h1>Study</h1>
+        <div className="header-wrapper">
+            <h1>Study:</h1>
+            <Authentication/>
+        </div>
         <p>No scan selected. Please go back and choose a scan. Or a previous study</p>
         <button className="study-button" onClick={() => navigate(-1)}>Go Back</button>
         <PastStudy />

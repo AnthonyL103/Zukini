@@ -153,23 +153,24 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC
         <div className={`fcmodal-container ${showModal ? "show" : ""}`}>
             {showModal && (
                 <div className="fcmodal-content">
+                    <h2>Rendered Flashcards:</h2>
                     <FlashCardList flashcards={flashcards} />
                     <div className="fcmodal-content-footer">
                         {Past ? (
                             <>
-                                <button className="fcmodal-button back" onClick={closeprevfcmodal}>
+                                <button className="deleteWarn-buttoncancel" onClick={closeprevfcmodal}>
                                     Done
                                 </button>
-                                <button className="fcmodal-button delete" onClick={deletefcmodalprev}>
+                                <button className="deleteWarn-button" onClick={deletefcmodalprev}>
                                     Delete
                                 </button>
                             </>
                         ) : (
                             <>
-                                <button className="fcmodal-button back" onClick={closefcmodal}>
+                                <button className="deleteWarn-buttoncancel" onClick={closefcmodal}>
                                     Done
                                 </button>
-                                <button className="fcmodal-button save" onClick={showNameModal}>
+                                <button className="deleteWarn-button" onClick={showNameModal}>
                                     Save and Exit
                                 </button>
                             </>

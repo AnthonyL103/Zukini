@@ -177,19 +177,19 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
                 <div className="fcmodal-content-footer">
                     {Past ? (
                         <>
-                            <button className="fcmodal-button back" onClick={closeprevmtmodal}>
+                            <button className="deleteWarn-buttoncancel" onClick={closeprevmtmodal}>
                                 Done
                             </button>
-                            <button className="fcmodal-button delete" onClick={deletemtmodalprev}>
+                            <button className="deleteWarn-button" onClick={deletemtmodalprev}>
                                 Delete
                             </button>
                         </>
                     ) : (
                         <>
-                            <button className="fcmodal-button back" onClick={closemtmodal}>
+                            <button className="deleteWarn-buttoncancel" onClick={closemtmodal}>
                                 Done
                             </button>
-                            <button className="fcmodal-button save" onClick={showNameModal}>
+                            <button className="deleteWarn-button" onClick={showNameModal}>
                                 Save and Exit
                             </button>
                         </>
