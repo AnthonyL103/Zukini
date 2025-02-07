@@ -14,6 +14,8 @@ const [showFlashCards, setShowFlashCards] = useState(false); // State to control
 const [showMockTests, setShowMockTests] = useState(false); // State to control rendering AddFlashCards
 const [NewMTEntry, setNewMTEntry, ] = useState(null)
 const [NewFCEntry, setNewFCEntry, ] = useState(null)
+const [clickedButton, setClickedButton] = useState(null); // Track which button was clicked
+
 
   if (!currentScan) {
     return (
@@ -23,7 +25,7 @@ const [NewFCEntry, setNewFCEntry, ] = useState(null)
             <Authentication/>
         </div>
         <p>No scan selected. Please go back and choose a scan. Or a previous study</p>
-        <button className="study-button" onClick={() => navigate(-1)}>Go Back</button>
+        <button className="goback-button" onClick={() => navigate('/files')}>Select Scan</button>
         <PastStudy />
       </div>
       
@@ -34,19 +36,23 @@ const [NewFCEntry, setNewFCEntry, ] = useState(null)
 
   // Trigger to show AddFlashCards component
   const handleGenerateFlashcards = () => {
+    setClickedButton("flashcards");
     setShowFlashCards(true);
   };
   
   const handleGenerateMocktests = () => {
+    setClickedButton("mocktests");
     setShowMockTests(true);
   };
   
   const handleCloseFlashcards = () => {
     setShowFlashCards(false); // Close modal and reset
+    setClickedButton(null);
   };
   
   const handleCloseMocktests = () => {
     setShowMockTests(false); // Close modal and reset
+    setClickedButton(null);
   };
   
   const goToSwitchScan =() => {
@@ -76,7 +82,7 @@ const [NewFCEntry, setNewFCEntry, ] = useState(null)
         <h2>Notes:</h2>
         <p>{text}</p>
       </div>
-      <StudyMenu onCardsClick={handleGenerateFlashcards} onTestClick={handleGenerateMocktests} onSwitchScanClick={goToSwitchScan} />
+      <StudyMenu onCardsClick={handleGenerateFlashcards} onTestClick={handleGenerateMocktests} onSwitchScanClick={goToSwitchScan} clickedButton={clickedButton}  />
       {showFlashCards && (
         <AddFlashCards
           filepath={filepath}

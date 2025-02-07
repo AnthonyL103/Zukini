@@ -19,11 +19,14 @@ const Scan = ({ scankey, filepath, scanname, text, date, onDelete }) => {
     navigate('/study');
   };
   return (
+    <div className="scanwrapper"> 
     <div className="scan">
       <span><strong>Scan name:</strong> {scanname}</span>
       <span><strong>Date: <small>{date}</small></strong></span>
       <br />
       <span>{text}</span>
+      
+      </div>
       <div className="scan-footer">
         <button className="study-button" onClick={handleStudy}>
           Study

@@ -5,7 +5,7 @@ const Flashcard = ({ flashcard, key }) => {
 
     return (
         <div className={`card ${flip ? 'flip' : ''}`} onClick={() => setFlip(!flip)}>
-            <div className="front"> {flashcard.question}</div>
+            <div className="front"> <strong>{flashcard.question}</strong></div>
             <div className="back">{flashcard.answer}</div>
         </div>
     )

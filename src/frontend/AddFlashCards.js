@@ -185,18 +185,20 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC
             <div className="EnterName-container show">
                 <div className="EnterName-modal">
                     <h2 className="EnterName-heading">Enter Flashcard Set Name</h2>
+                    <div className="EnterNamebutton-wrapper">
                     <input
                         type="text"
-                        className="input"
+                        className="nameinput"
                         placeholder="Enter name..."
                         value={FCName}
                         onChange={(e) => setFCName(e.target.value)}
                     />
-                    <div className="EnterNamebutton-wrapper">
-                        <button className="EnterName-button" onClick={confirmNameAndSave}>
-                            Confirm
-                        </button>
+                    
+                    <button className="EnterName-button" onClick={confirmNameAndSave}>
+                        Confirm
+                    </button>
                     </div>
+                    
                 </div>
             </div>
         )}

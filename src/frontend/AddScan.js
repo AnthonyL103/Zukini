@@ -184,6 +184,7 @@ const AddScan = ({onAddScan})  => {
     
   return (
     <>
+    <div className = "scanwrapper" >
       <div className="scan new">
       <label htmlFor="scanName" className="Make-bold">Create a new scan:</label>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
@@ -215,6 +216,7 @@ const AddScan = ({onAddScan})  => {
         <button className="fileinput" type="button" onClick={onsave} disabled={!saveEnabled} >Save</button>
         </div>
        </form>
+      </div>
       </div>
   
       
