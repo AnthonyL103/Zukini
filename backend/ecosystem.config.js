@@ -35,6 +35,15 @@ module.exports = {
           NODE_ENV: "production",
           PORT: 5005
         }
+      },
+      {
+        name: "handleAccount",
+        script: "handleAccount.js",
+        instances: 1,
+        env: {
+          NODE_ENV: "production",
+          PORT: 5006
+        }
       }
     ]
   };

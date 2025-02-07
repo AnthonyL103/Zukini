@@ -225,7 +225,7 @@ const AddScan = ({onAddScan})  => {
     <div className="parsedText-modal">
       <h2 className="parsedText-heading">Parsed Text</h2>
       <p className="parsedText-para">{displayedText}</p>
-      <div className="button-wrapper">
+      <div className="fcmodal-content-footer">
         <button
           className="parsedText-buttonaccept"
           onClick={handleCloseModal}
