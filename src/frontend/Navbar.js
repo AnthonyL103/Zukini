@@ -4,6 +4,7 @@ import { FileTextOutlined, ShoppingCartOutlined, HomeOutlined, BookOutlined } fr
 
 const Navbar = () => {
   return (
+    <div className="navcontainer">
     <div className="navbar">
       <Link to="/" className="link">
         <span className="link-icon">
@@ -29,6 +30,7 @@ const Navbar = () => {
         </span>
         <span className="link-title">Shop</span>
       </Link>
+    </div>
     </div>
   );
 };

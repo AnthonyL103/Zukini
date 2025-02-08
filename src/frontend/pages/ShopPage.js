@@ -4,7 +4,7 @@ const Shop = () => {
     return (
         <div className="container">
             <div className="header-wrapper">
-                <h1>Welcome to the Shop Page!</h1>
+                <h1>Account</h1>
                 <Authentication/>
             </div>
         </div>
