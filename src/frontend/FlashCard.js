@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const Flashcard = ({ flashcard, key }) => {
+const Flashcard = ({ flashcard}) => {
     const [flip, setFlip] = useState(false)
 
     return (

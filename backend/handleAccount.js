@@ -30,7 +30,7 @@ async function appendnewusertoDB(newEntry) {
         });
 
         console.log(`New user created with ID: ${userId}`);
-        return { success: true, message: "User registered successfully", userId };
+        return { success: true, message: "User registered successfully", userId, email: newEntry.email};
 
     } catch (error) {
         console.error('Error appending to the database:', error);
@@ -54,7 +54,7 @@ async function checklogin(entry) {
             return { success: false, message: "Incorrect password" };
         }
 
-        return { success: true, message: "Login successful", userId: user.id };
+        return { success: true, message: "Login successful", userId: user.id, email: user.email };
     } catch (error) {
         console.error('Error checking login:', error);
         return { success: false, message: "Database error" };

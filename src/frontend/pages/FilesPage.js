@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import ScanList from '../ScanList.js';
 import { useUser } from '../UserContext';
-import Authentication from '../Authentication';
+import AddScan from '../AddScan';
+
 
 const FilesPage = () => {
   const [scans, setScans] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [scanToDelete, setScanToDelete] = useState(null); 
   const { userId } = useUser();
-
+  const slidesRef = useRef([]);
+  
   useEffect(() => {
     const fetchScans = async () => {
       try {
@@ -36,6 +38,24 @@ const FilesPage = () => {
   const handleCloseModal = () => {
     setShowModal(false); // Close the modal
     setScanToDelete(null); // Clear the scan to delete
+  };
+  
+  
+  
+  const scrollToNextSlide = () => {
+    slidesRef.current[1].scrollIntoView({
+        behavior: "smooth",
+        block: "start", // Ensures it aligns properly with snap
+        inline: "nearest",
+    });
+    
+  };
+  const scrollToTop = () => {
+    slidesRef.current[0].scrollIntoView({
+        behavior: "smooth",
+        block: "start", // Ensures it aligns properly with snap
+        inline: "nearest",
+    });
   };
 
   const handleDeleteScan = async () => {
@@ -69,13 +89,10 @@ const FilesPage = () => {
   };
 
   return (
-    <div className="container">
-        <div className="header-wrapper">
-            <h1>Scans</h1>
-            <Authentication/>
-        </div>
-        
-      <ScanList scans={scans} onDelete={displayModal} onAddScan={handleAddScan} />
+    <div className="filescontainer">
+      <ScanList scans={scans} onDelete={displayModal} scroll={scrollToNextSlide} slidesRef={slidesRef}/>
+      
+      <AddScan onAddScan={handleAddScan} scrollToTop={scrollToTop} slidesRef={slidesRef}/>
       <div className={`deleteWarn-container ${showModal ? "show" : ""}`}>
         {showModal && (
         <div className="deleteWarn-modal">

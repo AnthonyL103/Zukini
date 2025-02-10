@@ -4,7 +4,7 @@ import Navbar from './Navbar';
 import FilesPage from './pages/FilesPage';
 import HomePage from './pages/HomePage';
 import StudyPage from './pages/StudyPage';
-import ShopPage from './pages/ShopPage';
+import AccountPage from './pages/AccountPage';
 import { UserProvider } from './UserContext';
 
 const App = () => {
@@ -16,7 +16,7 @@ const App = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/files" element={<FilesPage />} />
         <Route path="/study" element={<StudyPage />} />
-        <Route path="/account" element={<ShopPage />} />
+        <Route path="/account" element={<AccountPage />} />
       </Routes>
     </Router>
     </UserProvider>

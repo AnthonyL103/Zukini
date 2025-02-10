@@ -153,7 +153,7 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC
         <div className={`fcmodal-container ${showModal ? "show" : ""}`}>
             {showModal && (
                 <div className="fcmodal-content">
-                    <h2>Rendered Flashcards:</h2>
+                    <p className="modal-title">Rendered Flashcards:</p>
                     <FlashCardList flashcards={flashcards} />
                     <div className="fcmodal-content-footer">
                         {Past ? (

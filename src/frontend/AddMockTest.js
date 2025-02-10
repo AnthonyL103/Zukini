@@ -173,6 +173,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
     <div className={`fcmodal-container ${showModal ? "show" : ""}`}>
         {showModal && (
             <div className="fcmodal-content">
+                <p className="modal-title">Rendered Questions:</p>
                 <QuestionsList questions={questions} />
                 <div className="fcmodal-content-footer">
                     {Past ? (
@@ -204,14 +205,15 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
             <div className="EnterName-container show">
                 <div className="EnterName-modal">
                     <h2 className="EnterName-heading">Enter Mocktest Name</h2>
+                    <div className="EnterNamebutton-wrapper">
                     <input
                         type="text"
-                        className="input"
+                        className="nameinput"
                         placeholder="Enter name..."
                         value={MTName}
                         onChange={(e) => setMTName(e.target.value)}
                     />
-                    <div className="EnterNamebutton-wrapper">
+                    
                         <button className="EnterName-button" onClick={confirmNameAndSave}>
                             Confirm
                         </button>

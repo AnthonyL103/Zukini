@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FileTextOutlined, ShoppingCartOutlined, HomeOutlined, BookOutlined } from '@ant-design/icons';
+import { FileTextOutlined, UserOutlined, HomeOutlined, BookOutlined } from '@ant-design/icons';
 
 const Navbar = () => {
   return (
@@ -24,11 +24,11 @@ const Navbar = () => {
         </span>
         <span className="link-title">Study</span>
       </Link>
-      <Link to="/shop" className="link">
+      <Link to="/account" className="link">
         <span className="link-icon">
-        <ShoppingCartOutlined />
+        <UserOutlined />
         </span>
-        <span className="link-title">Shop</span>
+        <span className="link-title">Account</span>
       </Link>
     </div>
     </div>

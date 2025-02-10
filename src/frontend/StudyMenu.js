@@ -4,30 +4,30 @@ const StudyMenu = ({ onCardsClick, onTestClick, onSwitchScanClick, clickedButton
     return (
       <div className="studynavbar">
         <a
-          className={`link ${clickedButton === "flashcards" ? "disabled" : ""}`}
+          className={`studylink ${clickedButton === "flashcards" ? "disabled" : ""}`}
           onClick={() => clickedButton !== "flashcards" && onCardsClick()}
         >
-          <span className="link-icon">
+          <span className="studylink-icon">
             <CopyOutlined />
           </span>
-          <span className="link-title">Cards</span>
+          <span className="studylink-title">Cards</span>
         </a>
         
         <a
-          className={`link ${clickedButton === "mocktests" ? "disabled" : ""}`}
+          className={`studylink ${clickedButton === "mocktests" ? "disabled" : ""}`}
           onClick={() => clickedButton !== "mocktests" && onTestClick()}
         >
-          <span className="link-icon">
+          <span className="studylink-icon">
             <ReadOutlined />
           </span>
-          <span className="link-title">Test</span>
+          <span className="studylink-title">Test</span>
         </a>
   
-        <a className="link" onClick={onSwitchScanClick}>
-          <span className="link-icon">
+        <a className="studylink" onClick={onSwitchScanClick}>
+          <span className="studylink-icon">
             <SwitcherOutlined />
           </span>
-          <span className="link-title">Switch</span>
+          <span className="studylink-title">Switch</span>
         </a>
       </div>
     );

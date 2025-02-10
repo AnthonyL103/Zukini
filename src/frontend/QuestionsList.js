@@ -30,8 +30,7 @@ const QuestionsList = ({questions = [] }) => {
                 ))}
                 <div className="MTbuttonwrapper">
                     <div className="result">
-                        <h1>Results: {finalscore !== null ? `${finalscore} / ${allQuestions.length}` : "Pending..."}</h1>
-                    </div>
+                        <p className="modal-title">Result: {finalscore !== null ? `${finalscore} / ${allQuestions.length}` : "Pending..."}</p>                    </div>
 
                     <button onClick={handleSubmit} className="submit-button">
                     Submit

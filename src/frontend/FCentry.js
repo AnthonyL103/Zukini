@@ -1,12 +1,17 @@
 //md delete forever is just a visual icon
 import AddFlashCards from "./AddFlashCards";
-import {useState} from "react";
+import {useState, useEffect} from "react";
 
-const FCentry = ({ flashcardkey, filepath, FlashCards, FCName, scanname, date, entryType, displayModal }) => {
+const FCentry = ({ flashcardkey, filepath, FlashCards, FCName, scanname, date, entryType, displayModal, pausescroll}) => {
   const [showStudyModal, setShowStudyModal] = useState(false);
+  
+  useEffect(() => {
+    pausescroll(showStudyModal);
+  }, [showStudyModal]);
+  
   const handleDelete = () => {
     displayModal(flashcardkey, entryType);
-    setShowStudyModal(false);
+    pausescroll(false);
   };
   
   const handleclose = () => {
@@ -21,9 +26,9 @@ const FCentry = ({ flashcardkey, filepath, FlashCards, FCName, scanname, date, e
   
   return (
     <div className="FCentry">
-      <span><strong>Flashcard scan name:</strong> {scanname}</span>
-      <span><strong>Flashcard study name:</strong> {FCName}</span>
-      <span><strong>Date: <small>{date}</small></strong></span>
+        <p className="studyEntryTitle">Flashcards study name: {FCName}</p>
+        <p className="studyEntrybody">Flashcards scan name: {scanname}</p>
+        <p className="studyEntrybody">Date: {date} </p>
       
       <div className="FCentry-footer">
         <button className="study-button" onClick={handleStudy}>

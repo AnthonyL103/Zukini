@@ -1,7 +1,6 @@
 import {useState, useEffect} from 'react'
 import { useUser } from './UserContext';
-import MTentry from './MTentry';
-import FCentry from './FCentry';
+
 const PastStudy = ({NewMTEntry, NewFCEntry}) => {
     const [FCentries, setFCentries] = useState([]);
     const [MTentries, setMTentries] = useState([]);
@@ -111,40 +110,8 @@ const PastStudy = ({NewMTEntry, NewFCEntry}) => {
     
     return (
         <div>
-           <h2>Past Flashcards:</h2>
-            <div className="FCentries-list">
-                {FCentries.map((entry) => (
-                    <FCentry
-                        key={entry.flashcardkey}
-                        flashcardkey={entry.flashcardkey}
-                        filepath={entry.filepath}
-                        scanname={entry.scanname}
-                        FlashCards= {entry.flashcards}
-                        FCName = {entry.fcsessionname}
-                        date={entry.date}
-                        entryType="flashcard"
-                        displayModal={displayModal}
-                    />
-                ))}
-            </div>
-            <h2>Past Mocktests:</h2>
-            <div className="MTentries-list">
-                {MTentries.map((entry) => (
-                    <MTentry
-                        key={entry.mocktestkey}
-                        mocktestkey={entry.mocktestkey}
-                        filepath={entry.filepath}
-                        scanname={entry.scanname}
-                        Questions={entry.questions}
-                        MTName={entry.mtsessionname}
-                        date={entry.date}
-                        entryType="mocktest"
-                        displayModal={displayModal}
-                    />
-                ))}
-                
-            </div>
         
+
         <div className={`deleteWarn-container ${showModal ? "show" : ""}`}>
             {showModal && (
             <div className="deleteWarn-modal">
@@ -165,7 +132,8 @@ const PastStudy = ({NewMTEntry, NewFCEntry}) => {
                 </div>
             </div>
             )}
-        </div>
+        
+    </div>
 </div>
 );
     

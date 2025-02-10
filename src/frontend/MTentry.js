@@ -1,12 +1,18 @@
 //md delete forever is just a visual icon
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import AddMockTest from "./AddMockTest";
 
-const MTentry = ({ mocktestkey, filepath, Questions, MTName, scanname, date, entryType, displayModal }) => {
+const MTentry = ({ mocktestkey, filepath, Questions, MTName, scanname, date, entryType, displayModal, pausescroll }) => {
     const [showStudyModal, setShowStudyModal] = useState(false);
+    
+    useEffect(() => {
+        pausescroll(showStudyModal);
+    }, [showStudyModal]);
+      
+    
     const handleDelete = () => {
       displayModal(mocktestkey, entryType);
-      setShowStudyModal(false);
+      pausescroll(false);
     };
     
     const handleclose = () => {
@@ -21,10 +27,9 @@ const MTentry = ({ mocktestkey, filepath, Questions, MTName, scanname, date, ent
     
     return (
       <div className="MTentry">
-        <span><strong>Mock Test scan name:</strong> {scanname}</span>
-        <span><strong>Mock Test study name:</strong> {MTName}</span>
-        <span><strong>Date: <small>{date}</small></strong></span>
-
+        <p className="studyEntryTitle">Mock Test study name: {MTName}</p>
+        <p className="studyEntrybody">Mock Test scan name: {scanname}</p>
+        <p className="studyEntrybody">Date: {date} </p>
         <div className="MTentry-footer">
           <button className="study-button" onClick={handleStudy} >
             Study

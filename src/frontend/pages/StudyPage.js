@@ -1,40 +1,73 @@
-import React, { useState } from 'react';
+import { useState, useRef } from 'react';
 import StudyMenu from '../StudyMenu';
 import PastStudy from '../PastStudy';
 import AddFlashCards from '../AddFlashCards';
 import AddMockTest from '../AddMockTest';
 import { useNavigate } from 'react-router-dom';
 import { useScan } from '../ScanContext';
-import Authentication from '../Authentication';
+import PastFlashCardList from '../PastFlashcardList';
+import PastMocktestList from '../PastMocktestList';
+
 
 const Study = () => {
-const { currentScan, setCurrentScan } = useScan(); // Access global state for the current scan
-const navigate = useNavigate();
-const [showFlashCards, setShowFlashCards] = useState(false); // State to control rendering AddFlashCards
-const [showMockTests, setShowMockTests] = useState(false); // State to control rendering AddFlashCards
-const [NewMTEntry, setNewMTEntry, ] = useState(null)
-const [NewFCEntry, setNewFCEntry, ] = useState(null)
-const [clickedButton, setClickedButton] = useState(null); // Track which button was clicked
+    const { currentScan, setCurrentScan } = useScan(); // Access global state for the current scan
+    const navigate = useNavigate();
+    const [showFlashCards, setShowFlashCards] = useState(false); // State to control rendering AddFlashCards
+    const [showMockTests, setShowMockTests] = useState(false); // State to control rendering AddFlashCards
+    const [NewMTEntry, setNewMTEntry, ] = useState(null)
+    const [NewFCEntry, setNewFCEntry, ] = useState(null)
+    const [clickedButton, setClickedButton] = useState(null); // Track which button was clicked
+    const filepath = currentScan?.filepath || "";
+    const scanname = currentScan?.scanname || "";
+    const text = currentScan?.text || "";
+    const date = currentScan?.date || "";
 
+
+    const slidesRef = useRef([]);
+
+    const scrollToNextSlide = () => {
+        const currentSlideIndex = slidesRef.current.findIndex(slide =>
+            slide.getBoundingClientRect().top >= 0
+        );
+
+        if (currentSlideIndex !== -1 && currentSlideIndex < slidesRef.current.length - 1) {
+            slidesRef.current[currentSlideIndex + 1].scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+                inline: "nearest",
+            });
+        }
+
+    };
+
+    const scrollToTop = () => {
+        slidesRef.current[0].scrollIntoView({
+        behavior: "smooth",
+        block: "start", // Ensures it aligns properly with snap
+        inline: "nearest",
+        });
+    };
 
   if (!currentScan) {
     return (
-      <div className="container">
-        <div className="header-wrapper">
-            <h1>Study:</h1>
-            <Authentication/>
+      <div className="studycontainer">
+        <div className="studypagecont">
+            <p className="homepagecont-title">Study Page</p>
+            <p className="homepagecont-body">No scan selected. Please go back and choose a scan. Or a previous study</p>
+            <div className="gobackwrap">
+            <button className="nav-button" onClick={() => navigate('/files')}>Select Scan</button>
+            </div>
         </div>
-        <p>No scan selected. Please go back and choose a scan. Or a previous study</p>
-        <button className="goback-button" onClick={() => navigate('/files')}>Select Scan</button>
         <PastStudy />
       </div>
       
     );
   }
 
-  const { filepath, scanname, text, date } = currentScan; // Destructure the scan data
+  
+  
 
-  // Trigger to show AddFlashCards component
+  // Trig to show AddFlashCards component
   const handleGenerateFlashcards = () => {
     setClickedButton("flashcards");
     setShowFlashCards(true);
@@ -71,18 +104,24 @@ const [clickedButton, setClickedButton] = useState(null); // Track which button 
 
   //showflash cards is the condition representing if we should render addflashcards.js or not
   return (
-    <div className="container">
-        <div className="header-wrapper">
-            <h1>Study: {scanname}</h1>
-            <Authentication/>
+    <div  className="studycontainer">
+        <div ref={(el) => slidesRef.current[0] = el} className="studypagecont">
+            <div className="scanheaderwrapper">
+            <p className="scans-title">Study</p>
+            <button className="viewpast-button" onClick={scrollToNextSlide}>View Saved</button>
+                
+            </div>
+         <div className="notesholder">
+            <span><strong>Scan name:</strong> {scanname}</span>
+            <span><strong>Date: <small>{date}</small></strong></span>
+            <br />
+            <span><strong>Content:</strong></span>
+                <span>{text}</span>
+        </div>
+         <StudyMenu onCardsClick={handleGenerateFlashcards} onTestClick={handleGenerateMocktests} onSwitchScanClick={goToSwitchScan} clickedButton={clickedButton}  />
+         
         </div>
       
-      <p><strong>Date:</strong> {date}</p>
-      <div>
-        <h2>Notes:</h2>
-        <p>{text}</p>
-      </div>
-      <StudyMenu onCardsClick={handleGenerateFlashcards} onTestClick={handleGenerateMocktests} onSwitchScanClick={goToSwitchScan} clickedButton={clickedButton}  />
       {showFlashCards && (
         <AddFlashCards
           filepath={filepath}
@@ -107,7 +146,10 @@ const [clickedButton, setClickedButton] = useState(null); // Track which button 
           prevMT={null}
         />
         )}
-    <PastStudy NewMTEntry={NewMTEntry} NewFCEntry={NewFCEntry}/>
+        
+    <PastFlashCardList NewFCEntry={NewFCEntry} scroll={scrollToNextSlide} slidesRef={slidesRef}/>
+    <PastMocktestList NewMTEntry={NewMTEntry} backtoTop={scrollToTop} slidesRef={slidesRef}/>
+    
     </div>
   );
 };

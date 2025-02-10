@@ -4,21 +4,22 @@ import { useScan } from './ScanContext';
 
 const Authentication = () => {
     const { setCurrentScan } = useScan();
-    const { userId, setUserId } = useUser();
+    const { userId, setUserId, email, setEmail } = useUser();
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showSignUpModal, setShowSignUpModal] = useState(false);
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-    const [email, setEmail] = useState("");
+    const [useremail, setUserEmail] = useState("");
 
     useEffect(() => {
         const storedUserId = localStorage.getItem("userId");
-        if (storedUserId) {
-            setUserId(storedUserId);
-        }
-    }, []);
+        const storedEmail = localStorage.getItem("email");
 
+        if (storedUserId) setUserId(storedUserId);
+        if (storedEmail) setEmail(storedEmail);
+    }, []);
+    
     const handleSignUp = () => {
         setShowSignUpModal(true);
         setErrorMessage("");
@@ -36,7 +37,7 @@ const Authentication = () => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    Email: email,
+                    Email: useremail,
                     Password: password,
                 }),
             });
@@ -45,7 +46,10 @@ const Authentication = () => {
 
             if (data.success) {
                 setUserId(data.userId);
+                setEmail(data.email);
+                console.log(data.email);
                 localStorage.setItem("userId", data.userId);
+                localStorage.setItem("email", data.email);
                 setShowLoginModal(false);
             } else {
                 setErrorMessage("Login failed, invalid credentials");
@@ -56,7 +60,7 @@ const Authentication = () => {
         }
 
         setErrorMessage("");
-        setEmail("");
+        setUserEmail("");
         setPassword("");
     };
 
@@ -64,7 +68,9 @@ const Authentication = () => {
         setCurrentScan(null);
         localStorage.removeItem('currentScan');
         setUserId(null);
+        setEmail(null);
         localStorage.removeItem("userId");
+        localStorage.removeItem("email");
     };
     
     const handleclose = (e) => {
@@ -72,7 +78,7 @@ const Authentication = () => {
         setShowLoginModal(false);
         setShowSignUpModal(false);
         setErrorMessage("");
-        setEmail("");
+        setUserEmail("");
         setPassword("");
         setConfirmPassword("");
     }
@@ -89,7 +95,7 @@ const Authentication = () => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    Email: email,
+                    Email: useremail,
                     Password: password,
                 }),
             });
@@ -108,7 +114,7 @@ const Authentication = () => {
         }
 
         setErrorMessage("");
-        setEmail("");
+        setUserEmail("");
         setPassword("");
         setConfirmPassword("");
         alert("Account created successfully!");
@@ -144,7 +150,7 @@ const Authentication = () => {
                     <form className="loginform" onSubmit={handleLoggedIn}>
                         <p className="loginform-title">Sign in to your account</p>
                         <div className="logininput-container">
-                            <input type="email" placeholder="Enter email" required onChange={(e) => setEmail(e.target.value)} />
+                            <input type="email" placeholder="Enter email" required onChange={(e) => setUserEmail(e.target.value)} />
                         </div>
                         <div className="logininput-container">
                             <input type="password" placeholder="Enter password" required onChange={(e) => setPassword(e.target.value)} />
@@ -174,7 +180,7 @@ const Authentication = () => {
                     <form className="signupform" onSubmit={closeSignUpModal}>
                         <p className="signupform-title">Create an account</p>
                         <div className="signupinput-container">
-                            <input type="text" placeholder="Enter email" required onChange={(e) => setEmail(e.target.value)} />
+                            <input type="text" placeholder="Enter email" required onChange={(e) => setUserEmail(e.target.value)} />
                         </div>
                         <div className="signupinput-container">
                             <input type="password" placeholder="Enter password" required value={password} onChange={(e) => setPassword(e.target.value)} />

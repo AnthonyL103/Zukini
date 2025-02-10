@@ -1,6 +1,6 @@
 import React, { useState} from 'react';
 
-const Question = ({ question, key, updateChosenAnswer}) => { 
+const Question = ({ question,updateChosenAnswer}) => { 
     const [chosen, setChosen] = useState(question.chosen || null);
     
     const handleAnswerChange = (answer) => {

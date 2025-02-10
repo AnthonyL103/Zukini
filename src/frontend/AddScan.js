@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useUser } from './UserContext';
 
 
-const AddScan = ({onAddScan})  => {
+const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
     const [lastFile, setLastFile] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [parsedText, setParsedText] = useState("");
@@ -161,6 +161,7 @@ const AddScan = ({onAddScan})  => {
       }
     
     };
+    
 
     useEffect(() => {
         if (showModal && parsedText.trim() !== "") {
@@ -181,17 +182,21 @@ const AddScan = ({onAddScan})  => {
             }, 50);
       }
   }, [showModal, parsedText]);
+  
+  
+  const scrolltoTop = () => {
+    scrollToTop();
+  };
     
   return (
     <>
-    <div className = "scanwrapper" >
-      <div className="scan new">
-      <label htmlFor="scanName" className="Make-bold">Create a new scan:</label>
+    <div ref={(el) => slidesRef.current[1] = el} className ="addscanpagecontainer" >
+        <p className='scans-title'>Create New Scan:</p>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="Uploadscancontainer">
         <input
         type="text"
-        className="scanname"
+        className="addscannameinput"
         id="scanName"
         value={scanName}
         onChange={handleScanNameChange}
@@ -216,24 +221,37 @@ const AddScan = ({onAddScan})  => {
         <button className="fileinput" type="button" onClick={onsave} disabled={!saveEnabled} >Save</button>
         </div>
        </form>
+       
+       <div className="addscanwrap">
+       <button className="gobackbutton" onClick={scrolltoTop}>
+                <svg className="svgIcon" viewBox="0 0 384 512">
+                    <path
+                    d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"
+                    ></path>
+                </svg>
+            </button>
+
+        </div>
       </div>
-      </div>
+      
   
       
     <div className={`parsedTextmodal-container ${showModal ? "show" : ""}`}>
     {showModal && (
     <div className="parsedText-modal">
-      <h2 className="parsedText-heading">Parsed Text</h2>
-      <p className="parsedText-para">{displayedText}</p>
-      <div className="fcmodal-content-footer">
+      <p className="modal-title">Parsed Text:</p>
+      <div className="parsedTextcontent"> 
+        <p className="parsedText-para">{displayedText}</p>
+      </div>
+      <div className="parsedTextmodal-footer">
         <button
-          className="parsedText-buttonaccept"
+          className="deleteWarn-buttoncancel"
           onClick={handleCloseModal}
         >
           Accept
         </button>
         <button
-          className="parsedText-buttonRe-Scan"
+          className="deleteWarn-buttoncancel"
           onClick={handleReScan}
         >
           Re-Scan
