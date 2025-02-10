@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const { parseTextFromBuffer, parseTextFromPDF } = require('./parse');
-const { UploadFile, ParsedTextEntries } = require('./db');
+const { userinfos, ParsedTextEntries } = require('./db');
 //allows to read and write files
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
@@ -19,7 +19,7 @@ async function ensureGuestUserExists(userId) {
         const existingGuest = await UserInfos.findOne({ where: { id: userId } });
 
         if (!existingGuest) {
-            await UserInfos.create({
+            await userinfos.create({
                 id: userId,
                 email: `${uuidv4()}@guest.local`, 
                 createdAt: new Date(),
