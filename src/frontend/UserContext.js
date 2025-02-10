@@ -1,19 +1,35 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 // Create Context
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-    const [userId, setUserId] = useState(() => localStorage.getItem("userId") || null);
+    const [userId, setUserId] = useState(() => {
+        let storedUserId = localStorage.getItem("userId") || sessionStorage.getItem("guestUserId");
+        
+        if (!storedUserId) {
+            storedUserId = `guest-${uuidv4()}`;
+            sessionStorage.setItem("guestUserId", storedUserId);
+        }
+        return storedUserId;
+    });
+
     const [email, setEmail] = useState(() => localStorage.getItem("email") || null);
     const [totalScans, setTotalScans] = useState(0);
     const [totalFlashcards, setTotalFlashcards] = useState(0);
     const [totalMockTests, setTotalMockTests] = useState(0);
 
     // Save userId and email to localStorage
+    
     useEffect(() => {
-        if (userId) localStorage.setItem("userId", userId);
-        if (email) localStorage.setItem("email", email);
+        if (userId.startsWith("guest-")) {
+            sessionStorage.setItem("guestUserId", userId);
+        } else {
+            localStorage.setItem("userId", userId);
+            localStorage.setItem("email", email);
+            sessionStorage.removeItem("guestUserId"); // Remove guest ID if user logs in
+        }
     }, [userId, email]);
 
     // Fetch total scans, flashcards, and mock tests when userId changes

@@ -51,14 +51,15 @@ const Study = () => {
   if (!currentScan) {
     return (
       <div className="studycontainer">
-        <div className="studypagecont">
+        <div ref={(el) => slidesRef.current[0] = el}  className="studypagecont">
             <p className="homepagecont-title">Study Page</p>
             <p className="homepagecont-body">No scan selected. Please go back and choose a scan. Or a previous study</p>
             <div className="addscanwrap">
             <button className="nav-button" onClick={() => navigate('/files')}>Select Scan</button>
             </div>
         </div>
-        <PastStudy />
+        <PastFlashCardList NewFCEntry={NewFCEntry} scroll={scrollToNextSlide} slidesRef={slidesRef}/>
+        <PastMocktestList NewMTEntry={NewMTEntry} backtoTop={scrollToTop} slidesRef={slidesRef}/>
       </div>
       
     );

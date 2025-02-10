@@ -14,10 +14,25 @@ const port = 5002;
 
 app.use(cors());
 
+async function ensureGuestUserExists(userId) {
+    if (userId.startsWith("guest-")) {
+        const existingGuest = await UserInfos.findOne({ where: { id: userId } });
 
+        if (!existingGuest) {
+            await UserInfos.create({
+                id: userId,
+                email: `${uuidv4()}@guest.local`, 
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            });
+            console.log(`Guest user ${userId} added to userinfos`);
+        }
+    }
+}
 
 async function appendTextToDB(newEntry) {
     try {
+      await ensureGuestUserExists(newEntry.userid);
         
       // Insert the new entry into the database
       await ParsedTextEntries.create({

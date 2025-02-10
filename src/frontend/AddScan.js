@@ -4,6 +4,7 @@ import { useUser } from './UserContext';
 
 
 const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
+    
     const [lastFile, setLastFile] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [parsedText, setParsedText] = useState("");
@@ -101,6 +102,10 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
     
     const onsave = async () => {
       try {
+        let userid = userId;
+        if (!userId) {
+            
+        }
         // Prepare the data as JSON
         const key = uuidv4();
         console.log("currkey", key);

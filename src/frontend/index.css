@@ -1393,7 +1393,9 @@ body {
     
   
     .socialcard {
+      margin-top:2vh;
       height: fit-content;
+      background-color: #000;
       display: flex;
       border-radius: 15px;
       align-items: center;

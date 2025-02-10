@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useUser } from './UserContext';
 import { useScan } from './ScanContext';
+import { v4 as uuidv4 } from 'uuid';
+
 
 const Authentication = () => {
     const { setCurrentScan } = useScan();
@@ -67,7 +69,9 @@ const Authentication = () => {
     const handleLogout = () => {
         setCurrentScan(null);
         localStorage.removeItem('currentScan');
-        setUserId(null);
+        const newGuestId = `guest-${uuidv4()}`;
+        sessionStorage.setItem("guestUserId", newGuestId); // Store in session storage
+        setUserId(newGuestId); // Assign new guest ID instead of null
         setEmail(null);
         setTotalScans(0);
         setTotalFlashcards(0);
@@ -129,10 +133,12 @@ const Authentication = () => {
         setConfirmPassword("");
         alert("Account created successfully!");
     };
+    
+    const isGuestUser = userId && typeof userId === "string" && userId.startsWith("guest-");
 
     return (
         <div className="account-wrapper">
-            {userId ? (
+            {userId && !isGuestUser? (
                 <button className="logoutbutton" onClick={handleLogout}>
                     Log Out
                     <div className="arrow-wrapper">

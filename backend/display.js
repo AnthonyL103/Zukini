@@ -157,3 +157,35 @@ app.post('/deleteFC', async (req, res) => {
   });
   // Start the server
   app.listen(PORT, '0.0.0.0', () => console.log(`Display server running on port ${PORT}`));
+  
+  
+app.post('/deleteGuestAll', async (req, res) => {
+    const { key, userId} = req.body;
+    console.log("backend", key);
+  
+    if (!key) {
+      return res.status(400).json({ error: 'key not sent' });
+    }
+  
+    try {
+      // Delete the scan with the matching filepath
+      const result = await FlashCardEntries.destroy({ 
+        where: {
+        flashcardkey: key,
+        userid: userId
+        } 
+    });
+  
+      if (result === 0) {
+        // No rows were deleted
+        return res.status(404).json({ error: 'fc not found' });
+      }
+  
+      console.log(`Deleted fc with key: ${key}`);
+      res.status(200).json({ message: 'fc deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting fc from database:', error);
+      res.status(500).json({ error: 'Failed to delete fc.' });
+    }
+  });
+  
