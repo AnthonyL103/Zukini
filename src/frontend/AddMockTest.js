@@ -190,7 +190,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
                             <button className="deleteWarn-buttoncancel" onClick={closemtmodal}>
                                 Done
                             </button>
-                            <button className="deleteWarn-button" onClick={showNameModal}>
+                            <button className="deleteWarn-buttoncancel" onClick={showNameModal}>
                                 Save and Exit
                             </button>
                         </>

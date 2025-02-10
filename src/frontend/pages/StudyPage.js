@@ -54,7 +54,7 @@ const Study = () => {
         <div className="studypagecont">
             <p className="homepagecont-title">Study Page</p>
             <p className="homepagecont-body">No scan selected. Please go back and choose a scan. Or a previous study</p>
-            <div className="gobackwrap">
+            <div className="addscanwrap">
             <button className="nav-button" onClick={() => navigate('/files')}>Select Scan</button>
             </div>
         </div>

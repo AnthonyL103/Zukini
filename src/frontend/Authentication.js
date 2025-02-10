@@ -4,7 +4,7 @@ import { useScan } from './ScanContext';
 
 const Authentication = () => {
     const { setCurrentScan } = useScan();
-    const { userId, setUserId, email, setEmail } = useUser();
+    const { userId, setUserId, setEmail, setTotalScans, setTotalFlashcards, setTotalMockTests} = useUser();
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showSignUpModal, setShowSignUpModal] = useState(false);
     const [password, setPassword] = useState("");
@@ -69,6 +69,9 @@ const Authentication = () => {
         localStorage.removeItem('currentScan');
         setUserId(null);
         setEmail(null);
+        setTotalScans(0);
+        setTotalFlashcards(0);
+        setTotalMockTests(0);
         localStorage.removeItem("userId");
         localStorage.removeItem("email");
     };
@@ -87,6 +90,13 @@ const Authentication = () => {
         e.preventDefault();
         if (password !== confirmPassword) {
             setErrorMessage("Passwords do not match");
+            return;
+        }
+        //regular expression that defines a string that as at least one of those symbols digits and over 8 characters long
+        const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+    
+        if (!passwordRegex.test(password)) {
+            setErrorMessage("Password must be at least 8 characters long and include at least one number and one special character.");
             return;
         }
 

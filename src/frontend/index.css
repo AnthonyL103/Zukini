@@ -122,7 +122,7 @@ body {
   .scrollbutton:hover {
     max-width: 150px;
     min-width:100px;
-    border-radius: 0.5rem;
+    border-radius: 15px;
     transition-duration: 0.3s;
     background-color: rgb(181, 160, 255);
     align-items: center;
@@ -184,7 +184,7 @@ body {
   .gobackbutton:hover {
     min-width:100px;
     max-width: 150px;
-    border-radius: 0.5rem;
+    border-radius: 15px;
     transition-duration: 0.3s;
     background-color: rgb(181, 160, 255);
     align-items: center;
@@ -231,7 +231,7 @@ body {
     text-transform: uppercase;
     vertical-align: middle;
     align-items: center;
-    border-radius: 0.5rem;
+    border-radius: 15px;
     user-select: none;
     gap: 0.75rem;
     box-shadow:
@@ -317,7 +317,7 @@ body {
 .scanname {
     padding: 5px;
     border: 2px solid #ccc;
-    border-radius: 5px;
+    border-radius: 15px;
     font-size: 16px;
     color: #555;
     width:auto;
@@ -371,7 +371,7 @@ body {
     border: 2px solid #ccc;
     width:30vw;
     min-height: 2vw;
-    border-radius: 5px;
+    border-radius: 15px;
     font-size: 16px;
     color: #555;
     outline: none;
@@ -431,7 +431,7 @@ body {
     border: 2px solid #ccc;
     min-width:20%;
     min-height: 30px;
-    border-radius: 5px;
+    border-radius: 15px;
     font-size: 16px;
     color: #555;
     outline: none;
@@ -448,7 +448,8 @@ body {
   border: none;
   display: flex;
   padding: 0.75rem 1.5rem;
-  background-color: #488aec;
+  height:7vh;
+  background-color: #000000;
   color: #ffffff;
   font-size: 0.75rem;
   line-height: 1rem;
@@ -458,7 +459,7 @@ body {
   text-transform: uppercase;
   vertical-align: middle;
   align-items: center;
-  border-radius: 0.5rem;
+  border-radius: 15px;
   user-select: none;
   gap: 0.75rem;
   box-shadow:
@@ -467,13 +468,13 @@ body {
   transition: all 0.6s ease;
 }
 .fileinput:hover {
-    background-color: #ffffff;
+    background-color: rgb(181, 160, 255);
     color: hsl(0, 0%, 4%);
     cursor: pointer;
 }
   
 .fileinput:active {
-    background-color: #ffffff;
+    background-color: rgb(181, 160, 255);
     color: hsl(0, 0%, 3%);
     transform: translateY(10px);
     transition: 100ms;
@@ -498,7 +499,7 @@ body {
     text-transform: uppercase;
     vertical-align: middle;
     align-items: center;
-    border-radius: 10px;
+    border-radius: 15px;
     user-select: none;
     gap: 0.75rem;
     box-shadow:
@@ -540,7 +541,7 @@ body {
   .save{
       background-color: #ffffff;
       border: none;
-      border-radius: 5px;
+      border-radius: 15px;
       padding: 5px 10px 5px 10px;
       
   }
@@ -564,7 +565,7 @@ body {
     border: none;
     display: flex;
     padding: 0.75rem 1.5rem;
-    background-color: #488aec;
+    background-color: #000000;
     color: #ffffff;
     justify-content: center;
     font-size: 0.75rem;
@@ -575,7 +576,7 @@ body {
     text-transform: uppercase;
     vertical-align: middle;
     align-items: center;
-    border-radius: 0.5rem;
+    border-radius: 15px;
     user-select: none;
     gap: 0.75rem;
     box-shadow:
@@ -584,13 +585,13 @@ body {
     transition: all 0.6s ease;
   }
   .study-button:hover:hover {
-      background-color: #f6f5f1;
+      background-color: rgb(181, 160, 255);
       color: hsl(0, 0%, 4%);
       cursor: pointer;
   }
     
   .study-button:active {
-      background-color: #f7f7f3;
+      background-color: rgb(181, 160, 255);
       color: hsl(0, 0%, 3%);
       transform: translateY(10px);
       transition: 100ms;
@@ -613,7 +614,7 @@ body {
     text-transform: uppercase;
     vertical-align: middle;
     align-items: center;
-    border-radius: 0.5rem;
+    border-radius: 15px;
     user-select: none;
     gap: 0.75rem;
     box-shadow:
@@ -622,13 +623,13 @@ body {
     transition: all 0.6s ease;
   }
   .del-button:hover:hover {
-      background-color: #f9f9f5;
+      background-color: rgb(181, 160, 255);
       color: hsl(0, 0%, 4%);
       cursor: pointer;
   }
     
   .del-button:active {
-      background-color: #faf9f5;
+      background-color: rgb(181, 160, 255);
       color: hsl(0, 0%, 3%);
       transform: translateY(10px);
       transition: 100ms;
@@ -664,7 +665,7 @@ body {
       scrollbar-width: none;
       -ms-overflow-style: none;
       background-color: #ffffff;
-      border-radius: 5px;
+      border-radius: 15px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       padding:20px;
       width: 100%;
@@ -685,81 +686,6 @@ body {
       color: rgb(51, 51, 51);
     }
     
-  .parsedText-buttonaccept {
-      width: 50%;
-      border: none;
-      display: flex;
-      padding: 0.75rem 1.5rem;
-      background-color: #488aec;
-      color: #ffffff;
-      justify-content: center;
-      font-size: 0.75rem;
-      line-height: 1rem;
-      font-weight: 700;
-      text-align: center;
-      cursor: pointer;
-      text-transform: uppercase;
-      vertical-align: middle;
-      align-items: center;
-      border-radius: 0.5rem;
-      user-select: none;
-      gap: 0.75rem;
-      box-shadow:
-        0 4px 6px -1px #488aec31,
-        0 2px 4px -1px #488aec17;
-      transition: all 0.6s ease;
-    }
-    .parsedText-buttonaccept:hover {
-        background-color: #67d7cc;
-        color: hsl(0, 0%, 4%);
-        cursor: pointer;
-    }
-      
-    .parsedText-buttonaccept:active {
-        background-color: #67d7cc;
-        color: hsl(0, 0%, 3%);
-        transform: translateY(10px);
-        transition: 100ms;
-        cursor: pointer;
-    }
-    
-    .parsedText-buttonRe-Scan {
-      width: 50%;
-      border: none;
-      display: flex;
-      justify-content: center;
-      padding: 0.75rem 1.5rem;
-      background-color: #488aec;
-      color: #ffffff;
-      font-size: 0.75rem;
-      line-height: 1rem;
-      font-weight: 700;
-      text-align: center;
-      cursor: pointer;
-      text-transform: uppercase;
-      vertical-align: middle;
-      align-items: center;
-      border-radius: 0.5rem;
-      user-select: none;
-      gap: 0.75rem;
-      box-shadow:
-        0 4px 6px -1px #488aec31,
-        0 2px 4px -1px #488aec17;
-      transition: all 0.6s ease;
-    }
-    .parsedText-buttonRe-Scan:hover {
-        background-color: #67d7cc;
-        color: hsl(0, 0%, 4%);
-        cursor: pointer;
-    }
-      
-    .parsedText-buttonRe-Scan:active {
-        background-color: #67d7cc;
-        color: hsl(0, 0%, 3%);
-        transform: translateY(10px);
-        transition: 100ms;
-        cursor: pointer;
-    }
     
   .deleteWarn-container {
       background-color: rgba(0, 0, 0, 0.3);
@@ -785,7 +711,7 @@ body {
     .deleteWarn-modal {
       background-color: rgb(255, 250, 250);
       width: 50%;
-      border-radius: 5px;
+      border-radius: 15px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       padding: 30px 50px;
       max-width: 100%;
@@ -824,7 +750,7 @@ body {
     text-transform: uppercase;
     vertical-align: middle;
     align-items: center;
-    border-radius: 0.5rem;
+    border-radius: 15px;
     user-select: none;
     gap: 0.75rem;
     box-shadow:
@@ -851,7 +777,7 @@ body {
         width: 48%;
         height: 7vh;
         padding: 0.75rem 1.5rem;
-        background-color: #000000;
+        background-color: #eb4408;
         color: #ffffff;
         box-shadow: 0px 0px 0px 4px rgba(180, 160, 255, 0.253);
         justify-content: center;
@@ -863,7 +789,7 @@ body {
         text-transform: uppercase;
         vertical-align: middle;
         align-items: center;
-        border-radius: 0.5rem;
+        border-radius: 15px;
         user-select: none;
         gap: 0.75rem;
         box-shadow:
@@ -925,7 +851,7 @@ body {
         align-items: center;
         width: 70px;
         height: 50px;
-        border-radius: 5px;
+        border-radius: 15px;
         position: relative;
         z-index: 1;
         overflow: hidden;
@@ -938,7 +864,7 @@ body {
           z-index: -1;
           content: "";
           display: block;
-          border-radius: 5px;
+          border-radius: 15px;
           width: 100%;
           height: 100%;
           top: 0;
@@ -992,7 +918,7 @@ body {
       align-items: center;
       width: 70px;
       height: 50px;
-      border-radius: 5px;
+      border-radius: 15px;
       position: relative;
       z-index: 1;
       overflow: hidden;
@@ -1005,7 +931,7 @@ body {
         z-index: -1;
         content: "";
         display: block;
-        border-radius: 5px;
+        border-radius: 15px;
         width: 100%;
         height: 100%;
         top: 0;
@@ -1119,7 +1045,7 @@ body {
     text-transform: uppercase;
     vertical-align: middle;
     align-items: center;
-    border-radius: 0.5rem;
+    border-radius: 15px;
     user-select: none;
     gap: 0.75rem;
     box-shadow:
@@ -1192,7 +1118,7 @@ body {
     scrollbar-width: none;
     -ms-overflow-style: none;
     background-color: #fff;
-    border-radius: 5px;
+    border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     padding:20px;
     width: 100%;
@@ -1234,7 +1160,7 @@ body {
     border-radius: 15px;
     padding: 1rem;
     font-size: larger;
-    height: 60vh;
+    height: 70vh;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -1354,7 +1280,7 @@ body {
       background: #deded8;
       border: 2px solid black;
       color: #000;
-      border-radius: 5px;
+      border-radius: 15px;
       border-color: #000;
       height: 275px;
     }
@@ -1379,7 +1305,7 @@ body {
       background-color: #000000;
       padding: 10px;
       color: #fff;
-      border-radius: 5px;
+      border-radius: 15px;
       font-size: 15px;
       line-height: 12px;
       font-weight: 600;
@@ -1392,7 +1318,7 @@ body {
       margin: 8px 0 0 0;
       font-size: 13px;
       font-weight: 600;
-      border-radius: 5px;
+      border-radius: 15px;
       cursor: pointer;
       border: 1px solid rgba(9, 9, 9, 0.164);
       color: #ffffff;
@@ -1425,7 +1351,7 @@ body {
       background: #deded8;
       border: 2px solid rgba(9, 9, 9, 0.164);
       color: #000;
-      border-radius: 5px;
+      border-radius: 15px;
       border-color: #000;
       height: 275px;
   }
@@ -1435,7 +1361,7 @@ body {
   
   .submit-button {
       padding: 17px 40px;
-      border-radius: 5px;
+      border-radius: 15px;
       border: 1px solid rgba(9, 9, 9, 0.164);
       color:#ffffff;
       background-color: #000000;
@@ -1469,7 +1395,7 @@ body {
     .socialcard {
       height: fit-content;
       display: flex;
-      border-radius: 5px;
+      border-radius: 15px;
       align-items: center;
       justify-content: center;
       padding: 25px;
@@ -1483,7 +1409,7 @@ body {
       height: 52px;
       background-color: #deded8;
       display: flex;
-      border-radius: 5px;
+      border-radius: 15px;
       align-items: center;
       justify-content: center;
       overflow: hidden;
@@ -1547,11 +1473,17 @@ body {
       gap: 20px;
     }
     .account-wrapper {
-        margin: 20px 0 0 0;
+        margin-top:auto;
         flex-direction: column;
         display: flex;
         gap: 3vw;
     }
+    .account-body {
+        margin: 20px 0 0 0;
+        color: rgb(255, 255, 255);
+        font-size: clamp(1.5rem, 3vw, 2.5rem);
+    }
+    
     .signupbutton {
       --primary-color: #000000;
       --secondary-color: #ffffff;
@@ -1769,7 +1701,7 @@ body {
   .loginform {
       background-color: rgb(255, 250, 250);
       width: 600px;
-      border-radius: 5px;
+      border-radius: 15px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       padding: 30px;
       max-width: 100%;
@@ -1799,7 +1731,7 @@ body {
       background-color: #fff;
       padding: 10px;
       border: 2px solid #ccc;
-      border-radius: 5px;
+      border-radius: 15px;
       font-size: 16px;
       color: #555;
       width: 85%;
@@ -1811,7 +1743,7 @@ body {
   .signupform {
       background-color: rgb(255, 250, 250);
       width: 600px;
-      border-radius: 5px;
+      border-radius: 15px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       padding: 30px;
       max-width: 100%;
@@ -1842,7 +1774,7 @@ body {
       background-color: #fff;
       padding: 10px;
       border: 2px solid #ccc;
-      border-radius: 5px;
+      border-radius: 15px;
       font-size: 16px;
       color: #555;
       width: 85%;
@@ -1868,7 +1800,7 @@ body {
       width: 48%;
       display: flex;
       padding: 0.75rem 1.5rem;
-      background-color: #488aec;
+      background-color: #000000;
       color: #ffffff;
       font-size: 0.75rem;
       line-height: 1rem;
@@ -1878,7 +1810,7 @@ body {
       text-transform: uppercase;
       vertical-align: middle;
       align-items: center;
-      border-radius: 0.5rem;
+      border-radius: 15px;
       user-select: none;
       gap: 0.75rem;
       box-shadow:
@@ -1887,13 +1819,13 @@ body {
       transition: all 0.6s ease;
     }
     .login-buttonsignin:hover {
-        background-color: #67d7cc;
+        background-color: rgb(181, 160, 255);
         color: hsl(0, 0%, 4%);
         cursor: pointer;
     }
       
     .login-buttonsignin:active {
-        background-color: #67d7cc;
+        background-color: rgb(181, 160, 255);
         color: hsl(0, 0%, 3%);
         transform: translateY(10px);
         transition: 100ms;
@@ -1916,7 +1848,7 @@ body {
       text-transform: uppercase;
       vertical-align: middle;
       align-items: center;
-      border-radius: 0.5rem;
+      border-radius: 15px;
       user-select: none;
       gap: 0.75rem;
       box-shadow:
@@ -1925,13 +1857,13 @@ body {
       transition: all 0.6s ease;
     }
     .login-buttonclose:hover {
-        background-color: #67d7cc;
+        background-color: rgb(181, 160, 255);
         color: hsl(0, 0%, 4%);
         cursor: pointer;
     }
       
     .login-buttonclose:active {
-        background-color: #67d7cc;
+        background-color: rgb(181, 160, 255);
         color: hsl(0, 0%, 3%);
         transform: translateY(10px);
         transition: 100ms;
@@ -2107,7 +2039,7 @@ body {
     .EnterName-modal {
       background-color: rgb(255, 250, 250);
       width:50%;
-      border-radius: 5px;
+      border-radius: 15px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       padding: 30px;
       text-align: center;
@@ -2121,7 +2053,7 @@ body {
       padding: 5px;
       border: 2px solid #ccc;
       height: 40px;
-      border-radius: 5px;
+      border-radius: 15px;
       font-size: 16px;
       color: #555;
       outline: none;
@@ -2138,7 +2070,7 @@ body {
       border: none;
       display: flex;
       padding: 0.75rem 1.5rem;
-      background-color: #488aec;
+      background-color: #000000;
       color: #ffffff;
       font-size: 0.75rem;
       line-height: 1rem;
@@ -2148,7 +2080,7 @@ body {
       text-transform: uppercase;
       vertical-align: middle;
       align-items: center;
-      border-radius: 0.5rem;
+      border-radius: 15px;
       user-select: none;
       gap: 0.75rem;
       box-shadow:
@@ -2157,13 +2089,13 @@ body {
       transition: all 0.6s ease;
     }
     .EnterName-button:hover {
-        background-color: #67d7cc;
+        background-color: rgb(181, 160, 255);
         color: hsl(0, 0%, 4%);
         cursor: pointer;
     }
       
     .EnterName-button:active {
-        background-color: #67d7cc;
+        background-color: rgb(181, 160, 255);
         color: hsl(0, 0%, 3%);
         transform: translateY(10px);
         transition: 100ms;

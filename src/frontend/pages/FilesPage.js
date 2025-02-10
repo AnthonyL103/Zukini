@@ -8,7 +8,7 @@ const FilesPage = () => {
   const [scans, setScans] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [scanToDelete, setScanToDelete] = useState(null); 
-  const { userId } = useUser();
+  const { userId, setTotalScans } = useUser();
   const slidesRef = useRef([]);
   
   useEffect(() => {
@@ -74,7 +74,11 @@ const FilesPage = () => {
       }
 
       // Update the state to remove the deleted scan
-      setScans((prevScans) => prevScans.filter((scan) => scan.scankey !== scanToDelete));
+      setScans((prevScans) => {
+        const updatedScans = prevScans.filter((scan) => scan.scankey !== scanToDelete);
+        setTotalScans(updatedScans.length); // Ensure totalScans updates dynamically
+        return updatedScans;
+    });
       console.log('Scan deleted successfully:', scanToDelete);
       setShowModal(false);
     } catch (error) {
@@ -85,7 +89,11 @@ const FilesPage = () => {
   
   
   const handleAddScan = (newScan) => {
-    setScans((prevScans) => [...prevScans, newScan]); // Add the new scan to the state
+    setScans((prevScans) => {
+        const updatedScans = [...prevScans, newScan];
+        setTotalScans(updatedScans.length); // Ensure totalScans updates dynamically
+        return updatedScans;
+    });
   };
 
   return (

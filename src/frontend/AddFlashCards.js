@@ -170,7 +170,7 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC
                                 <button className="deleteWarn-buttoncancel" onClick={closefcmodal}>
                                     Done
                                 </button>
-                                <button className="deleteWarn-button" onClick={showNameModal}>
+                                <button className="deleteWarn-buttoncancel" onClick={showNameModal}>
                                     Save and Exit
                                 </button>
                             </>

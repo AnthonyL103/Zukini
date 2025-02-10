@@ -14,7 +14,7 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
     const [isStudyModalOpen, setIsStudyModalOpen] = useState(false); 
     const [itemsPerView, setItemsPerView] = useState(window.innerWidth < 768 ? 1 : 2);
     const [FCName, setFCName] = useState("");
-    const { userId } = useUser();
+    const { userId, setTotalFlashcards} = useUser();
 
     const scrollDelay = 7000; // Adjust this value to change delay time
     
@@ -38,9 +38,15 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
     
     useEffect(() => {
         if (NewFCEntry) {
-            setFCentries((prev) => [...prev, NewFCEntry]);
+            setFCentries((prev) => {
+                const updatedFCentries = [...prev, NewFCEntry];
+                setTotalFlashcards(updatedFCentries.length); // 
+                return updatedFCentries; 
+            });
         }
     }, [NewFCEntry]);
+    
+    
 
     
     const displayModal = (key, type) => {
@@ -72,8 +78,11 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
             }
 
             
-            setFCentries((prev) => prev.filter((entry) => entry.flashcardkey !== entryToDelete));
-        
+            setFCentries((prev) => {
+                const updatedFCentries = prev.filter((entry) => entry.flashcardkey !== entryToDelete);
+                setTotalFlashcards(updatedFCentries.length); 
+                return updatedFCentries; 
+            });
 
             console.log(`${entryType} deleted successfully:`, entryToDelete);
             setShowModal(false);

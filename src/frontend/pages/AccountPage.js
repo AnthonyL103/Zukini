@@ -11,11 +11,11 @@ const AccountPage = () => {
         <div className="Accountcontainer">
             <div className="Accountpagecont">
             <p className="homepagecont-title">Account Information: </p>
-            <p className="homepagecont-body">Account id: {userId} </p>
-            <p className="homepagecont-body">Account email: {email}</p>
-            <p className="homepagecont-body">Total scans: {totalScans} </p>
-            <p className="homepagecont-body">Total Flashcards: {totalFlashcards} </p>
-            <p className="homepagecont-body">Total Mocktests: {totalMockTests} </p>
+            <p className="account-body">Account id: {userId} </p>
+            <p className="account-body">Account email: {email}</p>
+            <p className="account-body">Total scans: {totalScans} </p>
+            <p className="account-body">Total Flashcards: {totalFlashcards} </p>
+            <p className="account-body">Total Mocktests: {totalMockTests} </p>
             <Authentication/>
             </div>
         </div>

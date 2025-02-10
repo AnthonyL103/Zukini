@@ -14,7 +14,7 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
     const [isPaused, setIsPaused] = useState(false);
     const [itemsPerView, setItemsPerView] = useState(window.innerWidth < 768 ? 1 : 2);
     const [MTName, setMTName] = useState("");
-    const { userId } = useUser();
+    const { userId, setTotalMockTests} = useUser();
 
     const scrollDelay = 7000; // Adjust this value to change delay time
     
@@ -40,9 +40,13 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
     
     useEffect(() => {
         if (NewMTEntry) {
-            setMTentries((prev) => [...prev, NewMTEntry]);
+            setMTentries((prev) => {
+                const updatedMTentries = [...prev, NewMTEntry];
+                setTotalMockTests(updatedMTentries.length); // Update total mock tests
+                return updatedMTentries;
+            });
         }
-    }, [NewMTEntry]);
+    }, [NewMTEntry, setTotalMockTests]);
     
     
     const displayModal = (key, type) => {
@@ -76,8 +80,11 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
             }
 
             
-            setMTentries((prev) => prev.filter((entry) => entry.mocktestkey !== entryToDelete));
-            
+            setMTentries((prev) => {
+                const updatedMTentries = prev.filter((entry) => entry.mocktestkey !== entryToDelete);
+                setTotalMockTests(updatedMTentries.length); // Update total mock tests
+                return updatedMTentries;
+            });            
 
             console.log(`${entryType} deleted successfully:`, entryToDelete);
             setShowModal(false);
