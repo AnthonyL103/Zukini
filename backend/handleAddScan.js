@@ -16,7 +16,7 @@ app.use(cors());
 
 async function ensureGuestUserExists(userId) {
     if (userId.startsWith("guest-")) {
-        const existingGuest = await UserInfos.findOne({ where: { id: userId } });
+        const existingGuest = await userinfos.findOne({ where: { id: userId } });
 
         if (!existingGuest) {
             await userinfos.create({
