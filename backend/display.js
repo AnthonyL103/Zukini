@@ -65,7 +65,7 @@ app.get('/displaymocktests', async (req, res) => {
   
 // Delete a scan (POST /deleteScan)
 app.delete('/deleteScan', async (req, res) => {
-    const { key, userId} = req.body;
+    const { key, userId} = req.query;
     console.log("backend", key);
   
     if (!key) {
@@ -97,7 +97,7 @@ app.delete('/deleteScan', async (req, res) => {
    
 
 app.delete('/deleteFC', async (req, res) => {
-    const { key, userId} = req.body;
+    const { key, userId} = req.query;
     console.log("backend", key);
   
     if (!key) {
@@ -127,7 +127,7 @@ app.delete('/deleteFC', async (req, res) => {
   });
   
   app.delete('/deleteMT', async (req, res) => {
-    const { key, userId} = req.body;
+    const { key, userId} = req.query;
     console.log("backend", key);
   
     if (!key) {
