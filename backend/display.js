@@ -159,6 +159,7 @@ app.delete('/deleteFC', async (req, res) => {
   
   
   app.delete('/deleteGuestAll', async (req, res) => {
+    console.log("at delete guest all");
     const { userId } = req.query;
 
     if (!userId || !userId.startsWith("guest-")) {
