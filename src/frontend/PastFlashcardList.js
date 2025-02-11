@@ -65,31 +65,29 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
     
     const handleDeleteEntry = async () => {
         try {
-            let endpoint = "http://18.236.227.203:5001/deleteFC";
-
+            let endpoint = `http://18.236.227.203:5001/deleteFC?userId=${userId}&key=${entryToDelete}`;
+    
             const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: userId, key: entryToDelete }),
+                method: 'DELETE',
             });
-
+    
             if (!response.ok) {
                 throw new Error(`Failed to delete ${entryType}`);
             }
-
-            
+    
             setFCentries((prev) => {
                 const updatedFCentries = prev.filter((entry) => entry.flashcardkey !== entryToDelete);
                 setTotalFlashcards(updatedFCentries.length); 
                 return updatedFCentries; 
             });
-
+    
             console.log(`${entryType} deleted successfully:`, entryToDelete);
             setShowModal(false);
         } catch (error) {
             console.error(`Error deleting ${entryType}:`, error);
         }
     };
+    
     
 
     // Adjust `itemsPerView` based on screen size

@@ -64,7 +64,7 @@ app.get('/displaymocktests', async (req, res) => {
 });
   
 // Delete a scan (POST /deleteScan)
-app.post('/deleteScan', async (req, res) => {
+app.delete('/deleteScan', async (req, res) => {
     const { key, userId} = req.body;
     console.log("backend", key);
   
@@ -96,7 +96,7 @@ app.post('/deleteScan', async (req, res) => {
   
    
 
-app.post('/deleteFC', async (req, res) => {
+app.delete('/deleteFC', async (req, res) => {
     const { key, userId} = req.body;
     console.log("backend", key);
   
@@ -126,7 +126,7 @@ app.post('/deleteFC', async (req, res) => {
     }
   });
   
-  app.post('/deleteMT', async (req, res) => {
+  app.delete('/deleteMT', async (req, res) => {
     const { key, userId} = req.body;
     console.log("backend", key);
   
@@ -158,7 +158,7 @@ app.post('/deleteFC', async (req, res) => {
   // Start the server
   
   
-  app.post('/deleteGuestAll', async (req, res) => {
+  app.delete('/deleteGuestAll', async (req, res) => {
     const { userId } = req.body;
 
     if (!userId || !userId.startsWith("guest-")) {

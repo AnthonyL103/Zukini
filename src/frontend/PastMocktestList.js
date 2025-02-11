@@ -67,18 +67,15 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
     
     const handleDeleteEntry = async () => {
         try {
-            let endpoint = "http://18.236.227.203:5001/deleteMT";
-
+            let endpoint = `http://18.236.227.203:5001/deleteMT?userId=${userId}&key=${entryToDelete}`;
+    
             const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: userId, key: entryToDelete }),
+                method: 'DELETE',
             });
-
+    
             if (!response.ok) {
                 throw new Error(`Failed to delete ${entryType}`);
             }
-
             
             setMTentries((prev) => {
                 const updatedMTentries = prev.filter((entry) => entry.mocktestkey !== entryToDelete);

@@ -60,18 +60,16 @@ const FilesPage = () => {
 
   const handleDeleteScan = async () => {
     try {
-      const response = await fetch('http://18.236.227.203:5001/deleteScan', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId, key: scanToDelete }),
-      });
-      console.log(response);
-
-      if (!response.ok) {
-        throw new Error('Failed to delete scan');
-      }
+        let endpoint = `http://18.236.227.203:5001/deleteScan?userId=${userId}&key=${scanToDelete}`;
+    
+            const response = await fetch(endpoint, {
+                method: 'DELETE',
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Failed to delete ${scanToDelete}`);
+            }
+      
 
       // Update the state to remove the deleted scan
       setScans((prevScans) => {

@@ -19,8 +19,45 @@ export const UserProvider = ({ children }) => {
     const [totalScans, setTotalScans] = useState(0);
     const [totalFlashcards, setTotalFlashcards] = useState(0);
     const [totalMockTests, setTotalMockTests] = useState(0);
-
+    
+    const deleteGuestData = async (userId) => {
+        try {
+            const response = await fetch(`http://18.236.227.203:5001/deleteGuestAll?userId=${userId}`, {
+                method: 'DELETE',
+            });
+    
+            if (!response.ok) {
+                throw new Error('Failed to delete guest data');
+            }
+    
+            console.log('Guest data deleted successfully');
+        } catch (error) {
+            console.error('Error deleting guest data:', error);
+        }
+    };
+    
     // Save userId and email to localStorage
+    
+    useEffect(() => {
+        const handleBeforeUnload = () => {
+            if (userId.startsWith("guest-")) {
+                deleteGuestData(userId);
+            }
+        };
+
+        window.addEventListener("beforeunload", handleBeforeUnload);
+        return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+    }, [userId]);
+    
+    useEffect(() => {
+        const storedUserId = localStorage.getItem("userId");
+
+        if (storedUserId && userId.startsWith("guest-")) {
+            // A guest has logged in, delete guest data
+            deleteGuestData(userId);
+            sessionStorage.removeItem("guestUserId"); // Clear guest session storage
+        }
+    }, [userId]);
     
     useEffect(() => {
         if (userId.startsWith("guest-")) {
