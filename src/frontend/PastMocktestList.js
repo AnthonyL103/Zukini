@@ -23,7 +23,7 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
         
         const fetchMT = async () => {
             try {
-                const response = await fetch(`http://18.236.227.203:5001/displaymocktests?userId=${userId}`);;
+                const response = await fetch(`http://18.236.227.203:5001/displaymocktests?userId=${userId}`);
                 if (!response.ok) {
                   throw new Error('Failed to fetch mt');
                 }

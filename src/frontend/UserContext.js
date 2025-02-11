@@ -1,10 +1,13 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { useScan } from './ScanContext';
+
 
 // Create Context
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
+    const { currentScan, setCurrentScan } = useScan(); 
     const [userId, setUserId] = useState(() => {
         let storedUserId = localStorage.getItem("userId") || sessionStorage.getItem("guestUserId");
         
@@ -20,34 +23,38 @@ export const UserProvider = ({ children }) => {
     const [totalFlashcards, setTotalFlashcards] = useState(0);
     const [totalMockTests, setTotalMockTests] = useState(0);
     
-    const deleteGuestData = async (userId) => {
-        if (!userId.startsWith("guest-")) return;
-    
-        try {
-            const response = await fetch(`http://18.236.227.203:5001/deleteGuestAll?userId=${userId}`, {
-                method: 'DELETE',
-            });
-    
+    const deleteGuestData = (guestId) => {
+        if (!guestId || !guestId.startsWith("guest-")) return;
+        setCurrentScan(null);
+
+        console.log(`Attempting to delete guest user data: ${guestId}`);
+        
+        fetch(`http://18.236.227.203:5001/deleteGuestAll?userId=${guestId}`, {
+            method: 'DELETE',
+            keepalive: true,  // Ensures the request completes before unload
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then(response => {
             if (!response.ok) {
-                throw new Error('Failed to delete guest data');
+                console.error("Failed to delete guest data.");
             }
-    
-            console.log('Guest data deleted successfully');
-        } catch (error) {
-            console.error('Error deleting guest data:', error);
-        }
+            
+        }).catch(error => console.error("Error deleting guest data:", error));
     };
-    
     useEffect(() => {
-        const handleBeforeUnload = () => {
-            if (userId.startsWith("guest-")) {
-                navigator.sendBeacon(`http://18.236.227.203:5001/deleteGuestAll?userId=${userId}`);
-            }
+        const handleUnload = () => {
+            deleteGuestData(sessionStorage.getItem("guestUserId"));
         };
-    
-        window.addEventListener("beforeunload", handleBeforeUnload);
-        return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-    }, [userId]);
+
+
+        window.addEventListener("beforeunload", handleUnload);
+
+        return () => {
+            window.removeEventListener("beforeunload", handleUnload);
+        };
+    }, []);
+
     
     // Save userId and email to localStorage
     
@@ -60,8 +67,10 @@ export const UserProvider = ({ children }) => {
             if (sessionStorage.getItem("guestUserId")) {
                 deleteGuestData(sessionStorage.getItem("guestUserId"));
                 sessionStorage.removeItem("guestUserId"); 
+                
             }
         }
+        
     }, [userId, email]);
 
     // Fetch total scans, flashcards, and mock tests when userId changes
