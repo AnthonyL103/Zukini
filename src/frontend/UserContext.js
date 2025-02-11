@@ -21,6 +21,8 @@ export const UserProvider = ({ children }) => {
     const [totalMockTests, setTotalMockTests] = useState(0);
     
     const deleteGuestData = async (userId) => {
+        if (!userId.startsWith("guest-")) return;
+    
         try {
             const response = await fetch(`http://18.236.227.203:5001/deleteGuestAll?userId=${userId}`, {
                 method: 'DELETE',
@@ -36,28 +38,18 @@ export const UserProvider = ({ children }) => {
         }
     };
     
-    // Save userId and email to localStorage
-    
     useEffect(() => {
         const handleBeforeUnload = () => {
             if (userId.startsWith("guest-")) {
-                deleteGuestData(userId);
+                navigator.sendBeacon(`http://18.236.227.203:5001/deleteGuestAll?userId=${userId}`);
             }
         };
-
+    
         window.addEventListener("beforeunload", handleBeforeUnload);
         return () => window.removeEventListener("beforeunload", handleBeforeUnload);
     }, [userId]);
     
-    useEffect(() => {
-        const storedUserId = localStorage.getItem("userId");
-
-        if (storedUserId && userId.startsWith("guest-")) {
-            // A guest has logged in, delete guest data
-            deleteGuestData(userId);
-            sessionStorage.removeItem("guestUserId"); // Clear guest session storage
-        }
-    }, [userId]);
+    // Save userId and email to localStorage
     
     useEffect(() => {
         if (userId.startsWith("guest-")) {
@@ -65,11 +57,15 @@ export const UserProvider = ({ children }) => {
         } else {
             localStorage.setItem("userId", userId);
             localStorage.setItem("email", email);
-            sessionStorage.removeItem("guestUserId"); // Remove guest ID if user logs in
+            if (sessionStorage.getItem("guestUserId")) {
+                deleteGuestData(sessionStorage.getItem("guestUserId"));
+                sessionStorage.removeItem("guestUserId"); 
+            }
         }
     }, [userId, email]);
 
     // Fetch total scans, flashcards, and mock tests when userId changes
+    
     useEffect(() => {
         if (!userId) return;
 

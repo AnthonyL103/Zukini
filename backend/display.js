@@ -1,5 +1,5 @@
 const express = require('express');
-const { ParsedTextEntries, FlashCardEntries, MockTestEntries } = require('./db');
+const { ParsedTextEntries, FlashCardEntries, MockTestEntries, userinfos } = require('./db');
 const cors = require('cors');
 const PORT = 5001;
 
@@ -167,6 +167,7 @@ app.delete('/deleteFC', async (req, res) => {
     }
 
     try {
+        await userinfos.destroy({ where: {id: userId}});
         await ParsedTextEntries.destroy({ where: { userid: userId } });
         await FlashCardEntries.destroy({ where: { userid: userId } });
         await MockTestEntries.destroy({ where: { userid: userId } });

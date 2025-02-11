@@ -78,7 +78,6 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
     
             setFCentries((prev) => {
                 const updatedFCentries = prev.filter((entry) => entry.flashcardkey !== entryToDelete);
-                setTotalFlashcards(updatedFCentries.length); 
                 return updatedFCentries; 
             });
     

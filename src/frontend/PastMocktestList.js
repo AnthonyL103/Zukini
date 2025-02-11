@@ -79,7 +79,6 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
             
             setMTentries((prev) => {
                 const updatedMTentries = prev.filter((entry) => entry.mocktestkey !== entryToDelete);
-                setTotalMockTests(updatedMTentries.length); // Update total mock tests
                 return updatedMTentries;
             });            
 
