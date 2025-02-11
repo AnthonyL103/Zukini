@@ -159,7 +159,7 @@ app.delete('/deleteFC', async (req, res) => {
   
   
   app.delete('/deleteGuestAll', async (req, res) => {
-    const { userId } = req.body;
+    const { userId } = req.query;
 
     if (!userId || !userId.startsWith("guest-")) {
         return res.status(400).json({ error: 'Invalid guest user ID' });

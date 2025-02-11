@@ -38,13 +38,14 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
     
     useEffect(() => {
         if (NewFCEntry) {
-            setFCentries((prev) => {
-                const updatedFCentries = [...prev, NewFCEntry];
-                setTotalFlashcards(updatedFCentries.length); // 
-                return updatedFCentries; 
-            });
+            setFCentries((prev) => [...prev, NewFCEntry]);
         }
     }, [NewFCEntry]);
+    
+    useEffect(() => {
+        setTotalFlashcards(FCentries.length);
+    }, [FCentries, setTotalFlashcards]);
+    
     
     
 

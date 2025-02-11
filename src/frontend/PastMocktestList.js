@@ -40,13 +40,13 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
     
     useEffect(() => {
         if (NewMTEntry) {
-            setMTentries((prev) => {
-                const updatedMTentries = [...prev, NewMTEntry];
-                setTotalMockTests(updatedMTentries.length); // Update total mock tests
-                return updatedMTentries;
-            });
+            setMTentries((prev) => [...prev, NewMTEntry]);
         }
-    }, [NewMTEntry, setTotalMockTests]);
+    }, [NewMTEntry]);
+    
+    useEffect(() => {
+        setTotalMockTests(MTentries.length);
+    }, [MTentries, setTotalMockTests]);
     
     
     const displayModal = (key, type) => {

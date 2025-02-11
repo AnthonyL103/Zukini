@@ -57,6 +57,14 @@ const FilesPage = () => {
         inline: "nearest",
     });
   };
+  
+  useEffect(() => {
+    setTotalScans(scans.length);
+  }, [scans, setTotalScans]);
+  
+  const handleAddScan = (newScan) => {
+    setScans((prevScans) => [...prevScans, newScan]);
+  };
 
   const handleDeleteScan = async () => {
     try {
@@ -72,11 +80,8 @@ const FilesPage = () => {
       
 
       // Update the state to remove the deleted scan
-      setScans((prevScans) => {
-        const updatedScans = prevScans.filter((scan) => scan.scankey !== scanToDelete);
-        setTotalScans(updatedScans.length); // Ensure totalScans updates dynamically
-        return updatedScans;
-    });
+      setScans((prevScans) => prevScans.filter((scan) => scan.scankey !== scanToDelete));
+
       console.log('Scan deleted successfully:', scanToDelete);
       setShowModal(false);
     } catch (error) {
@@ -86,13 +91,8 @@ const FilesPage = () => {
   
   
   
-  const handleAddScan = (newScan) => {
-    setScans((prevScans) => {
-        const updatedScans = [...prevScans, newScan];
-        setTotalScans(updatedScans.length); // Ensure totalScans updates dynamically
-        return updatedScans;
-    });
-  };
+
+
 
   return (
     <div className="filescontainer">
