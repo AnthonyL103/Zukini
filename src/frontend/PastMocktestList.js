@@ -166,7 +166,7 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
                     className="scansnameinput"
                     value={MTName}
                     onChange={(e) => setMTName(e.target.value)}
-                    placeholder="Search mock tests..."
+                    placeholder="Search..."
                 />
             </div>
 

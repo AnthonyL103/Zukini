@@ -169,7 +169,7 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
                     className="scansnameinput"
                     value={FCName}
                     onChange={(e) => setFCName(e.target.value)}
-                    placeholder="Search scans..."
+                    placeholder="Search..."
                 />
             </div>
 

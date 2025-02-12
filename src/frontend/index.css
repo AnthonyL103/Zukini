@@ -15,9 +15,9 @@ body {
   
   .homecontainer {
     max-width: 1200px;
-    height: 80vh;/* Full viewport height */
+    height: 80dvh;/* Full viewport height */
     padding:25px;
-    margin-top:1vh;
+    margin-top:1dvh;
     margin-right: auto;
     margin-left: auto;
     overflow-y: auto;  /* Enable vertical scrolling */
@@ -26,7 +26,7 @@ body {
 
 @media (max-width: 768px) {
     .homecontainer{
-        height: 75vh;
+        height: 75dvh;
     }
 }
 
@@ -169,7 +169,7 @@ body {
     cursor: pointer;
     transition-duration: 0.3s;
     overflow: hidden;
-    position: relative;
+    position: static;
   }
   
   .svgIcon {
@@ -217,7 +217,7 @@ body {
     border: none;
     display: flex;
     width: 30%;
-    height: 10vh;
+    height: 10dvh;
     padding: 0.75rem 1.5rem;
     background-color: #000000;
     color: #ffffff;
@@ -256,7 +256,7 @@ body {
   
 .filescontainer {
     max-width: 1200px;
-    height: 80vh;/* Full viewport height */
+    height: 80dvh;/* Full viewport height */
     padding:25px;
     margin-top:1vh;
     margin-right: auto;
@@ -267,7 +267,7 @@ body {
 
 @media (max-width: 768px) {
     .filescontainer{
-        height: 75vh;
+        height: 75dvh;
     }
 }
 
@@ -344,8 +344,8 @@ body {
 }
 
 .modal-title {
-    margin-top:3vh;
-    margin-bottom:3vh;
+    margin-top:3dvh;
+    margin-bottom:3dvh;
     font-size: clamp(1.5rem, 3vw, 2.5rem);/* Scales between 1rem - 2rem */
     font-weight: 600;
     color: #000000;
@@ -381,7 +381,7 @@ body {
     border-radius: 15px;
     padding: 1rem;
     font-size: larger;
-    height: 60vh;
+    height: 60dvh;
     display: flex;
     flex-direction: column;
     overflow: auto;
@@ -448,7 +448,7 @@ body {
   border: none;
   display: flex;
   padding: 0.75rem 1.5rem;
-  height:7vh;
+  height:7dvh;
   background-color: #000000;
   color: #ffffff;
   font-size: 0.75rem;
@@ -485,7 +485,7 @@ body {
     border: none;
     display: flex;
     width: 30%;
-    height: 6vh;
+    height: 6dvh;
     padding: 0.75rem 1.5rem;
     background-color: #000000;
     color: #ffffff;
@@ -525,7 +525,7 @@ body {
     margin-top: auto;
     padding-top:1vw;
     padding-bottom:1vw;
-    position:relative;
+    position:static;
     display: flex;       /* Enables Flexbox */
     justify-content:space-around;  /* Centers horizontally */
     align-items: center;  /* Centers vertically */
@@ -697,8 +697,8 @@ body {
       pointer-events: none;
       top: 0;
       left: 0;
-      height: 100vh;
-      width: 100vw;
+      height: 100dvh;
+      width: 100dvw;
       z-index: 1000;
     }
     
@@ -736,7 +736,7 @@ body {
     border: none;
     display: flex;
     width: 48%;
-    height: 7vh;
+    height: 7dvh;
     padding: 0.75rem 1.5rem;
     background-color: #000000;
     color: #ffffff;
@@ -775,7 +775,7 @@ body {
         border: none;
         display: flex;
         width: 48%;
-        height: 7vh;
+        height: 7dvh;
         padding: 0.75rem 1.5rem;
         background-color: #eb4408;
         color: #ffffff;
@@ -815,23 +815,6 @@ body {
       
     
     
-    .navcontainer {
-      background-color: #aaaaa7;
-      max-width: 1200px;
-      margin-right: auto;
-      margin-left: auto;
-      padding:15px;
-    }
-    .navbar {
-      padding: 0.5rem;
-      background-color:  #67d7cc;
-      border-radius: 15px;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      box-shadow: 0 10px 25px 0 rgba(#000, 0.075);
-    }
     
     .studynavbar {
       padding: 0.5rem;
@@ -911,6 +894,27 @@ body {
         width: 100%;
       }
       
+      
+      
+    .navcontainer {
+        background-color: #aaaaa7;
+        position: static;
+        max-width: 1200px;
+        margin-right: auto;
+        margin-left: auto;
+        padding:15px;
+      }
+      
+    .navbar {
+        padding: 0.5rem;
+        background-color:  #67d7cc;
+        border-radius: 15px;
+        position: static;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        box-shadow: 0 10px 25px 0 rgba(#000, 0.075);
+    }
     
     .link {
       display: inline-flex;
@@ -920,7 +924,6 @@ body {
       height: 50px;
       border-radius: 15px;
       position: relative;
-      z-index: 1;
       overflow: hidden;
       transform-origin: center left;
       transition: width 0.2s ease-in;
@@ -928,7 +931,6 @@ body {
       color:#000000;
       &:before {
         position: absolute;
-        z-index: -1;
         content: "";
         display: block;
         border-radius: 15px;
@@ -960,7 +962,7 @@ body {
       display: block;
       flex-shrink: 0;
       left: 18px;
-      position: absolute;
+      position: relative;
       svg {
         width: 28px;
         height: 28px;
@@ -977,12 +979,13 @@ body {
       width: 100%;
     }
     
+    
       
 .studycontainer {
     max-width: 1200px;
-    height: 80vh;/* Full viewport height */
+    height: 80dvh;/* Full viewport height */
     padding:25px;
-    margin-top:1vh;
+    margin-top:1dvh;
     margin-right: auto;
     margin-left: auto;
     overflow-y: auto;  /* Enable vertical scrolling */
@@ -991,7 +994,7 @@ body {
 
 @media (max-width: 768px) {
     .studycontainer{
-        height: 75vh;
+        height: 75dvh;
     }
 }
 
@@ -1030,7 +1033,7 @@ body {
 .viewpast-button {
     border: none;
     display: flex;
-    width:30vh;
+    width:30dvh;
     min-height:5vw;
     padding: 0.75rem 1.5rem;
     background-color: #000000;
@@ -1073,7 +1076,7 @@ body {
     border-radius: 15px;
     padding: 1rem;
     font-size: larger;
-    height: 60vh;
+    height: 60dvh;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -1095,7 +1098,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    position: fixed;
+    position:fixed;
     top: 0;
     left: 0;
     height: 100%;
@@ -1126,6 +1129,7 @@ body {
     text-align: center;
     overflow-y: auto;
     flex-direction: column;
+    z-index: 1000;
   }
   .fcmodal-heading {
     color: rgb(34, 34, 34);
@@ -1160,7 +1164,7 @@ body {
     border-radius: 15px;
     padding: 1rem;
     font-size: larger;
-    height: 70vh;
+    height: 70dvh;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -1393,7 +1397,7 @@ body {
     
   
     .socialcard {
-      margin-top:2vh;
+      margin-top:2dvh;
       height: fit-content;
       background-color: #000;
       display: flex;
@@ -1493,7 +1497,7 @@ body {
       --arrow-width: 10px;
       --arrow-stroke: 2px;
       box-sizing: border-box;
-      height: 7vh;
+      height: 7dvh;
       border: 0;
       border-radius: 15px;
       color: var(--secondary-color);
@@ -1557,7 +1561,7 @@ body {
       --arrow-stroke: 2px;
       box-sizing: border-box;
       border: 0;
-      height: 7vh;
+      height: 7dvh;
       border-radius: 15px;
       color: var(--secondary-color);
       padding: 1em 1.8em;
@@ -1621,7 +1625,7 @@ body {
       --arrow-width: 10px;
       --arrow-stroke: 2px;
       box-sizing: border-box;
-      height: 7vh;
+      height: 7dvh;
       border: 0;
       border-radius: 15px;
       color: var(--secondary-color);
@@ -1690,8 +1694,8 @@ body {
       pointer-events: none;
       top: 0;
       left: 0;
-      height: 100vh;
-      width: 100vw;
+      height: 100dvh;
+      width: 100dvw;
       z-index: 1000;
     }
     
@@ -1911,7 +1915,7 @@ body {
     border-radius: 15px;
     padding: 1rem;
     font-size: larger;
-    height: 60vh;
+    height: 60dvh;
     display: flex;
     flex-direction: column;
     overflow: auto;
@@ -1962,7 +1966,7 @@ body {
     border-radius: 15px;
     padding: 1rem;
     font-size: larger;
-    height: 60vh;
+    height: 60dvh;
     display: flex;
     flex-direction: column;
     overflow: auto;
@@ -1986,9 +1990,9 @@ body {
 
 .Accountcontainer {
     max-width: 1200px;
-    height: 80vh;/* Full viewport height */
+    height: 80dvh;/* Full viewport height */
     padding:25px;
-    margin-top:1vh;
+    margin-top:1dvh;
     margin-right: auto;
     margin-left: auto;
     overflow-y: auto;  /* Enable vertical scrolling */
@@ -1997,7 +2001,7 @@ body {
 
 @media (max-width: 768px) {
     .Accountcontainer{
-        height: 75vh;
+        height: 75dvh;
     }
 }
 
@@ -2027,8 +2031,8 @@ body {
       pointer-events: none;
       top: 0;
       left: 0;
-      height: 100vh;
-      width: 100vw;
+      height: 100dvh;
+      width: 100dvw;
       z-index: 1000;
     }
     

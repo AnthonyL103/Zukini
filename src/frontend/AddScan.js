@@ -4,8 +4,6 @@ import { useUser } from './UserContext';
 
 
 const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
-    
-    const [lastFile, setLastFile] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [parsedText, setParsedText] = useState("");
     const [currFile, setCurrFile] = useState("");
@@ -16,30 +14,30 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
     const [currDate, setCurrDate] = useState("");
     const [scanName, setScanName] = useState("");
     const { userId } = useUser();
-    const handleClick = () => {
-        fileInputRef.current.click();
-    };
         
-    const handleFileChange = (e) => {
-        const selectedFile = e.target.files[0]
-        if (selectedFile) {
-            setFile(selectedFile);
-            setLastFile(selectedFile); // Store a copy for re-scanning
-        }
+    const handleFileChange = async (e) => {
+        e.preventDefault();
+        const selectedFile = e.target.files[0];
+        setFile(selectedFile);
+        if (!selectedFile) return;
+        await handleSubmit(selectedFile);
+        fileInputRef.current.value = "";
+
     };
+    
+      
     const handleScanNameChange = (e) => {
       setScanName(e.target.value); // Update scan name state
     };
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-    
-      if (!file) {
-        console.error('No file selected for upload');
-        return;
+    const handleSubmit = async (selectedFile) => {
+      if (!selectedFile) {
+           console.error('No file selected for upload');
+           return;
       }
     
+    
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', selectedFile);
     
       try {
         // Step 1: Upload the file
@@ -70,7 +68,7 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
     const handleReScan = async () => {
       setShowModal(false);
       console.log("in rescan");
-      const fileToRescan = file || lastFile;
+      const fileToRescan = file 
       
       if (!fileToRescan) {
         console.error("No file available for re-scan");
@@ -197,7 +195,7 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
     <>
     <div ref={(el) => slidesRef.current[1] = el} className ="addscanpagecontainer" >
         <p className='scans-title'>Create New Scan:</p>
-        <form onSubmit={handleSubmit} encType="multipart/form-data">
+        <form onSubmit={(e) => e.preventDefault()} encType="multipart/form-data">
         <div className="Uploadscancontainer">
         <input
         type="text"
@@ -217,11 +215,12 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
           required
         ></input>
         
-        <button type="button" className="fileinput" onClick={handleClick}>
-        Upload File
+         {/*we use file input ref to hide the ugly default file upload button, so when we do onclick it activates the file input ref which is the ref of the input form 
+         then once a file is changed or that state changes we automatically try to parse */}
+        <button type="button" className="fileinput" onClick={() => fileInputRef.current.click()}>
+            Upload and Scan
         </button>
-      
-        <button className ="fileinput"type="submit">Upload and Scan</button>
+
         
         <button className="fileinput" type="button" onClick={onsave} disabled={!saveEnabled} >Save</button>
         </div>

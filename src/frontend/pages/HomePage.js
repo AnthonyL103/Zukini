@@ -57,13 +57,13 @@ const Home = () => {
 
                 <p className="homepagecont-body">
                     <strong>1. Upload Your Notes:</strong><br />
-                    Navigate to the Files page and click the "Upload" button. Select a file from your device, and our system
+                    Navigate to the Files page and click the "Upload and Scan" button. Select a file from your device, and our system
                     will begin processing your notes.
                 </p>
 
                 <p className="homepagecont-body">
                     <strong>2. Extract Text:</strong><br />
-                    After uploading your file, a pop-up will display the extracted text from your upload. 
+                    After uploading your file, a pop-up will display the extracted text from your upload in the files page. 
                 </p>
                 <p className="homepagecont-body">
                     <strong>3. Start Studying:</strong><br />
