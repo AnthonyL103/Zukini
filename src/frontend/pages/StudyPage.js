@@ -13,7 +13,8 @@ const Study = () => {
     const navigate = useNavigate();
     const [showFlashCards, setShowFlashCards] = useState(false); // State to control rendering AddFlashCards
     const [showMockTests, setShowMockTests] = useState(false); // State to control rendering AddFlashCards
-    const [NewMTEntry, setNewMTEntry, ] = useState(null)
+    const [NewMTEntry, setNewMTEntry] = useState(null)
+    const [isLoading, setIsLoading] = useState(false);
     const [NewFCEntry, setNewFCEntry, ] = useState(null)
     const [clickedButton, setClickedButton] = useState(null); // Track which button was clicked
     const filepath = currentScan?.filepath || "";
@@ -70,21 +71,25 @@ const Study = () => {
   // Trig to show AddFlashCards component
   const handleGenerateFlashcards = () => {
     setClickedButton("flashcards");
+    setIsLoading(true);
     setShowFlashCards(true);
   };
   
   const handleGenerateMocktests = () => {
     setClickedButton("mocktests");
+    setIsLoading(true);
     setShowMockTests(true);
   };
   
   const handleCloseFlashcards = () => {
     setShowFlashCards(false); // Close modal and reset
+    setIsLoading(false);
     setClickedButton(null);
   };
   
   const handleCloseMocktests = () => {
     setShowMockTests(false); // Close modal and reset
+    setIsLoading(false);
     setClickedButton(null);
   };
   
@@ -118,7 +123,7 @@ const Study = () => {
             <span><strong>Content:</strong></span>
                 <span>{text}</span>
         </div>
-         <StudyMenu onCardsClick={handleGenerateFlashcards} onTestClick={handleGenerateMocktests} onSwitchScanClick={goToSwitchScan} clickedButton={clickedButton}  />
+         <StudyMenu onCardsClick={handleGenerateFlashcards} onTestClick={handleGenerateMocktests} onSwitchScanClick={goToSwitchScan} clickedButton={clickedButton} isLoading = {isLoading}/>
          
         </div>
       
