@@ -29,7 +29,7 @@ async function appendflashCardToDB(newEntry) {
 }
   
 app.post('/callparseFlashCards', async (req, res) => {
-  const { scanname, text, date } = req.body; // Destructure scanname, text, and date
+  const { scanname, text, date } = req.body; 
   console.log('Received parameters:', { scanname, text, date });
 
   if (!text) {
