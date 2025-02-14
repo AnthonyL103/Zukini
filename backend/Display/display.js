@@ -1,5 +1,5 @@
 const express = require('express');
-const { ParsedTextEntries, FlashCardEntries, MockTestEntries, userinfos } = require('./db');
+const { ParsedTextEntries, FlashCardEntries, MockTestEntries, userinfos } = require('../Database/db');
 const cors = require('cors');
 const PORT = 5001;
 

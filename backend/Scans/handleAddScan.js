@@ -1,8 +1,8 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-const { parseTextFromBuffer, parseTextFromPDF } = require('./parse');
-const { userinfos, ParsedTextEntries } = require('./db');
+const { parseTextFromBuffer, parseTextFromPDF } = require('../parse');
+const { userinfos, ParsedTextEntries } = require('../Database/db');
 
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');

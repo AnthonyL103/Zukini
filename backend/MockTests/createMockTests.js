@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { createMockTests } = require('./parseMockTest');
-const { MockTestEntries } = require('./db');
+const { MockTestEntries } = require('../Database/db');
 const app = express();
 app.use(express.json());
 const port = 5005;

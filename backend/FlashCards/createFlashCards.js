@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const { parseFlashCards } = require('./parseFlashCards');
-const { FlashCardEntries } = require('./db');
+const { FlashCardEntries } = require('../Database/db');
 const app = express();
 app.use(express.json());
 const port = 5003;
