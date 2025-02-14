@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run server2\" \"npm run server3\" \"npm run server4\" \"npm run server5\" ",
-    "server": "nodemon Authentication/handleAddScan.js",
+    "server": "nodemon Scans/handleAddScan.js",
     "server2": "nodemon Display/display.js",
     "server3": "nodemon FlashCards/createFlashCards.js",
     "server4": "nodemon MockTests/createMockTests.js",
