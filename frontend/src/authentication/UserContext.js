@@ -19,6 +19,7 @@ export const UserProvider = ({ children }) => {
     });
 
     const [email, setEmail] = useState(() => localStorage.getItem("email") || null);
+    const [name, setName] = useState(() => localStorage.getItem("name") || null);
     const [totalScans, setTotalScans] = useState(0);
     const [totalFlashcards, setTotalFlashcards] = useState(0);
     const [totalMockTests, setTotalMockTests] = useState(0);
@@ -64,6 +65,7 @@ export const UserProvider = ({ children }) => {
         } else {
             localStorage.setItem("userId", userId);
             localStorage.setItem("email", email);
+            localStorage.setItem("name", name);
             if (sessionStorage.getItem("guestUserId")) {
                 deleteGuestData(sessionStorage.getItem("guestUserId"));
                 sessionStorage.removeItem("guestUserId"); 
@@ -111,7 +113,8 @@ export const UserProvider = ({ children }) => {
             email, setEmail,
             totalScans, setTotalScans,
             totalFlashcards, setTotalFlashcards,
-            totalMockTests, setTotalMockTests
+            totalMockTests, setTotalMockTests,
+            name, setName
         }}>
             {children}
         </UserContext.Provider>

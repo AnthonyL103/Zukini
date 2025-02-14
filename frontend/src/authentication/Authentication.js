@@ -6,20 +6,23 @@ import { v4 as uuidv4 } from 'uuid';
 
 const Authentication = () => {
     const { setCurrentScan } = useScan();
-    const { userId, setUserId, setEmail, setTotalScans, setTotalFlashcards, setTotalMockTests} = useUser();
+    const { userId, setUserId, setEmail, setTotalScans, setTotalFlashcards, setTotalMockTests, setName} = useUser();
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showSignUpModal, setShowSignUpModal] = useState(false);
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [useremail, setUserEmail] = useState("");
+    const [username, setUserName]= useState("");
 
     useEffect(() => {
         const storedUserId = localStorage.getItem("userId");
         const storedEmail = localStorage.getItem("email");
+        const storedName = localStorage.getItem("name");
 
         if (storedUserId) setUserId(storedUserId);
         if (storedEmail) setEmail(storedEmail);
+        if (storedName) setName(storedName)
     }, []);
     
     const handleSignUp = () => {
@@ -111,6 +114,7 @@ const Authentication = () => {
                 body: JSON.stringify({
                     Email: useremail,
                     Password: password,
+                    Name: username,
                 }),
             });
 
@@ -129,6 +133,7 @@ const Authentication = () => {
 
         setErrorMessage("");
         setUserEmail("");
+        setUserName("");
         setPassword("");
         setConfirmPassword("");
         alert("Account created successfully!");
@@ -196,8 +201,12 @@ const Authentication = () => {
                     <form className="signupform" onSubmit={closeSignUpModal}>
                         <p className="signupform-title">Create an account</p>
                         <div className="signupinput-container">
+                            <input type="text" placeholder="Enter name" required onChange={(e) => setUserName(e.target.value)} />
+                        </div>
+                        <div className="signupinput-container">
                             <input type="text" placeholder="Enter email" required onChange={(e) => setUserEmail(e.target.value)} />
                         </div>
+                        
                         <div className="signupinput-container">
                             <input type="password" placeholder="Enter password" required value={password} onChange={(e) => setPassword(e.target.value)} />
                         </div>

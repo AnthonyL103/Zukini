@@ -24,6 +24,7 @@ async function ensureGuestUserExists(userId) {
                 email: `${uuidv4()}@guest.local`, 
                 password: `${uuidv4()}`,
                 createdat: new Date(),
+                name: `guest${uuidv4()}`
             });
             console.log(`Guest user ${userId} added to userinfos`);
         }
