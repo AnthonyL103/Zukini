@@ -43,6 +43,19 @@ const userinfos = sequelize.define('userinfos', {
         type: DataTypes.DATE,
         defaultValue: Sequelize.NOW,
     },
+    name: {
+        type: DataTypes.STRING,
+        allowNull:false,
+    },
+    verified: { 
+        type: DataTypes.BOOLEAN, 
+        allowNull: false, 
+        defaultValue: false  
+    },
+    verification_token: {
+        type: DataTypes.STRING,
+        allowNull: true, 
+    }
    },
     {  
         freezeTableName: false, 
