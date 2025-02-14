@@ -2,7 +2,7 @@ const vision = require('@google-cloud/vision');
 const path = require('path');
 
 const client = new vision.ImageAnnotatorClient({
-    keyFilename: path.join(__dirname, 'credentials.json'), // Path to your Google Cloud credentials JSON file
+    keyFilename: path.join(__dirname, '../credentials.json'), // Path to your Google Cloud credentials JSON file
   });
 
   async function parseTextFromBuffer(buffer) {
