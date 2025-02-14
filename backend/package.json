@@ -1,7 +1,6 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "createFlashCards.js",
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run server2\" \"npm run server3\" \"npm run server4\" \"npm run server5\" ",
     "server": "nodemon Authentication/handleAddScan.js",
