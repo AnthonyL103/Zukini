@@ -3,7 +3,7 @@ const path = require('path');
 const cors = require('cors');
 const { parseTextFromBuffer, parseTextFromPDF } = require('./parse');
 const { userinfos, ParsedTextEntries } = require('./db');
-//allows to read and write files
+
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
 const formidable = require('formidable');
