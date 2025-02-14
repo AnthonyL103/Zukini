@@ -1,4 +1,4 @@
-import SocialMediaLinks from '../socialmenu';
+import SocialMediaLinks from '../Header/socialmenu';
 import { useRef } from "react";
 import { useNavigate} from 'react-router-dom';
 
@@ -14,7 +14,7 @@ const Home = () => {
         if (currentSlideIndex !== -1 && currentSlideIndex < slidesRef.current.length - 1) {
             slidesRef.current[currentSlideIndex + 1].scrollIntoView({
                 behavior: "smooth",
-                block: "start", // Ensures it aligns properly with snap
+                block: "start", // Ensures it aligns prouiperly with snap
                 inline: "nearest",
             });
         }

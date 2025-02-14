@@ -147,7 +147,6 @@ body {
   }
   
 
- /* From Uiverse.io by vinodjangid07 */ 
 .gobackbutton {
     max-width: 70px;
     max-height: 70px;
@@ -466,13 +465,13 @@ body {
 }
 .fileinput:hover {
     background-color: rgb(181, 160, 255);
-    color: hsl(0, 0%, 4%);
+    color: hsl(0, 0%, 0%);
     cursor: pointer;
 }
   
 .fileinput:active {
     background-color: rgb(181, 160, 255);
-    color: hsl(0, 0%, 3%);
+    color: hsl(0, 0%, 0%);
     transform: translateY(10px);
     transition: 100ms;
     cursor: pointer;
@@ -529,11 +528,17 @@ body {
     width: 100%;  /* Ensures it takes full width */
     
 }
-  
-  
-  
 
-  
+.errormessage {
+    margin-left: auto;
+    margin-right:auto;
+    font-size: clamp(1rem, 2vw, 2rem);
+    padding:5px;
+    color: rgb(255, 0, 0);
+    background-color:#ffffff;
+    border: 2px solid #ccc;
+    border-radius: 15px;
+}
   
   .save{
       background-color: #ffffff;
@@ -810,86 +815,133 @@ body {
       
   
       
-    
-    
-    
-    .studynavbar {
-      padding: 0.5rem;
-      background-color: #000000;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px 0 rgba(#000, 0.075);
-      
+    .linkholder {
+        align-items: center;
+        display: flex; 
+        justify-content: space-between; 
     }
     
-    .studylink {
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        width: 70px;
-        height: 50px;
-        border-radius: 15px;
+ 
+    .studynavbar {
+        padding: 0.5rem;
+        background-color: #000000;
         position: relative;
-        z-index: 1;
-        overflow: hidden;
-        transform-origin: center left;
-        transition: width 0.2s ease-in;
-        text-decoration: none;
-        color:#000000;
-        &:before {
-          position: absolute;
-          z-index: -1;
-          content: "";
-          display: block;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px 0 rgba(#000, 0.075);
+        
+      }
+      
+      .studylink {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 70px;
+          height: 50px;
           border-radius: 15px;
-          width: 100%;
-          height: 100%;
-          top: 0;
+          position: relative;
+          z-index: 1;
+          overflow: hidden;
+          transform-origin: center left;
+          transition: width 0.2s ease-in;
+          text-decoration: none;
+          color:#000000;
+          &:before {
+            position: absolute;
+            z-index: -1;
+            content: "";
+            display: block;
+            border-radius: 15px;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            transform: translateX(100%);
+            transition: transform 0.2s ease-in;
+            transform-origin: center right;
+            background-color:  rgb(181, 160, 255);;
+          }
+        
+          &:hover,
+          &:focus {
+            outline: 0;
+            width: 130px;
+            &:before,
+            .studylink-title {
+              transform: translateX(0);
+              opacity: 1;
+            }
+          }
+        }
+        
+        .studylink-icon {
+          color: #ffffff;
+          width: 28px;
+          height: 28px;
+          display: block;
+          flex-shrink: 0;
+          left: 18px;
+          position: absolute;
+          svg {
+            width: 28px;
+            height: 28px;
+          }
+        }
+        
+        .studylink-title {
+          color: #ffffff;
           transform: translateX(100%);
           transition: transform 0.2s ease-in;
           transform-origin: center right;
-          background-color:  rgb(181, 160, 255);;
+          display: block;
+          text-align: center;
+          text-indent: 28px;
+          width: 100%;
         }
+        
       
-        &:hover,
-        &:focus {
-          outline: 0;
-          width: 130px;
-          &:before,
-          .studylink-title {
-            transform: translateX(0);
-            opacity: 1;
+   
+    
+        .loading-svg {
+            width: 3em;
+            height: 3em;
+            transform-origin: center;
+            animation: rotate4 2s linear infinite;
           }
-        }
-      }
-      
-      .studylink-icon {
-        color: #ffffff;
-        width: 28px;
-        height: 28px;
-        display: block;
-        flex-shrink: 0;
-        left: 18px;
-        position: absolute;
-        svg {
-          width: 28px;
-          height: 28px;
-        }
-      }
-      
-      .studylink-title {
-        color: #ffffff;
-        transform: translateX(100%);
-        transition: transform 0.2s ease-in;
-        transform-origin: center right;
-        display: block;
-        text-align: center;
-        text-indent: 28px;
-        width: 100%;
-      }
+          
+          .loadingcircle {
+            fill: none;
+            stroke: hsl(0, 0%, 100%);
+            stroke-width: 2;
+            stroke-dasharray: 1, 200;
+            stroke-dashoffset: 0;
+            stroke-linecap: round;
+            animation: dash4 1.5s ease-in-out infinite;
+          }
+          
+          
+          @keyframes rotate4 {
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+          
+          @keyframes dash4 {
+            0% {
+              stroke-dasharray: 1, 200;
+              stroke-dashoffset: 0;
+            }
+            50% {
+              stroke-dasharray: 90, 200;
+              stroke-dashoffset: -35px;
+            }
+            100% {
+              stroke-dashoffset: -125px;
+            }
+          }
+          
+    
       
       
       
@@ -1788,6 +1840,7 @@ body {
     .error-message {
       color: red;
     }
+    
     
     .authbuttonlogin-wrapper {
       width: 100%;

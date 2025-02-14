@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import ScanList from '../ScanList.js';
-import { useUser } from '../UserContext';
-import AddScan from '../AddScan';
+import ScanList from '../scans/ScanList.js';
+import { useUser } from '../authentication/UserContext';
+import AddScan from '../scans/AddScan';
 
 
 const FilesPage = () => {

@@ -1,6 +1,6 @@
 import {useState, useEffect, useRef} from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { useUser } from '../UserContext';
+import { useUser } from '../authentication/UserContext';
 
 
 const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
@@ -10,16 +10,19 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
     const [file, setFile] = useState(null);
     const [displayedText, setDisplayedText] = useState("");
     const fileInputRef = useRef(null);
-    const [saveEnabled, setSaveEnabled] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [isLoading, setisLoading] = useState(false);
     const [currDate, setCurrDate] = useState("");
     const [scanName, setScanName] = useState("");
     const { userId } = useUser();
         
     const handleFileChange = async (e) => {
+        
         e.preventDefault();
         const selectedFile = e.target.files[0];
         setFile(selectedFile);
         if (!selectedFile) return;
+        setErrorMessage("");
         await handleSubmit(selectedFile);
         fileInputRef.current.value = "";
 
@@ -28,13 +31,17 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
       
     const handleScanNameChange = (e) => {
       setScanName(e.target.value); // Update scan name state
-    };
-    const handleSubmit = async (selectedFile) => {
-      if (!selectedFile) {
-           console.error('No file selected for upload');
-           return;
+      if (scanName.length !== 0) {
+        setErrorMessage("");
       }
+    };
     
+    const handleSubmit = async (selectedFile) => {
+      if (!scanName) {
+        setErrorMessage("Please enter a scan name");
+        return;
+      }
+      setisLoading(true);
     
       const formData = new FormData();
       formData.append('file', selectedFile);
@@ -61,8 +68,8 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
     
     const handleCloseModal = () => {
         setDisplayedText("");
-        setShowModal(false); // Close the modal
-        setSaveEnabled(true);
+        setisLoading(false);
+        setShowModal(false);
     };
 
     const handleReScan = async () => {
@@ -100,10 +107,11 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
     
     const onsave = async () => {
       try {
-        let userid = userId;
-        if (!userId) {
-            
+        if (parsedText.length === 0) {
+            setErrorMessage("Please upload a file");
+            return;
         }
+        
         // Prepare the data as JSON
         const key = uuidv4();
         console.log("currkey", key);
@@ -140,15 +148,13 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
           // Clear form data and states
           setShowModal(false);
 
-            
+          
           setParsedText(""); // Reset parsed text **after** modal is closed
           setCurrFile("");
           setScanName("");
           setFile(null);
           setDisplayedText("");
-          setSaveEnabled(false);
-
-               
+          scrolltoTop();
 
               
           if (fileInputRef.current) {
@@ -204,7 +210,6 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
         value={scanName}
         onChange={handleScanNameChange}
         placeholder="Enter scan name"
-        required
         />
         <input
           className="hiddenfileinput"
@@ -212,17 +217,28 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
           accept="image/*,application/pdf" 
           onChange={handleFileChange}
           ref={fileInputRef}
-          required
         ></input>
         
-         {/*we use file input ref to hide the ugly default file upload button, so when we do onclick it activates the file input ref which is the ref of the input form 
+        {/*we use file input ref to hide the ugly default file upload button, so when we do onclick it activates the file input ref which is the ref of the input form 
          then once a file is changed or that state changes we automatically try to parse */}
-        <button type="button" className="fileinput" onClick={() => fileInputRef.current.click()}>
+        <button type="button" className="fileinput" onClick={() => fileInputRef.current.click() } >
             Upload and Scan
+            {isLoading && (
+                <svg className="loading-svg" viewBox="25 25 50 50">
+                <circle className="loadingcircle" cx="50" cy="50" r="20"></circle>
+              </svg>
+            )}
         </button>
 
         
-        <button className="fileinput" type="button" onClick={onsave} disabled={!saveEnabled} >Save</button>
+        <button className="fileinput" type="button" onClick={onsave} >Save</button>
+        
+        {errorMessage.length > 0 && (
+            <div className="errormessage"> 
+                <text>{errorMessage}</text>
+            </div>
+        )}
+        
         </div>
        </form>
        

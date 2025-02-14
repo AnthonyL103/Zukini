@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useUser } from './UserContext';
-import { useScan } from './ScanContext';
+import { useScan } from '../scans/ScanContext';
 import { v4 as uuidv4 } from 'uuid';
 
 
