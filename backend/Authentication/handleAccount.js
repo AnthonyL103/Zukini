@@ -5,6 +5,7 @@ const app = express();
 app.use(express.json());
 const port = 5006;
 const bcrypt = require('bcrypt');
+const router = express.Router(); 
 require('dotenv').config();
 
 
@@ -69,7 +70,8 @@ async function appendnewusertoDB(newEntry) {
 
         console.log(`New user created with ID: ${userId}`);
         
-        const verificationLink = `http://18.236.227.203:5006/verify/${verificationToken}`;
+        const verificationLink = `https://api.zukini.com/account/verify/${verificationToken}`;
+
         console.log(`Verification Link: ${verificationLink}`);
         
         await sendVerificationEmail(newEntry.email, verificationLink);
@@ -107,7 +109,7 @@ async function checklogin(entry) {
 }
 
 
-app.post('/signup', async (req, res) => {
+router.post('/signup', async (req, res) => {
     const { Email, Password, Name } = req.body;
 
     if (!Email || !Password || !Name) {
@@ -129,7 +131,7 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-app.get("/verify/:token", async (req, res) => {
+router.get("/verify/:token", async (req, res) => {
     const { token } = req.params;
 
     try {
@@ -152,7 +154,7 @@ app.get("/verify/:token", async (req, res) => {
 });
 
 
-app.post('/login', async (req, res) => {
+router.post('/login', async (req, res) => {
     const { Email, Password } = req.body;
 
     if (!Email || !Password) {

@@ -5,6 +5,7 @@ const { parseFlashCards } = require('./parseFlashCards');
 const { FlashCardEntries } = require('../Database/db');
 const app = express();
 app.use(express.json());
+const router = express.Router(); 
 const port = 5003;
 
 app.use(cors());
@@ -28,7 +29,7 @@ async function appendflashCardToDB(newEntry) {
   }
 }
   
-app.post('/callparseFlashCards', async (req, res) => {
+router.post('/callparseFlashCards', async (req, res) => {
   const { scanname, text, date } = req.body; 
   console.log('Received parameters:', { scanname, text, date });
 
@@ -54,7 +55,7 @@ app.post('/callparseFlashCards', async (req, res) => {
 });
 
 
-app.post('/saveFlashCards', async (req, res) => {
+router.post('/saveFlashCards', async (req, res) => {
   const { flashcardkey, filePath, scanName, FlashCardtext, FCsession, currDate, userId } = req.body; // Extract variables
 
   if (!filePath || !FlashCardtext) {

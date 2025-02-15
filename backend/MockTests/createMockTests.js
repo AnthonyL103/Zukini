@@ -4,6 +4,7 @@ const { createMockTests } = require('./parseMockTest');
 const { MockTestEntries } = require('../Database/db');
 const app = express();
 app.use(express.json());
+const router = express.Router(); 
 const port = 5005;
 
 app.use(cors());
@@ -27,7 +28,7 @@ async function appendmocktestToDB(newEntry) {
     }
   }
 
-app.post('/callparseMockTests', async (req, res) => {
+router.post('/callparseMockTests', async (req, res) => {
   const { scanname, text, date } = req.body; // Destructure scanname, text, and date
   console.log('Received parameters:', { scanname, text, date });
 
@@ -52,7 +53,7 @@ app.post('/callparseMockTests', async (req, res) => {
   }
 });
 
-app.post('/saveMockTest', async (req, res) => {
+router.post('/saveMockTest', async (req, res) => {
     const { mocktestkey, filePath, scanName, questionstext, MTsessionname, currDate, userId } = req.body; // Extract variables
   
     if (!filePath || !questionstext) {

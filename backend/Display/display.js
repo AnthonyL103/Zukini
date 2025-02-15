@@ -4,12 +4,12 @@ const cors = require('cors');
 const PORT = 5001;
 
 const app = express();
-
+const router = express.Router(); 
 app.use(cors());
 app.use(express.json());
 
 // Display scans (GET /displayscans)
-app.get('/displayscans', async (req, res) => {
+router.get('/displayscans', async (req, res) => {
     const { userId } = req.query;
     if (!userId) {
         console.log(userId);
@@ -27,7 +27,7 @@ app.get('/displayscans', async (req, res) => {
     }
   });
 
-app.get('/displayflashcards', async (req, res) => {
+router.get('/displayflashcards', async (req, res) => {
     const { userId } = req.query;
     if (!userId) {
         console.log(userId);
@@ -45,7 +45,7 @@ app.get('/displayflashcards', async (req, res) => {
     }
 });
 
-app.get('/displaymocktests', async (req, res) => {
+router.get('/displaymocktests', async (req, res) => {
     const { userId } = req.query;
     if (!userId) {
         console.log(userId);
@@ -64,7 +64,7 @@ app.get('/displaymocktests', async (req, res) => {
 });
   
 // Delete a scan (POST /deleteScan)
-app.delete('/deleteScan', async (req, res) => {
+router.delete('/deleteScan', async (req, res) => {
     const { key, userId} = req.query;
     console.log("backend", key);
   
@@ -96,7 +96,7 @@ app.delete('/deleteScan', async (req, res) => {
   
    
 
-app.delete('/deleteFC', async (req, res) => {
+router.delete('/deleteFC', async (req, res) => {
     const { key, userId} = req.query;
     console.log("backend", key);
   
@@ -126,7 +126,7 @@ app.delete('/deleteFC', async (req, res) => {
     }
   });
   
-  app.delete('/deleteMT', async (req, res) => {
+  router.delete('/deleteMT', async (req, res) => {
     const { key, userId} = req.query;
     console.log("backend", key);
   
@@ -158,7 +158,7 @@ app.delete('/deleteFC', async (req, res) => {
   // Start the server
   
   
-  app.delete('/deleteGuestAll', async (req, res) => {
+  router.delete('/deleteGuestAll', async (req, res) => {
     console.log("at delete guest all");
     const { userId } = req.query;
 
