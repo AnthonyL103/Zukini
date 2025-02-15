@@ -134,7 +134,7 @@ router.post('/saveandexit', async (req, res) => {
 
 
 
-app.use('/scans', router); // Mount the router 
+app.use('/scans', router); 
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`handle add scan server on ${port}`);
