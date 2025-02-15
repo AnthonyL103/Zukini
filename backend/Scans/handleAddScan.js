@@ -98,7 +98,7 @@ router.post('/callparse', async (req, res) => {
     }
 });
 
-module.exports = router;
+
 
 
 app.post('/saveandexit', async (req, res) => {
@@ -139,3 +139,5 @@ app.use('/scans', router); // Mount the router
 app.listen(port, '0.0.0.0', () => {
     console.log(`handle add scan server on ${port}`);
   });
+  
+module.exports = router;
