@@ -18,7 +18,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
         }
         const generateMockTestQuestions = async () => {
             try {
-                const response = await fetch('http://18.236.227.203:5005/callparseMockTests', {
+                const response = await fetch('https://api.zukini.com/mocktests/callparseMockTests', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -137,7 +137,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
                 currDate: date,
                 userId: userId,
             }
-            const onsaveresponse = await fetch('http://18.236.227.203:5005/saveMockTest', {
+            const onsaveresponse = await fetch('https://api.zukini.com/mocktests/saveMockTest', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

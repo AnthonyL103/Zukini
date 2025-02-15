@@ -38,7 +38,8 @@ const Authentication = () => {
     const handleLoggedIn = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch("http://18.236.227.203:5006/login", {
+            const response = await fetch("https://api.zukini.com/account/login", {
+                //api.zukini.com
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -108,7 +109,7 @@ const Authentication = () => {
         }
 
         try {
-            const response = await fetch("http://18.236.227.203:5006/signup", {
+            const response = await fetch("https://api.zukini.com/account/signup", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

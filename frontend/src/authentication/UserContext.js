@@ -30,7 +30,7 @@ export const UserProvider = ({ children }) => {
 
         console.log(`Attempting to delete guest user data: ${guestId}`);
         
-        fetch(`http://18.236.227.203:5001/deleteGuestAll?userId=${guestId}`, {
+        fetch(`https://api.zukini.com/display/deleteGuestAll?userId=${guestId}`, {
             method: 'DELETE',
             keepalive: true,  // Ensures the request completes before unload
             headers: {
@@ -83,9 +83,9 @@ export const UserProvider = ({ children }) => {
         const fetchUserStats = async () => {
             try {
                 const [fcRes, mtRes, scanRes] = await Promise.all([
-                    fetch(`http://18.236.227.203:5001/displayflashcards?userId=${userId}`),
-                    fetch(`http://18.236.227.203:5001/displaymocktests?userId=${userId}`),
-                    fetch(`http://18.236.227.203:5001/displayscans?userId=${userId}`)
+                    fetch(`https://api.zukini.com/flashcards/displayflashcards?userId=${userId}`),
+                    fetch(`https://api.zukini.com/mocktests/displaymocktests?userId=${userId}`),
+                    fetch(`https://api.zukini.com/scans/displayscans?userId=${userId}`)
                 ]);
 
                 if (!fcRes.ok || !mtRes.ok || !scanRes.ok) {

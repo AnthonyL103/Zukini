@@ -21,7 +21,7 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
     useEffect(() => {
         const fetchFC = async () => {
             try {
-                const response = await fetch(`http://18.236.227.203:5001/displayflashcards?userId=${userId}`);
+                const response = await fetch(`https://api.zukini.com/display/displayflashcards?userId=${userId}`);
                 if (!response.ok) {
                   throw new Error('Failed to fetch fc');
                 }
@@ -66,7 +66,7 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
     
     const handleDeleteEntry = async () => {
         try {
-            let endpoint = `http://18.236.227.203:5001/deleteFC?userId=${userId}&key=${entryToDelete}`;
+            let endpoint = `https://api.zukini.com/display/deleteFC?userId=${userId}&key=${entryToDelete}`;
     
             const response = await fetch(endpoint, {
                 method: 'DELETE',

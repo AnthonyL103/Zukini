@@ -48,7 +48,7 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
     
       try {
         // Step 1: Upload the file
-        const parseResponse = await fetch('http://18.236.227.203:5002/callparse', {
+        const parseResponse = await fetch('https://api.zukini.com/scans/callparse', {
             method: 'POST',
             body: formData, // Send file directly
         });
@@ -84,7 +84,7 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
       const formData = new FormData();
       formData.append('file', fileToRescan); 
       try {
-        const parseResponse = await fetch('http://18.236.227.203:5002/callparse', {
+        const parseResponse = await fetch('https://api.zukini.com/scans/callparse', {
           method: 'POST',
           body: formData, // Send filePath as JSON
         });
@@ -126,7 +126,7 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
         };
     
         // Sending the POST request with JSON
-        const onsaveresponse = await fetch('http://18.236.227.203:5002/saveandexit', {
+        const onsaveresponse = await fetch('https://api.zukini.com/scans/saveandexit', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json', // Specify JSON content type

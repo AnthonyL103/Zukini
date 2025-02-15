@@ -101,7 +101,7 @@ router.post('/callparse', async (req, res) => {
 
 
 
-app.post('/saveandexit', async (req, res) => {
+router.post('/saveandexit', async (req, res) => {
   const {scankey, filePath, scanName, parsedText, currDate, userId } = req.body; // Extract filePath and parsedText from the JSON body
 
   if (!filePath || !parsedText) {
