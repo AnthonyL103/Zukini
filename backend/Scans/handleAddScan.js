@@ -108,7 +108,7 @@ router.post('/saveandexit', async (req, res) => {
     return res.status(400).json({ message: 'filePath and parsedText are required' });
   }
   //console.log("key", scankey);
-  // Create a new entry with the filePath and parsedText
+  
   console.log(userId);
   const newEntry = {
     scankey: scankey,
