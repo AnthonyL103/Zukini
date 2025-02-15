@@ -181,6 +181,9 @@ app.delete('/deleteFC', async (req, res) => {
     }
 });
 
+app.use('/display', router);
+
+
 app.listen(PORT, '0.0.0.0', () => console.log(`Display server running on port ${PORT}`));
 
 

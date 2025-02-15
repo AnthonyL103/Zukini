@@ -81,6 +81,9 @@ app.post('/saveMockTest', async (req, res) => {
   
     res.json({ message: 'mocktest saved successfully', newEntry });
   });
+  
+app.use('/mocktests', router);
+
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`create mock tests server on ${port}`);
