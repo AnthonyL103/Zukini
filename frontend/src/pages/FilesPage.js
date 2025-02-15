@@ -68,7 +68,7 @@ const FilesPage = () => {
 
   const handleDeleteScan = async () => {
     try {
-        let endpoint = `https://api.zukini.com/displays/deleteScan?userId=${userId}&key=${scanToDelete}`;
+        let endpoint = `https://api.zukini.com/display/deleteScan?userId=${userId}&key=${scanToDelete}`;
     
             const response = await fetch(endpoint, {
                 method: 'DELETE',
