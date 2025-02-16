@@ -78,7 +78,9 @@ async function appendnewusertoDB(newEntry) {
 
 async function checklogin(entry) {
     try {
+        console.log("checking for ", entry.email);
         const user = await userinfos.findOne({ where: { email: entry.email } });
+        
 
         if (!user) {
             return { success: false, message: "User not found" };
