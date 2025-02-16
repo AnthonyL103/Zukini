@@ -95,33 +95,32 @@ const FilesPage = () => {
 
 
   return (
-    <div className="filescontainer">
-      <ScanList scans={scans} onDelete={displayModal} scroll={scrollToNextSlide} slidesRef={slidesRef}/>
-      
-      <AddScan onAddScan={handleAddScan} scrollToTop={scrollToTop} slidesRef={slidesRef}/>
-      <div className={`deleteWarn-container ${showModal ? "show" : ""}`}>
-        {showModal && (
-        <div className="deleteWarn-modal">
-        <h2 className="deleteWarn-heading">Are you Sure?</h2>
-        <div className="deleteWarnbutton-wrapper">
-            
-            <button
-            className="deleteWarn-buttoncancel" // Updated to match CSS
-            onClick={handleCloseModal}
-            >
-            No
-            </button>
-            <button
-            className="deleteWarn-button" // Updated to match CSS
-            onClick={handleDeleteScan}
-            >
-            Yes
-            </button>
+    <div className="max-w-[1200px] h-[80dvh] md:h-[75dvh] p-6 mt-[1vh] mx-auto overflow-y-auto snap-y snap-mandatory">
+      <ScanList scans={scans} onDelete={displayModal} scroll={scrollToNextSlide} slidesRef={slidesRef} />
+      <AddScan onAddScan={handleAddScan} scrollToTop={scrollToTop} slidesRef={slidesRef} />
+
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-[1000]">
+          <div className="bg-white w-1/2 max-w-full rounded-xl shadow-lg p-8 text-center">
+            <h2 className="text-black font-extrabold text-xl">Are you Sure?</h2>
+            <div className="flex justify-between items-center gap-5 mt-5">
+              <button
+                className="w-[48%] h-[7dvh] flex items-center justify-center bg-black text-white text-sm font-bold uppercase tracking-wide rounded-lg transition-transform duration-300 hover:bg-purple-300 hover:text-black active:translate-y-2"
+                onClick={handleCloseModal}
+              >
+                No
+              </button>
+              <button
+                className="w-[48%] h-[7dvh] flex items-center justify-center bg-red-600 text-white text-sm font-bold uppercase tracking-wide rounded-lg transition-transform duration-300 hover:bg-purple-300 hover:text-black active:translate-y-2"
+                onClick={handleDeleteScan}
+              >
+                Yes
+              </button>
+            </div>
+          </div>
         </div>
-        </div>
-        )}
+      )}
     </div>
-</div>
   );
 };
 

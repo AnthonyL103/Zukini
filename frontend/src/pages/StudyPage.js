@@ -137,6 +137,7 @@ const Study = () => {
           onAddFlashCard={onAddFlashCard}
           Past={false}
           prevFC={null}
+          setisLoading = {setIsLoading}
         />
       )}
       {showMockTests && (
@@ -149,6 +150,7 @@ const Study = () => {
           onAddMockTest={onAddMockTest}
           Past={false}
           prevMT={null}
+          setisLoading = {setIsLoading}
         />
         )}
         

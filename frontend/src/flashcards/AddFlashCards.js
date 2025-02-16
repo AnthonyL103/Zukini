@@ -3,7 +3,7 @@ import FlashCardList from './FlashCardList';
 import { useUser } from '../authentication/UserContext';
 import { v4 as uuidv4 } from 'uuid';
 
-const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC, onClosePrevFC, onAddFlashCard, Past, prevFC }) => {
+const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC, onClosePrevFC, onAddFlashCard, Past, prevFC, setisLoading}) => {
   const [flashcards, setFlashcards] = useState([]);
   const [showModal, setShowModal] = useState(Past);
   const [showFCNameModal, setShowFCNameModal] = useState(false);
@@ -86,6 +86,7 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC
   const showNameModal = () => {
     setShowModal(false);
     setShowFCNameModal(true);
+    setisLoading(false);
   }
   
   const closeNameModal = () => {

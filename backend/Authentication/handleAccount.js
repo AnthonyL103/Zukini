@@ -6,36 +6,29 @@ app.use(express.json());
 const port = 5006;
 const bcrypt = require('bcrypt');
 const router = express.Router(); 
+const sgMail = require('@sendgrid/mail');
 require('dotenv').config();
-
-
 app.use(cors());
-
 const { v4: uuidv4 } = require('uuid'); // Import uuid
 const nodemailer = require("nodemailer"); 
 
+sgMail.setApiKey(process.env.MAILERKEY);
+
 async function sendVerificationEmail(email, verificationLink) {
     try {
-        const transporter = nodemailer.createTransport({
-            service: "gmail",  // You can change this based on your email provider
-            auth: {
-                user: process.env.EMAIL,  // Replace with your email
-                pass: process.env.PASS,  // Replace with your email password (or App Password)
-            },
-        });
-
-        const mailOptions = {
-            from: process.env.EMAIL,
+        const msg = {
             to: email,
-            subject: "Verify Your Email",
+            from: process.env.EMAIL_FROM, // Must be a verified sender in SendGrid
+            subject: "Verify Your Email - Zukini",
             text: `Click the link to verify your email: ${verificationLink}`,
-            html: `<p>Click the link below to verify your email:</p><a href="${verificationLink}">Verify Email</a>`,
+            html: `<p>Click the link below to verify your email:</p>
+                   <a href="${verificationLink}">Verify Email</a>`,
         };
 
-        await transporter.sendMail(mailOptions);
+        await sgMail.send(msg);
         console.log(`Verification email sent to ${email}`);
     } catch (error) {
-        console.error("Error sending verification email:", error);
+        console.error("Error sending verification email:", error.response ? error.response.body : error);
     }
 }
 

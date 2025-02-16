@@ -3,7 +3,7 @@ import QuestionsList from './QuestionsList';
 import { useUser } from '../authentication/UserContext';
 import { v4 as uuidv4 } from 'uuid';
 
-const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, onClosePrevMT, onAddMockTest, Past, prevMT }) => {
+const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, onClosePrevMT, onAddMockTest, Past, prevMT, setisLoading }) => {
     const [questions, setQuestions] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [showMTNameModal, setShowMTNameModal] = useState(false);
@@ -107,6 +107,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
     const showNameModal = () => {
         setShowModal(false);
         setShowMTNameModal(true);
+        setisLoading(false);
       }
       
     const closeNameModal = () => {
