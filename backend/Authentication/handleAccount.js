@@ -15,7 +15,7 @@ sgMail.setApiKey(process.env.MAILERKEY);
 
 async function sendVerificationEmail(email, verificationLink) {
     try {
-        console.log(MAILERKEY, EMAIL_FROM);
+        console.log(process.env.MAILERKEY, process.env.EMAIL_FROM);
         const msg = {
             to: email,
             from: process.env.EMAIL_FROM, // Must be a verified sender in SendGrid
