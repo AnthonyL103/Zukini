@@ -70,6 +70,7 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
         setDisplayedText("");
         setisLoading(false);
         setShowModal(false);
+        onsave();
     };
 
     const handleReScan = async () => {
@@ -229,9 +230,6 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
               </svg>
             )}
         </button>
-
-        
-        <button className="fileinput" type="button" onClick={onsave} >Save</button>
         
         {errorMessage.length > 0 && (
             <div className="errormessage"> 
