@@ -87,6 +87,7 @@ async function checklogin(entry) {
         }
 
         if (!user.verified) {
+            console.log('User not verified');
             return { success: false, message: "Please verify your email before logging in." };
         }
 
