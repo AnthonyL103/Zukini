@@ -10,7 +10,6 @@ const sgMail = require('@sendgrid/mail');
 require('dotenv').config();
 app.use(cors());
 const { v4: uuidv4 } = require('uuid'); // Import uuid
-const nodemailer = require("nodemailer"); 
 
 sgMail.setApiKey(process.env.MAILERKEY);
 
