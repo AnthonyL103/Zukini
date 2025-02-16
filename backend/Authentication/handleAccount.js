@@ -39,7 +39,7 @@ async function appendnewusertoDB(newEntry) {
         if (existingUser) {
             if (!existingUser.verified) {
                 console.log('User exists but is not verified. Sending verification email again.');
-                const verificationLink = `http://18.236.227.203:5006/verify/${existingUser.verification_token}`;
+                const verificationLink = `https://api.zukini.com/account/verify/${existingUser.verification_token}`;
                 await sendVerificationEmail(newEntry.email, verificationLink);
                 return { success: false, message: "User already exists but is not verified. A new verification email has been sent." };
             }
