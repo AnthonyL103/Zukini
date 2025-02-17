@@ -134,6 +134,10 @@ router.get("/verify/:token", async (req, res) => {
         const user = await userinfos.findOne({ where: { verification_token: token } });
 
         if (!user) {
+            const alreadyVerifiedUser = await userinfos.findOne({ where: { verified: true } });
+            if (alreadyVerifiedUser) {
+                return res.send("<h2>Email is already verified! You can now log in.</h2>");
+            }
             return res.status(400).send("Invalid or expired verification link.");
         }
 
