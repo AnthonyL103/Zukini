@@ -2,7 +2,7 @@
 import {useState, useEffect} from "react";
 import AddMockTest from "./AddMockTest";
 
-const MTentry = ({ mocktestkey, filepath, Questions, MTName, scanname, date, entryType, displayModal, pausescroll }) => {
+const MTentry = ({ mocktestkey, filepath, Questions, MTName, scanname, date, entryType, displayModal, pausescroll, viewall, closeVA }) => {
     const [showStudyModal, setShowStudyModal] = useState(false);
     
     useEffect(() => {
@@ -16,6 +16,9 @@ const MTentry = ({ mocktestkey, filepath, Questions, MTName, scanname, date, ent
     };
     
     const handleclose = () => {
+        if (viewall) {
+            closeVA();
+        }
         setShowStudyModal(false);
         console.log(showStudyModal);
       };

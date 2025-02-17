@@ -73,7 +73,7 @@ export const UserProvider = ({ children }) => {
             }
         }
         
-    }, [userId, email]);
+    }, [userId, email, name]);
 
     // Fetch total scans, flashcards, and mock tests when userId changes
     
@@ -82,19 +82,23 @@ export const UserProvider = ({ children }) => {
 
         const fetchUserStats = async () => {
             try {
-                const [fcRes, mtRes, scanRes] = await Promise.all([
-                    fetch(`https://api.zukini.com/flashcards/displayflashcards?userId=${userId}`),
-                    fetch(`https://api.zukini.com/mocktests/displaymocktests?userId=${userId}`),
-                    fetch(`https://api.zukini.com/scans/displayscans?userId=${userId}`)
+                const [fcRes, mtRes, scanRes] = await Promise.allSettled([
+                    fetch(`https://api.zukini.com/display/displayflashcards?userId=${userId}`),
+                    fetch(`https://api.zukini.com/display/displaymocktests?userId=${userId}`),
+                    fetch(`https://api.zukini.com/display/displayscans?userId=${userId}`)
                 ]);
+                
 
-                if (!fcRes.ok || !mtRes.ok || !scanRes.ok) {
-                    throw new Error("Failed to fetch one or more resources");
-                }
-
-                const FC = await fcRes.json();
-                const MT = await mtRes.json();
-                const Scans = await scanRes.json();
+                const parseResponse = async (res) => 
+                    res.status === "fulfilled" && res.value.ok 
+                        ? res.value.json() 
+                        : [];
+    
+                const [FC, MT, Scans] = await Promise.all([
+                    parseResponse(fcRes),
+                    parseResponse(mtRes),
+                    parseResponse(scanRes),
+                ]);
 
                 setTotalFlashcards(FC?.length || 0);
                 setTotalMockTests(MT?.length || 0);
@@ -105,6 +109,7 @@ export const UserProvider = ({ children }) => {
         };
 
         fetchUserStats();
+        
     }, [userId]);
 
     return (

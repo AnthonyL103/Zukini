@@ -14,6 +14,8 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
     const [isStudyModalOpen, setIsStudyModalOpen] = useState(false); 
     const [itemsPerView, setItemsPerView] = useState(window.innerWidth < 768 ? 1 : 2);
     const [FCName, setFCName] = useState("");
+    const [VAFCName, setVAFCName] = useState("");
+    const [viewAll, setShowViewAll] = useState(false);
     const { userId, setTotalFlashcards} = useUser();
 
     const scrollDelay = 7000; // Adjust this value to change delay time
@@ -143,6 +145,10 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
     const filteredFC = FCentries.filter(fc =>
         fc.fcsessionname.toLowerCase().includes(FCName.toLowerCase())
     );
+    
+    const filteredVAFC = FCentries.filter(fc => 
+        fc.fcsessionname.toLowerCase().includes(VAFCName.toLowerCase())
+    );
 
     const displayedFC = FCName.trim()
         ? filteredFC.slice(0, itemsPerView)// Show all filtered scans when searching
@@ -152,6 +158,12 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
         scroll();
         
     };
+    const viewall = () => {
+        setShowViewAll(true);
+    }
+    const closeviewall = () => {
+        setShowViewAll(false);
+    }
 
     return (
         <div ref={(el) => {
@@ -165,12 +177,15 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
             >
             <div className="scanheaderwrapper">
                 <p className="scans-title">Flashcards:</p>
+                <div className="searchVAWrap">
                 <input 
                     className="scansnameinput"
                     value={FCName}
                     onChange={(e) => setFCName(e.target.value)}
                     placeholder="Search..."
                 />
+                <button className= "viewall-button" onClick={viewall} >View All</button>
+                </div>
             </div>
 
             <div className={`FCentries-list ${isFading ? "fade" : ""}`}>
@@ -193,6 +208,45 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
                     <p className="nosearch">No flashcards found.</p>
                 )}
             </div>
+            
+            <div className={`VA-container ${viewAll ? "show" : ""}`}>
+            {viewAll && (
+                <div className="VA-content">
+                    <div className="scanheaderwrapper">
+                    <p className="VA-title">Flashcards:</p>
+                    <input className="scansnameinput" value={VAFCName}  onChange={(e) => setVAFCName(e.target.value)} placeholder="Search scans...."></input>
+                    </div>
+                    
+                    <div className="scan-list">
+                    {filteredVAFC.length > 0 ? (
+                        filteredVAFC.map((entry) => (
+                            <FCentry
+                            key={entry.flashcardkey}
+                            flashcardkey={entry.flashcardkey}
+                            filepath={entry.filepath}
+                            scanname={entry.scanname}
+                            FlashCards={entry.flashcards}
+                            FCName={entry.fcsessionname}
+                            date={entry.date}
+                            entryType="flashcard"
+                            displayModal={displayModal}
+                            pausescroll= {setIsStudyModalOpen}
+                            closeVA={closeviewall}
+                            viewall={viewall}
+                        />
+                    ))
+                    ) : (
+                        <p className="VAnosearch">No Flashcards found.</p> // Message if no results
+                    )}
+                    </div>
+                    <div className="VA-content-footer">
+                    <button className="deleteWarn-buttoncancel" onClick={closeviewall}>
+                        Done
+                    </button>
+                    </div>
+                </div>
+            )}
+        </div>
             
             <div className="addscanwrap">
                 <button className="addscan-button" onClick={scrolltoNext}>View Mocktests</button>

@@ -53,12 +53,14 @@ const Authentication = () => {
             if (data.success) {
                 setUserId(data.userId);
                 setEmail(data.email);
+                setName(data.name);
                 console.log(data.email);
                 localStorage.setItem("userId", data.userId);
                 localStorage.setItem("email", data.email);
+                localStorage.setItem("name", data.name);
                 setShowLoginModal(false);
             } else {
-                setErrorMessage("Login failed, invalid credentials");
+                setErrorMessage(data.message);
                 return;
             }
         } catch (error) {
@@ -68,6 +70,7 @@ const Authentication = () => {
         setErrorMessage("");
         setUserEmail("");
         setPassword("");
+        setUserName("");
     };
 
     const handleLogout = () => {
@@ -77,11 +80,13 @@ const Authentication = () => {
         sessionStorage.setItem("guestUserId", newGuestId); // Store in session storage
         setUserId(newGuestId); // Assign new guest ID instead of null
         setEmail(null);
+        setName(null);
         setTotalScans(0);
         setTotalFlashcards(0);
         setTotalMockTests(0);
         localStorage.removeItem("userId");
         localStorage.removeItem("email");
+        localStorage.removeItem("name");
     };
     
     const handleclose = (e) => {
@@ -90,6 +95,7 @@ const Authentication = () => {
         setShowSignUpModal(false);
         setErrorMessage("");
         setUserEmail("");
+        setUserName("");
         setPassword("");
         setConfirmPassword("");
     }
@@ -137,7 +143,7 @@ const Authentication = () => {
         setUserName("");
         setPassword("");
         setConfirmPassword("");
-        alert("Account created successfully!");
+        alert("Account created successfully! Please check your email and click verification link.");
     };
     
     const isGuestUser = userId && typeof userId === "string" && userId.startsWith("guest-");

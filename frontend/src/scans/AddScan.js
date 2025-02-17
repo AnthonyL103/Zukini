@@ -210,7 +210,8 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
         id="scanName"
         value={scanName}
         onChange={handleScanNameChange}
-        placeholder="Enter scan name"
+        /*use brackets to register the quotes*/
+        placeholder={'Enter scan name ex: "Chemistry 101 Notes"'}
         />
         <input
           className="hiddenfileinput"
