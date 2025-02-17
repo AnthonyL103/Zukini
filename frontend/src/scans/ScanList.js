@@ -120,7 +120,7 @@ const ScanList = ({ scans, onDelete, scroll, slidesRef}) => {
                 <div className="VA-content">
                     <div className="scanheaderwrapper">
                     <p className="VA-title">Scans:</p>
-                    <input className="scansnameinput" value={VAscanName}  onChange={(e) => setVAScanName(e.target.value)} placeholder="Search scans...."></input>
+                    <input className="VAscansnameinput" value={VAscanName}  onChange={(e) => setVAScanName(e.target.value)} placeholder="Search scans...."></input>
                     </div>
                     
                     <div className="scan-list">

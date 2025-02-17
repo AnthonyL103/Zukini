@@ -212,7 +212,7 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
                 <div className="VA-content">
                     <div className="scanheaderwrapper">
                     <p className="VA-title">Mocktests:</p>
-                    <input className="scansnameinput" value={VAMTName}  onChange={(e) => setVAMTName(e.target.value)} placeholder="Search scans...."></input>
+                    <input className="VAscansnameinput" value={VAMTName}  onChange={(e) => setVAMTName(e.target.value)} placeholder="Search scans...."></input>
                     </div>
                     
                     <div className="scan-list">

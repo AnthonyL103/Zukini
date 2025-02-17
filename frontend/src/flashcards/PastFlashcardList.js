@@ -214,7 +214,7 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
                 <div className="VA-content">
                     <div className="scanheaderwrapper">
                     <p className="VA-title">Flashcards:</p>
-                    <input className="scansnameinput" value={VAFCName}  onChange={(e) => setVAFCName(e.target.value)} placeholder="Search scans...."></input>
+                    <input className="VAscansnameinput" value={VAFCName}  onChange={(e) => setVAFCName(e.target.value)} placeholder="Search scans...."></input>
                     </div>
                     
                     <div className="scan-list">
