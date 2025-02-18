@@ -270,6 +270,42 @@ router.post('/login', async (req, res) => {
     }
 });
 
+
+
+router.post('/loginforgotpass', async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ success: false, message: "Email is required" });
+    }
+
+    try {
+        const user = await userinfos.findOne({ where: { email: email } });
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        if (!user.verified) {
+            return res.status(403).json({ success: false, message: "Please verify your email before logging in." });
+        }
+
+        return res.status(200).json({ 
+            success: true, 
+            message: "Login successful", 
+            userId: user.id, 
+            email: user.email, 
+            name: user.name 
+        });
+
+    } catch (error) {
+        console.error("Error during login via email:", error);
+        return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+});
+
+
+
 app.use('/account', router);
 
 
