@@ -68,17 +68,27 @@ const ScanList = ({ scans, onDelete, scroll, slidesRef}) => {
     };
     
     return (
-        <div ref={(el) => slidesRef.current[0] = el} className="scanpagecontainer"
-        onMouseEnter={() => setIsPaused(true)}  
-        onMouseLeave={() => scanName.trim() === "" && setIsPaused(false)}
-        onTouchStart={() => setIsPaused(true)}  // Pause scrolling on touch (Mobile)
-        onTouchEnd={() => scanName.trim() === "" && setIsPaused(false)} // Resume scrolling on release (Mobile)
-        > 
-            <div className="scanheaderwrapper">
-            <p className="scans-title">Scans:</p>
-            <input className="scansnameinput" value={scanName}  onChange={(e) => setScanName(e.target.value)} placeholder="Search scans...."></input>
+        <div
+            ref={(el) => slidesRef.current[0] = el}
+            className="relative flex flex-col p-5 bg-[rgba(15,6,71,0.4)] rounded-xl mb-4 snap-start"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => scanName.trim() === "" && setIsPaused(false)}
+            onTouchStart={() => setIsPaused(true)}
+            onTouchEnd={() => scanName.trim() === "" && setIsPaused(false)}
+        >
+            {/* Header Section */}
+            <div className="flex justify-between items-center mb-4">
+                <p className="text-white text-[clamp(1.5rem,3vw,2.5rem)] font-semibold">Scans:</p>
+                <input
+                    className="p-2 border-2 border-gray-300 rounded-lg text-lg text-gray-600 outline-none w-1/3 min-h-[2vw]"
+                    value={scanName}
+                    onChange={(e) => setScanName(e.target.value)}
+                    placeholder="Search scans..."
+                />
             </div>
-            <div className={`scan-list ${isFading ? 'fade' : ''}`}>
+
+            {/* Scan List */}
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 transition-opacity duration-500 ${isFading ? 'opacity-0' : 'opacity-100'}`}>
                 {displayedScans.length > 0 ? (
                     displayedScans.map((scan) => (
                         <Scan
@@ -92,11 +102,18 @@ const ScanList = ({ scans, onDelete, scroll, slidesRef}) => {
                         />
                     ))
                 ) : (
-                    <p className="nosearch">No scans found.</p> // Message if no results
+                    <p className="text-white text-[clamp(1rem,2vw,2rem)]">No scans found.</p>
                 )}
             </div>
-            <div className="addscanwrap">
-                <button className="addscan-button" onClick={scrolltoNext}>Add A Scan</button>
+
+            {/* Add Scan Button */}
+            <div className="flex justify-center mt-4">
+                <button
+                    className="w-1/3 h-14 bg-black text-white font-bold uppercase rounded-lg transition-all duration-300 hover:bg-purple-300 hover:text-black active:translate-y-2"
+                    onClick={scrollToNext}
+                >
+                    Add A Scan
+                </button>
             </div>
         </div>
     );

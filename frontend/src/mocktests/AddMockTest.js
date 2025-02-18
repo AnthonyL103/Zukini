@@ -3,7 +3,7 @@ import QuestionsList from './QuestionsList';
 import { useUser } from '../authentication/UserContext';
 import { v4 as uuidv4 } from 'uuid';
 
-const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, onClosePrevMT, onAddMockTest, Past, prevMT }) => {
+const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, onClosePrevMT, onAddMockTest, Past, prevMT, setisLoading }) => {
     const [questions, setQuestions] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [showMTNameModal, setShowMTNameModal] = useState(false);
@@ -18,7 +18,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
         }
         const generateMockTestQuestions = async () => {
             try {
-                const response = await fetch('http://18.236.227.203:5005/callparseMockTests', {
+                const response = await fetch('https://api.zukini.com/mocktests/callparseMockTests', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -107,6 +107,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
     const showNameModal = () => {
         setShowModal(false);
         setShowMTNameModal(true);
+        setisLoading(false);
       }
       
     const closeNameModal = () => {
@@ -137,7 +138,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
                 currDate: date,
                 userId: userId,
             }
-            const onsaveresponse = await fetch('http://18.236.227.203:5005/saveMockTest', {
+            const onsaveresponse = await fetch('https://api.zukini.com/mocktests/saveMockTest', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

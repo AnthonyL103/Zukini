@@ -3,7 +3,7 @@ import FlashCardList from './FlashCardList';
 import { useUser } from '../authentication/UserContext';
 import { v4 as uuidv4 } from 'uuid';
 
-const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC, onClosePrevFC, onAddFlashCard, Past, prevFC }) => {
+const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC, onClosePrevFC, onAddFlashCard, Past, prevFC, setisLoading}) => {
   const [flashcards, setFlashcards] = useState([]);
   const [showModal, setShowModal] = useState(Past);
   const [showFCNameModal, setShowFCNameModal] = useState(false);
@@ -19,7 +19,7 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC
     }
     const generateFlashcards = async () => {
       try {
-        const response = await fetch('http://18.236.227.203:5003/callparseFlashCards', {
+        const response = await fetch('https://api.zukini.com/flashcards/callparseFlashCards', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -86,6 +86,7 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC
   const showNameModal = () => {
     setShowModal(false);
     setShowFCNameModal(true);
+    setisLoading(false);
   }
   
   const closeNameModal = () => {
@@ -117,7 +118,7 @@ const AddFlashCards = ({ filepath, scanname, text, date, onClose, onDeletePrevFC
             currDate: date,
             userId: userId,
         }
-        const onsaveresponse = await fetch('http://18.236.227.203:5003/saveFlashCards', {
+        const onsaveresponse = await fetch('https://api.zukini.com/flashcards/saveFlashCards', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

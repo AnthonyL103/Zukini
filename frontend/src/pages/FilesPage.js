@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import ScanList from '../ScanList.js';
-import { useUser } from '../UserContext';
-import AddScan from '../AddScan';
+import ScanList from '../scans/ScanList.js';
+import { useUser } from '../authentication/UserContext';
+import AddScan from '../scans/AddScan';
 
 
 const FilesPage = () => {
@@ -14,7 +14,7 @@ const FilesPage = () => {
   useEffect(() => {
     const fetchScans = async () => {
       try {
-        const response = await fetch(`http://18.236.227.203:5001/displayscans?userId=${userId}`);;
+        const response = await fetch(`https://api.zukini.com/display/displayscans?userId=${userId}`);;
         if (!response.ok) {
           throw new Error('Failed to fetch scans');
         }
@@ -68,7 +68,7 @@ const FilesPage = () => {
 
   const handleDeleteScan = async () => {
     try {
-        let endpoint = `http://18.236.227.203:5001/deleteScan?userId=${userId}&key=${scanToDelete}`;
+        let endpoint = `https://api.zukini.com/display/deleteScan?userId=${userId}&key=${scanToDelete}`;
     
             const response = await fetch(endpoint, {
                 method: 'DELETE',

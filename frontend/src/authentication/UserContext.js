@@ -19,6 +19,7 @@ export const UserProvider = ({ children }) => {
     });
 
     const [email, setEmail] = useState(() => localStorage.getItem("email") || null);
+    const [name, setName] = useState(() => localStorage.getItem("name") || null);
     const [totalScans, setTotalScans] = useState(0);
     const [totalFlashcards, setTotalFlashcards] = useState(0);
     const [totalMockTests, setTotalMockTests] = useState(0);
@@ -29,7 +30,7 @@ export const UserProvider = ({ children }) => {
 
         console.log(`Attempting to delete guest user data: ${guestId}`);
         
-        fetch(`http://18.236.227.203:5001/deleteGuestAll?userId=${guestId}`, {
+        fetch(`https://api.zukini.com/display/deleteGuestAll?userId=${guestId}`, {
             method: 'DELETE',
             keepalive: true,  // Ensures the request completes before unload
             headers: {
@@ -64,6 +65,7 @@ export const UserProvider = ({ children }) => {
         } else {
             localStorage.setItem("userId", userId);
             localStorage.setItem("email", email);
+            localStorage.setItem("name", name);
             if (sessionStorage.getItem("guestUserId")) {
                 deleteGuestData(sessionStorage.getItem("guestUserId"));
                 sessionStorage.removeItem("guestUserId"); 
@@ -71,7 +73,7 @@ export const UserProvider = ({ children }) => {
             }
         }
         
-    }, [userId, email]);
+    }, [userId, email, name]);
 
     // Fetch total scans, flashcards, and mock tests when userId changes
     
@@ -80,19 +82,23 @@ export const UserProvider = ({ children }) => {
 
         const fetchUserStats = async () => {
             try {
-                const [fcRes, mtRes, scanRes] = await Promise.all([
-                    fetch(`http://18.236.227.203:5001/displayflashcards?userId=${userId}`),
-                    fetch(`http://18.236.227.203:5001/displaymocktests?userId=${userId}`),
-                    fetch(`http://18.236.227.203:5001/displayscans?userId=${userId}`)
+                const [fcRes, mtRes, scanRes] = await Promise.allSettled([
+                    fetch(`https://api.zukini.com/display/displayflashcards?userId=${userId}`),
+                    fetch(`https://api.zukini.com/display/displaymocktests?userId=${userId}`),
+                    fetch(`https://api.zukini.com/display/displayscans?userId=${userId}`)
                 ]);
+                
 
-                if (!fcRes.ok || !mtRes.ok || !scanRes.ok) {
-                    throw new Error("Failed to fetch one or more resources");
-                }
-
-                const FC = await fcRes.json();
-                const MT = await mtRes.json();
-                const Scans = await scanRes.json();
+                const parseResponse = async (res) => 
+                    res.status === "fulfilled" && res.value.ok 
+                        ? res.value.json() 
+                        : [];
+    
+                const [FC, MT, Scans] = await Promise.all([
+                    parseResponse(fcRes),
+                    parseResponse(mtRes),
+                    parseResponse(scanRes),
+                ]);
 
                 setTotalFlashcards(FC?.length || 0);
                 setTotalMockTests(MT?.length || 0);
@@ -103,6 +109,7 @@ export const UserProvider = ({ children }) => {
         };
 
         fetchUserStats();
+        
     }, [userId]);
 
     return (
@@ -111,7 +118,8 @@ export const UserProvider = ({ children }) => {
             email, setEmail,
             totalScans, setTotalScans,
             totalFlashcards, setTotalFlashcards,
-            totalMockTests, setTotalMockTests
+            totalMockTests, setTotalMockTests,
+            name, setName
         }}>
             {children}
         </UserContext.Provider>

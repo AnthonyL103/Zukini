@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import MTentry from "../MTentry";
+import MTentry from "../mocktests/MTentry";
 import { useUser } from '../authentication/UserContext';
 
 
@@ -14,6 +14,8 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
     const [isPaused, setIsPaused] = useState(false);
     const [itemsPerView, setItemsPerView] = useState(window.innerWidth < 768 ? 1 : 2);
     const [MTName, setMTName] = useState("");
+    const [VAMTName, setVAMTName] = useState("");
+    const [viewAll, setShowViewAll] = useState(false);
     const { userId, setTotalMockTests} = useUser();
 
     const scrollDelay = 7000; // Adjust this value to change delay time
@@ -23,7 +25,7 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
         
         const fetchMT = async () => {
             try {
-                const response = await fetch(`http://18.236.227.203:5001/displaymocktests?userId=${userId}`);
+                const response = await fetch(`https://api.zukini.com/display/displaymocktests?userId=${userId}`);
                 if (!response.ok) {
                   throw new Error('Failed to fetch mt');
                 }
@@ -67,7 +69,7 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
     
     const handleDeleteEntry = async () => {
         try {
-            let endpoint = `http://18.236.227.203:5001/deleteMT?userId=${userId}&key=${entryToDelete}`;
+            let endpoint = `https://api.zukini.com/display/deleteMT?userId=${userId}&key=${entryToDelete}`;
     
             const response = await fetch(endpoint, {
                 method: 'DELETE',
@@ -141,6 +143,10 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
     const filteredMT = MTentries.filter(mt =>
         mt.mtsessionname.toLowerCase().includes(MTName.toLowerCase())
     );
+    
+    const filteredVAMT = MTentries.filter(mt => 
+        mt.mtsessionname.toLowerCase().includes(VAMTName.toLowerCase())
+    );
 
     const displayedMT = MTName.trim()
         ? filteredMT.slice(0, itemsPerView) // Show all filtered mock tests when searching
@@ -148,6 +154,13 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
     
     const back = () => {
         backtoTop();
+    }
+    
+    const viewall = () => {
+        setShowViewAll(true);
+    }
+    const closeviewall = () => {
+        setShowViewAll(false);
     }
 
     return (
@@ -162,12 +175,15 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
             >
             <div className="scanheaderwrapper">
                 <p className="scans-title">Mocktests:</p>
+                <div className="searchVAWrap"> 
                 <input 
                     className="scansnameinput"
                     value={MTName}
                     onChange={(e) => setMTName(e.target.value)}
                     placeholder="Search..."
                 />
+                <button className= "viewall-button" onClick={viewall} >View All</button>
+                </div>
             </div>
 
             <div className={`MTentries-list ${isFading ? "fade" : ""}`}>
@@ -190,6 +206,45 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
                     <p className="nosearch">No mock tests found.</p>
                 )}
             </div>
+            
+            <div className={`VA-container ${viewAll ? "show" : ""}`}>
+            {viewAll && (
+                <div className="VA-content">
+                    <div className="scanheaderwrapper">
+                    <p className="VA-title">Mocktests:</p>
+                    <input className="VAscansnameinput" value={VAMTName}  onChange={(e) => setVAMTName(e.target.value)} placeholder="Search scans...."></input>
+                    </div>
+                    
+                    <div className="scan-list">
+                    {filteredVAMT.length > 0 ? (
+                        filteredVAMT.map((entry) => (
+                            <MTentry
+                            key={entry.mocktestkey}
+                            mocktestkey={entry.mocktestkey}
+                            filepath={entry.filepath}
+                            scanname={entry.scanname}
+                            Questions={entry.questions}
+                            MTName={entry.mtsessionname}
+                            date={entry.date}
+                            entryType="mocktest"
+                            displayModal={displayModal}
+                            pausescroll= {setIsStudyModalOpen}
+                            closeVA={closeviewall}
+                            viewall={viewall}
+                        />
+                    ))
+                    ) : (
+                        <p className="VAnosearch">No Mocktests found.</p> // Message if no results
+                    )}
+                    </div>
+                    <div className="VA-content-footer">
+                    <button className="deleteWarn-buttoncancel" onClick={closeviewall}>
+                        Done
+                    </button>
+                    </div>
+                </div>
+            )}
+        </div>
             <div className="addscanwrap">
             <button className="gobackbutton" onClick={back}>
                 <svg className="svgIcon" viewBox="0 0 384 512">

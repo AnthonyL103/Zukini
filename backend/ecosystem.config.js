@@ -2,7 +2,7 @@ module.exports = {
     apps: [
       {
         name: "handleAddScan",
-        script: "handleAddScan.js",
+        script: "./Scans/handleAddScan.js",
         instances: 1,
         env: {
           NODE_ENV: "production",
@@ -11,7 +11,7 @@ module.exports = {
       },
       {
         name: "display",
-        script: "display.js",
+        script: "./Display/display.js",
         instances: 1,
         env: {
           NODE_ENV: "production",
@@ -20,7 +20,7 @@ module.exports = {
       },
       {
         name: "createFlashCards",
-        script: "createFlashCards.js",
+        script: "./FlashCards/createFlashCards.js",
         instances: 1,
         env: {
           NODE_ENV: "production",
@@ -29,7 +29,7 @@ module.exports = {
       },
       {
         name: "createMockTests",
-        script: "createMockTests.js",
+        script: "./MockTests/createMockTests.js",
         instances: 1,
         env: {
           NODE_ENV: "production",
@@ -38,7 +38,7 @@ module.exports = {
       },
       {
         name: "handleAccount",
-        script: "handleAccount.js",
+        script: "./Authentication/handleAccount.js",
         instances: 1,
         env: {
           NODE_ENV: "production",

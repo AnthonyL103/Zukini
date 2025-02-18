@@ -45,3 +45,5 @@ const QuestionsList = ({questions = [] }) => {
         </div>
     );
 };
+
+export default QuestionsList;

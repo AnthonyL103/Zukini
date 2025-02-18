@@ -100,10 +100,6 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
     
     const onsave = async () => {
       try {
-        let userid = userId;
-        if (!userId) {
-            
-        }
         // Prepare the data as JSON
         const key = uuidv4();
         console.log("currkey", key);
@@ -193,82 +189,61 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
     
   return (
     <>
-    <div ref={(el) => slidesRef.current[1] = el} className ="addscanpagecontainer" >
-        <p className='scans-title'>Create New Scan:</p>
-        <form onSubmit={(e) => e.preventDefault()} encType="multipart/form-data">
-        <div className="Uploadscancontainer">
-        <input
-        type="text"
-        className="addscannameinput"
-        id="scanName"
-        value={scanName}
-        onChange={handleScanNameChange}
-        placeholder="Enter scan name"
-        required
-        />
-        <input
-          className="hiddenfileinput"
-          type="file"
-          accept="image/*,application/pdf" 
-          onChange={handleFileChange}
-          ref={fileInputRef}
-          required
-        ></input>
-        
-         {/*we use file input ref to hide the ugly default file upload button, so when we do onclick it activates the file input ref which is the ref of the input form 
-         then once a file is changed or that state changes we automatically try to parse */}
-        <button type="button" className="fileinput" onClick={() => fileInputRef.current.click()}>
-            Upload and Scan
-        </button>
+        <div ref={(el) => slidesRef.current[1] = el} className="relative flex flex-col p-5 bg-[rgba(15,6,71,0.4)] rounded-xl mb-4 snap-start">
+            <p className="text-white text-[clamp(1.5rem,3vw,2.5rem)] font-semibold">Create New Scan:</p>
+            <form onSubmit={(e) => e.preventDefault()} encType="multipart/form-data">
+                <div className="flex flex-col gap-4 mt-4">
+                    <input
+                        type="text"
+                        className="p-2 border-2 border-gray-300 rounded-lg text-lg text-gray-600 outline-none min-w-[20%] min-h-[30px]"
+                        value={scanName}
+                        onChange={handleScanNameChange}
+                        placeholder="Enter scan name"
+                        required
+                    />
+                    <input
+                        className="hidden"
+                        type="file"
+                        accept="image/*,application/pdf"
+                        onChange={handleFileChange}
+                        ref={fileInputRef}
+                        required
+                    />
+                    <button type="button" className="w-full h-14 bg-black text-white font-bold uppercase rounded-lg transition-all duration-300 hover:bg-purple-300 hover:text-black active:translate-y-2"
+                        onClick={() => fileInputRef.current.click()}>
+                        Upload and Scan
+                    </button>
+                    <button className="w-full h-14 bg-black text-white font-bold uppercase rounded-lg transition-all duration-300 hover:bg-purple-300 hover:text-black active:translate-y-2"
+                        type="button" onClick={onsave} disabled={!saveEnabled}>
+                        Save
+                    </button>
+                </div>
+            </form>
 
-        
-        <button className="fileinput" type="button" onClick={onsave} disabled={!saveEnabled} >Save</button>
+            <div className="flex justify-center mt-4">
+                <button className="w-14 h-14 bg-black text-white font-bold uppercase rounded-full flex items-center justify-center transition-all duration-300 hover:bg-purple-300 hover:text-black active:translate-y-2"
+                    onClick={scrollToTop}>
+                    <svg className="w-5 h-5" viewBox="0 0 384 512">
+                        <path d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
-       </form>
-       
-       <div className="addscanwrap">
-       <button className="gobackbutton" onClick={scrolltoTop}>
-                <svg className="svgIcon" viewBox="0 0 384 512">
-                    <path
-                    d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"
-                    ></path>
-                </svg>
-            </button>
 
-        </div>
-      </div>
-      
-  
-      
-    <div className={`parsedTextmodal-container ${showModal ? "show" : ""}`}>
-    {showModal && (
-    <div className="parsedText-modal">
-      <p className="modal-title">Parsed Text:</p>
-      <div className="parsedTextcontent"> 
-        <p className="parsedText-para">{displayedText}</p>
-      </div>
-      <div className="parsedTextmodal-footer">
-        <button
-          className="deleteWarn-buttoncancel"
-          onClick={handleCloseModal}
-        >
-          Accept
-        </button>
-        <button
-          className="deleteWarn-buttoncancel"
-          onClick={handleReScan}
-        >
-          Re-Scan
-        </button>
-      </div>
-    </div>
-  )}
-</div>
-
+        {showModal && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white rounded-lg p-6 w-full max-w-md text-center">
+                    <p className="text-black text-[clamp(1.5rem,3vw,2.5rem)] font-semibold">Parsed Text:</p>
+                    <p className="text-lg text-gray-700">{displayedText}</p>
+                    <div className="mt-4 flex justify-around">
+                        <button className="bg-gray-700 text-white py-2 px-4 rounded-lg" onClick={handleCloseModal}>Accept</button>
+                        <button className="bg-red-500 text-white py-2 px-4 rounded-lg" onClick={handleReScan}>Re-Scan</button>
+                    </div>
+                </div>
+            </div>
+        )}
     </>
-  );
-  
+);
 };
-  
 
 export default AddScan;

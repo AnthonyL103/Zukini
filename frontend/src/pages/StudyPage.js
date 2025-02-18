@@ -1,11 +1,11 @@
 import { useState, useRef } from 'react';
-import StudyMenu from '../StudyMenu';
-import AddFlashCards from '../AddFlashCards';
-import AddMockTest from '../AddMockTest';
+import StudyMenu from '../Header/StudyMenu';
+import AddFlashCards from '../flashcards/AddFlashCards';
+import AddMockTest from '../mocktests/AddMockTest';
 import { useNavigate } from 'react-router-dom';
-import { useScan } from '../ScanContext';
-import PastFlashCardList from '../PastFlashcardList';
-import PastMocktestList from '../PastMocktestList';
+import { useScan } from '../scans/ScanContext';
+import PastFlashCardList from '../flashcards/PastFlashcardList';
+import PastMocktestList from '../mocktests/PastMocktestList';
 
 
 const Study = () => {
@@ -137,6 +137,7 @@ const Study = () => {
           onAddFlashCard={onAddFlashCard}
           Past={false}
           prevFC={null}
+          setisLoading = {setIsLoading}
         />
       )}
       {showMockTests && (
@@ -149,6 +150,7 @@ const Study = () => {
           onAddMockTest={onAddMockTest}
           Past={false}
           prevMT={null}
+          setisLoading = {setIsLoading}
         />
         )}
         

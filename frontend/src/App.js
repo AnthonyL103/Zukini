@@ -5,7 +5,7 @@ import FilesPage from './pages/FilesPage';
 import HomePage from './pages/HomePage';
 import StudyPage from './pages/StudyPage';
 import AccountPage from './pages/AccountPage';
-import { UserProvider } from './UserContext';
+import { UserProvider } from './authentication/UserContext';
 
 const App = () => {
   return (

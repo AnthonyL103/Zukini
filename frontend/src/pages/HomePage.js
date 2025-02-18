@@ -1,4 +1,4 @@
-import SocialMediaLinks from '../socialmenu';
+import SocialMediaLinks from '../Header/socialmenu';
 import { useRef } from "react";
 import { useNavigate} from 'react-router-dom';
 

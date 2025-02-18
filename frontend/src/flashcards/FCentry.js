@@ -2,7 +2,7 @@
 import AddFlashCards from "./AddFlashCards";
 import {useState, useEffect} from "react";
 
-const FCentry = ({ flashcardkey, filepath, FlashCards, FCName, scanname, date, entryType, displayModal, pausescroll}) => {
+const FCentry = ({ flashcardkey, filepath, FlashCards, FCName, scanname, date, entryType, displayModal, pausescroll, viewall, closeVA}) => {
   const [showStudyModal, setShowStudyModal] = useState(false);
   
   useEffect(() => {
@@ -15,9 +15,13 @@ const FCentry = ({ flashcardkey, filepath, FlashCards, FCName, scanname, date, e
   };
   
   const handleclose = () => {
+    if (viewall) {
+        closeVA();
+    }
     setShowStudyModal(false);
     console.log(showStudyModal);
   };
+  
   
   const handleStudy = () => {
     setShowStudyModal(true);

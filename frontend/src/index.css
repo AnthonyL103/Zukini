@@ -362,16 +362,7 @@ body {
     margin-bottom:1vw;
 }
 
-.scansnameinput {
-    padding: 5px;
-    border: 2px solid #ccc;
-    width:30vw;
-    min-height: 2vw;
-    border-radius: 15px;
-    font-size: 16px;
-    color: #555;
-    outline: none;
-  }
+
 .scan{
     background-color: #deded8;
     border-radius: 15px;
@@ -390,8 +381,6 @@ body {
     pointer-events: auto;
 }
 
-
-
 .scan-footer {
     margin-top: auto;
     display: flex;
@@ -399,6 +388,148 @@ body {
     position: sticky; /* Sticks to the bottom of the scan container */
     bottom: 0; /* Sticks it at the bottom inside .scan */
 }
+
+.searchVAWrap {
+    display: flex;
+    width:40dvw;
+    justify-content: space-between;
+    height:5dvh;
+    
+}
+
+.scansnameinput {
+    padding: 5px;
+    border: 2px solid #ccc;
+    width:65%;
+    border-radius: 15px;
+    font-size: 16px;
+    color: #555;
+    outline: none;
+  }
+
+/*view All for scans*/
+.viewall-button {
+    border: none;
+    display: flex;
+    width: 30%;
+    padding: 0.75rem 1.5rem;
+    background-color: #000000;
+    color: #ffffff;
+    box-shadow: 0px 0px 0px 4px rgba(180, 160, 255, 0.253);
+    justify-content: center;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    text-transform: uppercase;
+    vertical-align: middle;
+    align-items: center;
+    border-radius: 15px;
+    user-select: none;
+    gap: 0.75rem;
+    box-shadow:
+      0 4px 6px -1px #488aec31,
+      0 2px 4px -1px #488aec17;
+    transition: all 0.6s ease;
+  }
+  .viewall-button:hover {
+      background-color: rgb(181, 160, 255);
+      color: hsl(0, 0%, 4%);
+      cursor: pointer;
+  }
+  
+  .viewall-button:active {
+    color: hsl(0, 0%, 3%);
+    transform: translateY(10px);
+    transition: 100ms;
+    cursor: pointer;
+    }
+
+    .VAscansnameinput {
+        margin: 5px 0 0 0;
+        padding: 5px;
+        border: 2px solid #ccc;
+        width:65%;
+        border-radius: 15px;
+        font-size: 16px;
+        color: #555;
+        outline: none;
+      }
+    
+    
+
+
+.VA-container {
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position:fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+  }
+  
+  .VA-container.show {
+    pointer-events: auto;
+    opacity: 1;
+  }
+  
+  .VA-content {
+    overscroll-behavior: contain;
+    touch-action: manipulation;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding:20px;
+    width: 100%;
+    height: 100%; 
+    text-align: center;
+    overflow-y: auto;
+    flex-direction: column;
+    z-index: 1000;
+  }
+  
+    
+  
+  .VA-content-footer {
+    padding-top: 1rem;
+    padding-bottom:1rem;
+    display: flex;
+    justify-content: space-around;
+    position: sticky;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.2); 
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px); 
+  }
+  
+  .VA-title {
+    margin: 5px 0 0 0;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);/* Scales between 1rem - 2rem */
+    font-weight: 600;
+    color: #000000;
+    }
+    
+    .VAnosearch{
+        color: rgb(0, 0, 0);
+        font-size: clamp(1rem, 2vw, 2rem);
+    }
+    
+    
+
+
+
+
 /*add scan stuff*/
 
 .addscanpagecontainer {
@@ -431,7 +562,7 @@ body {
     font-size: 16px;
     color: #555;
     outline: none;
-  }
+}
 
 
 .hiddenfileinput {
@@ -687,6 +818,31 @@ body {
       font-weight: 500;
       color: rgb(51, 51, 51);
     }
+    
+    
+  .parsedTextmodal-footer {
+    padding-top: 1rem;
+    padding-bottom:1rem;
+    display: flex;
+    justify-content: space-between;
+    position: sticky;
+    bottom: 0;
+  }
+  
+  .parsedTextcontent {
+    margin-bottom: 1vw;
+    background-color: #deded8;
+    border-radius: 15px;
+    padding: 1rem;
+    font-size: larger;
+    height: 70dvh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    position: relative; 
+    touch-action: manipulation;
+    -webkit-overflow-scrolling: touch;
+  }
     
     
   .deleteWarn-container {
@@ -1198,29 +1354,6 @@ body {
     justify-content: space-between;
   }
   
-  .parsedTextmodal-footer {
-    padding-top: 1rem;
-    padding-bottom:1rem;
-    display: flex;
-    justify-content: space-between;
-    position: sticky;
-    bottom: 0;
-  }
-  
-  .parsedTextcontent {
-    margin-bottom: 1vw;
-    background-color: #deded8;
-    border-radius: 15px;
-    padding: 1rem;
-    font-size: larger;
-    height: 70dvh;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    position: relative; 
-    touch-action: manipulation;
-    -webkit-overflow-scrolling: touch;
-  }
   
   
   
@@ -1842,15 +1975,34 @@ body {
     }
     
     
-    .authbuttonlogin-wrapper {
-      width: 100%;
-      height: auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
+   
     
+    .fgpasssignup-wrapper{
+        width: 100%;
+        height: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom:1dvh;
+    }
+    .fgpasssingupspan {
+        font-size: 14px;
+        margin-left: 5px;
+        color: #2d79f3;
+        font-weight: 500;
+        cursor: pointer;
+      }
+    
+    .authbuttonlogin-wrapper {
+        width: 100%;
+        height: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+      
     .login-buttonsignin {
       border: none;
       width: 48%;
