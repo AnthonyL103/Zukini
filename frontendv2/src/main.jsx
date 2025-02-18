@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import { ScanProvider } from './ScanContext';
+import { ScanProvider } from './components/scans/ScanContext';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

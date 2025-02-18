@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './Header/Navbar';
-import FilesPage from './pages/FilesPage';
-import HomePage from './pages/HomePage';
-import StudyPage from './pages/StudyPage';
-import AccountPage from './pages/AccountPage';
-import { UserProvider } from './UserContext';
+import Navbar from './components/Header/Navbar';
+import FilesPage from './components/pages/FilesPage';
+import HomePage from './components/pages/HomePage';
+import StudyPage from './components/pages/StudyPage';
+import AccountPage from './components/pages/AccountPage';
+import { UserProvider } from './components/authentication/UserContext';
 
 const App = () => {
   return (

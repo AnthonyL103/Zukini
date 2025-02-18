@@ -1,5 +1,5 @@
-import Authentication from '../Authentication';
-import { useUser } from '../UserContext';
+import Authentication from '../authentication/Authentication';
+import { useUser } from '../authentication/UserContext';
 
 const AccountPage = () => {
     const { userId, email, totalScans, totalFlashcards, totalMockTests } = useUser();

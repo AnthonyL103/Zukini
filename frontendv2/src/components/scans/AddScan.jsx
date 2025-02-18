@@ -1,6 +1,6 @@
 import {useState, useEffect, useRef} from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { useUser } from '../UserContext';
+import { useUser } from '../authentication/UserContext';
 
 
 const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
