@@ -10,7 +10,7 @@ const sgMail = require('@sendgrid/mail');
 require('dotenv').config();
 app.use(cors());
 const { v4: uuidv4 } = require('uuid'); // Import uuid
-
+let verificationCodes = {}; 
 sgMail.setApiKey(process.env.MAILERKEY);
 
 async function sendVerificationEmail(email, verificationLink) {
@@ -187,6 +187,71 @@ router.get("/verify/:token", async (req, res) => {
         return res.status(500).send("Database error.");
     }
 });
+
+async function sendCodeEmail(to, subject, text) {
+    console.log(`Sending email to ${to} with subject: ${subject}`);
+    try {
+        const msg = {
+            to: to,
+            from: { email: process.env.EMAIL_FROM, name: "Zukini Support" }, // Proper format for SendGrid
+            subject: subject,
+            text: text,
+            html: `<p>${text}</p>`, // Ensure HTML version also has the text
+        };
+
+        await sgMail.send(msg);
+        console.log(`Email successfully sent to ${to}`);
+    } catch (error) {
+        console.error("Error sending email:", error.response ? error.response.body : error);
+    }
+}
+
+router.post('/sendCode', async (req, res) => {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ success: false, message: "Email is required" });
+
+    const user = await userinfos.findOne({ where: { email: email } });
+    if (!user) {
+        return res.status(404).json({ success: false, message: "User doesn't exist" });
+    }
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
+    const expiresAt = Date.now() + 5 * 60 * 1000; // Code expires in 5 minutes
+    
+    verificationCodes[email] = { code, expiresAt };
+
+    console.log(`Generated Code for ${email}: ${code}`); // Debugging
+
+    try {
+        await sendCodeEmail(email, "Your Verification Code", `Your verification code is: <strong>${code}</strong>. This code will expire in 5 minutes.`);
+        res.json({ success: true, message: "Code sent successfully" });
+        
+        setTimeout(() => {
+            if (verificationCodes[email] && verificationCodes[email].expiresAt <= Date.now()) {
+                delete verificationCodes[email];
+                console.log(`Code for ${email} has expired and been deleted.`);
+            }
+        }, 5 * 60 * 1000); 
+    } catch (error) {
+        console.error("Error sending code:", error);
+        res.status(500).json({ success: false, message: "Failed to send verification code" });
+    }
+});
+
+// Verify Code API
+router.post('/verifyCode', (req, res) => {
+    const { email, code } = req.body;
+    const stored = verificationCodes[email];
+
+    if (!stored || stored.code !== code || Date.now() > stored.expiresAt) {
+        return res.status(400).json({ success: false, message: "Invalid or expired code" });
+    }
+
+    delete verificationCodes[email]; // Remove after successful verification
+    res.json({ success: true, message: "Code verified successfully" });
+});
+
+
 
 
 router.post('/login', async (req, res) => {
