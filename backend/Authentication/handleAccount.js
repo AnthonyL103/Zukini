@@ -127,7 +127,7 @@ router.post('/signup', async (req, res) => {
     }
 });
 
-router.post('/change-password', async (req, res) => {
+router.post('/changepassword', async (req, res) => {
     const { userId, oldPassword, newPassword } = req.body;
 
     if (!userId || !oldPassword || !newPassword) {
