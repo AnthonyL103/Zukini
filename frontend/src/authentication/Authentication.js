@@ -18,6 +18,20 @@ const Authentication = () => {
     const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmNewPassword, setConfirmNewPassword] = useState("");
+    const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
+    const [isCodeSent, setIsCodeSent] = useState(false);
+    const [verificationCode, setVerificationCode] = useState("");
+    const [countdown, setCountdown] = useState(300); // 5-minute timer (300s)
+    const [timerActive, setTimerActive] = useState(false);
+    
+    useEffect(() => {
+        if (timerActive && countdown > 0) {
+            const interval = setInterval(() => {
+                setCountdown((prev) => prev - 1);
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+    }, [countdown, timerActive]);
 
     useEffect(() => {
         const storedUserId = localStorage.getItem("userId");
@@ -45,15 +59,23 @@ const Authentication = () => {
         setErrorMessage("");
     };
     
+    const handlegotologin = () => {
+        setShowSignUpModal(false);
+        setShowLoginModal(true);
+        setErrorMessage("");
+    };
+    
     const handleChangePassword = () => {
         setShowChangePasswordModal(true);
         setErrorMessage("");
     };
     
-    const handleCloseChangePassword = () => {
-        setShowChangePasswordModal(false);
+    const handleforgotpassword = () => {
+        setShowLoginModal(false);
+        setShowForgotPasswordModal(true);
         setErrorMessage("");
     };
+    
 
     const handleLoggedIn = async (e) => {
         e.preventDefault();
@@ -92,6 +114,43 @@ const Authentication = () => {
         setPassword("");
         setUserName("");
     };
+    
+    const handleLoginForgot = async (email) => {
+        setErrorMessage("");
+    
+        try {
+            const response = await fetch("https://api.zukini.com/account/loginforgotpass", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),  // Use email for login
+            });
+    
+            const data = await response.json();
+    
+            if (data.success) {
+                setUserId(data.userId);
+                setEmail(data.email);
+                setName(data.name);
+                localStorage.setItem("userId", data.userId);
+                localStorage.setItem("email", data.email);
+                localStorage.setItem("name", data.name);
+    
+                setShowForgotPasswordModal(false);
+                setIsCodeSent(false);
+                setVerificationCode("");
+                setCountdown(300);
+                setTimerActive(false);
+    
+                alert("Login successful!");
+            } else {
+                setErrorMessage(data.message);
+            }
+        } catch (error) {
+            console.error("Error logging in via forgot password:", error);
+            setErrorMessage("Login failed. Please try again.");
+        }
+    };
+    
 
     const handleLogout = () => {
         setCurrentScan(null);
@@ -113,11 +172,20 @@ const Authentication = () => {
         e.preventDefault(); // Prevent form validation from triggering
         setShowLoginModal(false);
         setShowSignUpModal(false);
+        setShowChangePasswordModal(false);
+        setShowForgotPasswordModal(false);
         setErrorMessage("");
         setUserEmail("");
         setUserName("");
         setPassword("");
         setConfirmPassword("");
+        setOldPassword("");
+        setNewPassword("");
+        setIsCodeSent(false);
+        setVerificationCode("");
+        setCountdown(300);
+        setTimerActive(false);
+        setConfirmNewPassword("");
     }
 
     const closeSignUpModal = async (e) => {
@@ -202,6 +270,70 @@ const Authentication = () => {
         }
     };
     
+    const handleSendCode = async (e) => {
+        e.preventDefault();
+        setErrorMessage("");
+    
+        try {
+            const response = await fetch("https://api.zukini.com/account/sendCode", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: useremail }),
+            });
+    
+            const data = await response.json();
+    
+            if (data.success) {
+                setIsCodeSent(true);
+                setCountdown(300); // Reset timer
+                setTimerActive(true);
+            } else {
+                setErrorMessage(data.message);
+            }
+        } catch (error) {
+            console.error("Error sending code:", error);
+            setErrorMessage("Failed to send code. Try again.");
+        }
+    };
+    
+    const handleVerifyCode = async (e) => {
+        e.preventDefault();
+        setErrorMessage("");
+    
+        try {
+            const response = await fetch("https://api.zukini.com/account/verifyCode", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: useremail, code: verificationCode }),
+            });
+    
+            const data = await response.json();
+    
+            if (data.success) {
+                alert("Code verified successfully! Proceed to reset your password.");
+                await handleLoginForgot(useremail);
+                setUserEmail("");
+                setShowForgotPasswordModal(false);
+                setVerificationCode("");
+                setCountdown(300);
+                setTimerActive(false);
+                setIsCodeSent(false);
+            } else {
+                setErrorMessage("Invalid or expired code.");
+            }
+        } catch (error) {
+            console.error("Error verifying code:", error);
+            setErrorMessage("Failed to verify code.");
+        }
+    };
+    
+    const formatTime = (seconds) => {
+        const min = Math.floor(seconds / 60);
+        const sec = seconds % 60;
+        return `${min}:${sec < 10 ? "0" : ""}${sec}`;
+    };
+    
+    
     
     const isGuestUser = userId && typeof userId === "string" && userId.startsWith("guest-");
 
@@ -251,8 +383,8 @@ const Authentication = () => {
                         </div>
                         {errorMessage && <p className="error-message">{errorMessage}</p>}
                         <div className="fgpasssignup-wrapper">
-                            <span class="fgpasssingupspan" onClick={handlegotosignup}>No account? Sign up</span>
-                            <span class="fgpasssingupspan">Forgot password?</span>
+                            <span className="fgpasssingupspan" onClick={handlegotosignup}>No account? Sign up</span>
+                            <span className="fgpasssingupspan" onClick={handleforgotpassword}>Forgot password?</span>
                             
                         </div>
                         <div className="authbuttonlogin-wrapper">
@@ -290,6 +422,11 @@ const Authentication = () => {
                         </div>
                         <div className="signupinput-container">
                             <input type="password" placeholder="Enter password again" required value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                        </div>
+                        
+                        <div className="fgpasssignup-wrapper">
+                            <span className="fgpasssingupspan" onClick={handlegotologin}>Have an account? Log in</span>
+                            
                         </div>
                         {errorMessage && <p className="error-message">{errorMessage}</p>}
                         <div className="authbuttonlogin-wrapper">
@@ -342,7 +479,7 @@ const Authentication = () => {
                 </div>
                 {errorMessage && <p className="error-message">{errorMessage}</p>}
                 <div className="authbuttonlogin-wrapper">
-                    <button className="login-buttonclose" onClick={handleCloseChangePassword}>
+                    <button className="login-buttonclose" onClick={handleclose}>
                         Close
                     </button>
                     <button className="login-buttonsignin" type="submit">
@@ -352,6 +489,36 @@ const Authentication = () => {
             </form>
             
             )}
+            </div>
+            
+            <div className={`loginmodal-container ${showForgotPasswordModal ? "show" : ""}`}>
+                    {showForgotPasswordModal && (
+                    <form className="signupform" onSubmit={isCodeSent ? handleVerifyCode : handleSendCode}>
+                        <p className="signupform-title">{isCodeSent ? "Enter Code" : "Enter Account Email"}</p>
+
+                        <div className="signupinput-container">
+                            {!isCodeSent ? (
+                                <input type="text" placeholder="Enter email" required value={useremail} onChange={(e) => setUserEmail(e.target.value)} />
+                            ) : (
+                                <>
+                                    <input type="text" placeholder="Enter verification code" required value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} />
+                                    <p className="timer-text">Code expires in: {formatTime(countdown)}</p>
+                                </>
+                            )}
+                        </div>
+
+                        {errorMessage && <p className="error-message">{errorMessage}</p>}
+
+                        <div className="authbuttonlogin-wrapper">
+                            <button className="login-buttonclose" onClick={handleclose}>
+                                Close
+                            </button>
+                            <button className="login-buttonsignin" type="submit">
+                                {isCodeSent ? "Verify Code" : "Send Code"}
+                            </button>
+                        </div>
+                    </form>
+                )}
             </div>
 
         </div>
