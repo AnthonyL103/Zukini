@@ -14,6 +14,10 @@ const Authentication = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const [useremail, setUserEmail] = useState("");
     const [username, setUserName]= useState("");
+    const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+    const [oldPassword, setOldPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
     useEffect(() => {
         const storedUserId = localStorage.getItem("userId");
@@ -32,6 +36,22 @@ const Authentication = () => {
 
     const handleLogIn = () => {
         setShowLoginModal(true);
+        setErrorMessage("");
+    };
+    
+    const handlegotosignup = () => {
+        setShowLoginModal(false);
+        setShowSignUpModal(true);
+        setErrorMessage("");
+    };
+    
+    const handleChangePassword = () => {
+        setShowChangePasswordModal(true);
+        setErrorMessage("");
+    };
+    
+    const handleCloseChangePassword = () => {
+        setShowChangePasswordModal(false);
         setErrorMessage("");
     };
 
@@ -146,17 +166,63 @@ const Authentication = () => {
         alert("Account created successfully! Please check your email and click verification link.");
     };
     
+    const handleConfirmChangePassword = async (e) => {
+        e.preventDefault();
+        
+        if (newPassword !== confirmNewPassword) {
+            setErrorMessage("New passwords do not match");
+            return;
+        }
+    
+        try {
+            const response = await fetch("https://api.zukini.com/account/changepassword", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId,
+                    oldPassword,
+                    newPassword,
+                }),
+            });
+    
+            const data = await response.json();
+    
+            if (data.success) {
+                alert("Password changed successfully!");
+                setShowChangePasswordModal(false);
+                setOldPassword("");
+                setNewPassword("");
+                setConfirmNewPassword("");
+            } else {
+                setErrorMessage(data.message);
+            }
+        } catch (error) {
+            console.log("Error changing password:", error);
+            setErrorMessage("An error occurred while changing your password.");
+        }
+    };
+    
+    
     const isGuestUser = userId && typeof userId === "string" && userId.startsWith("guest-");
 
     return (
         <div className="account-wrapper">
             {userId && !isGuestUser? (
+                <>
+                <button className="logoutbutton" onClick={handleChangePassword}>
+                    Change Password
+                    <div className="arrow-wrapper">
+                        <div className="arrow"></div>
+                    </div>
+                </button>
+                
                 <button className="logoutbutton" onClick={handleLogout}>
                     Log Out
                     <div className="arrow-wrapper">
                         <div className="arrow"></div>
                     </div>
                 </button>
+                </>
             ) : (
                 <>
                     <button className="signupbutton" onClick={handleSignUp}>Sign Up 
@@ -184,6 +250,11 @@ const Authentication = () => {
                             <input type="password" placeholder="Enter password" required onChange={(e) => setPassword(e.target.value)} />
                         </div>
                         {errorMessage && <p className="error-message">{errorMessage}</p>}
+                        <div className="fgpasssignup-wrapper">
+                            <span class="fgpasssingupspan" onClick={handlegotosignup}>No account? Sign up</span>
+                            <span class="fgpasssingupspan">Forgot password?</span>
+                            
+                        </div>
                         <div className="authbuttonlogin-wrapper">
                             <button
                             className="login-buttonclose"
@@ -193,7 +264,7 @@ const Authentication = () => {
                             </button>
                             <button
                             className="login-buttonsignin"
-                            onClick={handleLogIn}
+                            type="submit"
                             >
                             Login
                             </button>
@@ -230,7 +301,7 @@ const Authentication = () => {
                             </button>
                             <button
                             className="login-buttonsignin"
-                            onClick={handleSignUp}
+                            type="submit"
                             >
                             Sign-Up
                             </button>
@@ -238,6 +309,51 @@ const Authentication = () => {
                     </form>
                 )}
             </div>
+            <div className={`loginmodal-container ${showChangePasswordModal ? "show" : ""}`}>
+            {showChangePasswordModal && (
+            <form className="signupform" onSubmit={handleConfirmChangePassword}>
+                <p className="signupform-title">Change Password</p>
+                <div className="signupinput-container">
+                    <input 
+                        type="password" 
+                        placeholder="Enter old password" 
+                        required 
+                        value={oldPassword} 
+                        onChange={(e) => setOldPassword(e.target.value)} 
+                    />
+                </div>
+                <div className="signupinput-container">
+                    <input 
+                        type="password" 
+                        placeholder="Enter new password" 
+                        required 
+                        value={newPassword} 
+                        onChange={(e) => setNewPassword(e.target.value)} 
+                    />
+                </div>
+                <div className="signupinput-container">
+                    <input 
+                        type="password" 
+                        placeholder="Confirm new password" 
+                        required 
+                        value={confirmNewPassword} 
+                        onChange={(e) => setConfirmNewPassword(e.target.value)} 
+                    />
+                </div>
+                {errorMessage && <p className="error-message">{errorMessage}</p>}
+                <div className="authbuttonlogin-wrapper">
+                    <button className="login-buttonclose" onClick={handleCloseChangePassword}>
+                        Close
+                    </button>
+                    <button className="login-buttonsignin" type="submit">
+                        Confirm
+                    </button>
+                </div>  
+            </form>
+            
+            )}
+            </div>
+
         </div>
     );
 };

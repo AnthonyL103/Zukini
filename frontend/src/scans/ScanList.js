@@ -86,7 +86,7 @@ const ScanList = ({ scans, onDelete, scroll, slidesRef}) => {
         onTouchEnd={() => scanName.trim() === "" && setIsPaused(false)} // Resume scrolling on release (Mobile)
         > 
             <div className="scanheaderwrapper">
-                <p className="scans-title">Scans:</p>
+                <p className="scans-title">Scans:</p>s
                 <div className="searchVAWrap">
                 <input className="scansnameinput" value={scanName}  onChange={(e) => setScanName(e.target.value)} placeholder="Search scans...."></input>
                 <button className= "viewall-button" onClick={viewall} >View All</button>

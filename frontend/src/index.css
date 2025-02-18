@@ -1975,15 +1975,34 @@ body {
     }
     
     
-    .authbuttonlogin-wrapper {
-      width: 100%;
-      height: auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
+   
     
+    .fgpasssignup-wrapper{
+        width: 100%;
+        height: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom:1dvh;
+    }
+    .fgpasssingupspan {
+        font-size: 14px;
+        margin-left: 5px;
+        color: #2d79f3;
+        font-weight: 500;
+        cursor: pointer;
+      }
+    
+    .authbuttonlogin-wrapper {
+        width: 100%;
+        height: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+      
     .login-buttonsignin {
       border: none;
       width: 48%;
