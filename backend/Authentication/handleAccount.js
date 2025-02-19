@@ -128,37 +128,67 @@ router.post('/signup', async (req, res) => {
 });
 
 router.post('/changepassword', async (req, res) => {
-    const { userId, oldPassword, newPassword } = req.body;
-
-    if (!userId || !oldPassword || !newPassword) {
-        return res.status(400).json({ success: false, message: "Missing required fields" });
+    const { userId, oldPassword, newPassword, isforgot } = req.body;
+    
+    if (isforgot) {
+        if (!userId || !newPassword) {
+            return res.status(400).json({ success: false, message: "Missing required fields" });
+        }
+        
+        try {
+            const user = await userinfos.findOne({ where: { id: userId } });
+    
+            if (!user) {
+                return res.status(404).json({ success: false, message: "User not found" });
+            }
+    
+            // Check if old password is correct
+    
+            // Hash the new password and update it
+            const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+            await userinfos.update(
+                { password: hashedNewPassword },
+                { where: { id: userId } }
+            );
+    
+            return res.status(200).json({ success: true, message: "Password updated successfully" });
+        } catch (error) {
+            console.error("Error changing password:", error);
+            return res.status(500).json({ success: false, message: "Internal server error" });
+        }
+    } 
+    else {
+        if (!userId || !oldPassword || !newPassword) {
+            return res.status(400).json({ success: false, message: "Missing required fields" });
+        }
+    
+        try {
+            const user = await userinfos.findOne({ where: { id: userId } });
+    
+            if (!user) {
+                return res.status(404).json({ success: false, message: "User not found" });
+            }
+    
+            // Check if old password is correct
+            const isMatch = await bcrypt.compare(oldPassword, user.password);
+            if (!isMatch) {
+                return res.status(401).json({ success: false, message: "Incorrect old password" });
+            }
+    
+            // Hash the new password and update it
+            const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+            await userinfos.update(
+                { password: hashedNewPassword },
+                { where: { id: userId } }
+            );
+    
+            return res.status(200).json({ success: true, message: "Password updated successfully" });
+        } catch (error) {
+            console.error("Error changing password:", error);
+            return res.status(500).json({ success: false, message: "Internal server error" });
+        }
     }
 
-    try {
-        const user = await userinfos.findOne({ where: { id: userId } });
-
-        if (!user) {
-            return res.status(404).json({ success: false, message: "User not found" });
-        }
-
-        // Check if old password is correct
-        const isMatch = await bcrypt.compare(oldPassword, user.password);
-        if (!isMatch) {
-            return res.status(401).json({ success: false, message: "Incorrect old password" });
-        }
-
-        // Hash the new password and update it
-        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-        await userinfos.update(
-            { password: hashedNewPassword },
-            { where: { id: userId } }
-        );
-
-        return res.status(200).json({ success: true, message: "Password updated successfully" });
-    } catch (error) {
-        console.error("Error changing password:", error);
-        return res.status(500).json({ success: false, message: "Internal server error" });
-    }
 });
 
 
