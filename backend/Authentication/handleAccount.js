@@ -267,23 +267,23 @@ router.post('/login', async (req, res) => {
         const user = await userinfos.findOne({ where: { email: email } });
 
         if (!user) {
-            return { success: false, message: "User not found" };
+            return res.status(400).json({ success: false, message: "User not found" });
         }
 
         if (!user.verified) {
             console.log('User not verified');
-            return { success: false, message: "Please verify your email before logging in." };
+            return res.status(400).json({ success: false, message: "Please verify your email before logging in." });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return { success: false, message: "Incorrect password" };
+            return res.status(400).json({ success: false, message: "Incorrect password" });
         }
 
-        return { success: true, message: "Login successful", userId: user.id, email: user.email, name: user.name };
+        return res.status(200).json({ success: true, message: "Login successful", userId: user.id, email: user.email, name: user.name });
     } catch (error) {
         console.error('Error checking login:', error);
-        return { success: false, message: "Database error" };
+        return res.status(500).json({ success: false, message: "Database error" });
     }
 });
 
