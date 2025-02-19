@@ -255,7 +255,6 @@ router.post('/verifyCode', (req, res) => {
 
 
 
-
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
@@ -266,29 +265,28 @@ router.post('/login', async (req, res) => {
     try {
         console.log("checking for ", email);
         const user = await userinfos.findOne({ where: { email: email } });
-        
-        console.log("made it");
+
         if (!user) {
             return { success: false, message: "User not found" };
         }
-        console.log("made it1")
+
         if (!user.verified) {
             console.log('User not verified');
             return { success: false, message: "Please verify your email before logging in." };
         }
-        console.log("made it2")
-        const isMatch = await bcrypt.compare(password, user.password);
 
+        const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return { success: false, message: "Incorrect password" };
         }
-        console.log("made it3")
+
         return { success: true, message: "Login successful", userId: user.id, email: user.email, name: user.name };
     } catch (error) {
         console.error('Error checking login:', error);
         return { success: false, message: "Database error" };
     }
 });
+
 
 
 
