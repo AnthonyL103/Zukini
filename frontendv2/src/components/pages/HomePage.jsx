@@ -7,7 +7,6 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Three.js scene setup
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / (window.innerHeight/1.42), 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ 
@@ -27,10 +26,23 @@ const HomePage = () => {
     gridHelper.material.transparent = true;
     scene.add(gridHelper);
 
-    // Add floating math symbols
+    // Add floating math symbols with better distribution
     const mathSymbols = ['π', '∑', '∫', '√', '∞', 'θ', 'Δ', '±', 'φ', 'λ', 'μ', 'σ', '∏', '∂'];
-    const symbolInstances = 3;
+    const symbolInstances = 5; // Increased number of instances
     const mathObjects = [];
+    
+    // Create a function to generate a random position within a sphere
+    const getRandomSpherePosition = (radius) => {
+      const phi = Math.random() * Math.PI * 2; // Random angle around Y axis
+      const costheta = Math.random() * 2 - 1; // Random height
+      const theta = Math.acos(costheta); // Convert to angle
+      
+      return {
+        x: radius * Math.sin(theta) * Math.cos(phi),
+        y: radius * Math.sin(theta) * Math.sin(phi),
+        z: radius * Math.cos(theta)
+      };
+    };
     
     mathSymbols.forEach((symbol) => {
       for (let i = 0; i < symbolInstances; i++) {
@@ -39,8 +51,9 @@ const HomePage = () => {
         canvas.width = 128;
         canvas.height = 128;
         
-        // Draw symbol on canvas
-        context.fillStyle = '#67d7cc';
+        // Draw symbol on canvas with varying colors
+        const hue = Math.random() * 180 + 160; // Range from cyan to blue
+        context.fillStyle = `hsla(${hue}, 70%, 60%, 0.7)`;
         context.font = '80px Arial';
         context.textAlign = 'center';
         context.textBaseline = 'middle';
@@ -54,30 +67,37 @@ const HomePage = () => {
         });
         
         const sprite = new THREE.Sprite(material);
-        sprite.position.set(
-          Math.random() * 10 - 5,
-          Math.random() * 10 - 5,
-          Math.random() * 10 - 5
-        );
-        sprite.scale.set(0.5, 0.5, 0.5);
         
-        // Add random phase offset for each sprite
-        sprite.userData.phaseOffset = Math.random() * Math.PI * 2;
-        sprite.userData.floatSpeed = 0.5 + Math.random() * 0.5; // Random speed multiplier
-        sprite.userData.rotationSpeed = 0.2 + Math.random() * 0.3; // Random rotation speed
+        // Position within a sphere
+        const radius = 8; // Increased radius for better distribution
+        const pos = getRandomSpherePosition(radius);
+        sprite.position.set(pos.x, pos.y, pos.z);
+        
+        // Randomize scale for depth effect
+        const scale = 1 + Math.random() * 0.4;
+        sprite.scale.set(scale, scale, scale);
+        
+        // Enhanced animation parameters
+        sprite.userData = {
+          phaseOffset: Math.random() * Math.PI * 2,
+          floatSpeed: 0.2 + Math.random() * 0.3,
+          rotationSpeed: 0.1 + Math.random() * 0.2,
+          orbitRadius: Math.random() * 2 + 3,
+          orbitSpeed: 0.1 + Math.random() * 0.2,
+          initialPosition: { ...pos }
+        };
         
         mathObjects.push(sprite);
         scene.add(sprite);
       }
     });
 
-    // Create geometric lines
+    // Create geometric lines (rest of the lines code remains the same)
     const lines = [];
     for(let i = 0; i < 100; i++) {
       const geometry = new THREE.BufferGeometry();
       const points = [];
       
-      // Random line points
       points.push(new THREE.Vector3(
         Math.random() * 10 - 5,
         Math.random() * 10 - 5,
@@ -97,34 +117,47 @@ const HomePage = () => {
       });
       
       const line = new THREE.Line(geometry, material);
-      // Add random rotation speeds for each line
       line.userData.rotationSpeedX = (Math.random() - 0.5) * 0.002;
       line.userData.rotationSpeedY = (Math.random() - 0.5) * 0.002;
       lines.push(line);
       scene.add(line);
     }
 
-    // Animation loop with time-based updates
+    // Enhanced animation loop
     let lastTime = 0;
     const animate = (currentTime) => {
       requestAnimationFrame(animate);
       
-      // Convert time to seconds
       const time = currentTime * 0.001;
       const deltaTime = lastTime === 0 ? 0 : time - lastTime;
       lastTime = time;
       
-      // Update lines with individual rotation speeds
+      // Update lines
       lines.forEach(line => {
         line.rotation.x += line.userData.rotationSpeedX;
         line.rotation.y += line.userData.rotationSpeedY;
       });
 
-      // Update math symbols with smooth floating motion
+      // Update math symbols with complex motion
       mathObjects.forEach(sprite => {
-        const floatOffset = Math.sin((time + sprite.userData.phaseOffset) * sprite.userData.floatSpeed) * 0.1;
-        sprite.position.y = sprite.position.y + (floatOffset - sprite.position.y) * 0.1;
-        sprite.rotation.z += sprite.userData.rotationSpeed * deltaTime;
+        const userData = sprite.userData;
+        
+        // Orbital motion
+        const orbitAngle = time * userData.orbitSpeed + userData.phaseOffset;
+        const newX = userData.initialPosition.x + Math.cos(orbitAngle) * userData.orbitRadius;
+        const newZ = userData.initialPosition.z + Math.sin(orbitAngle) * userData.orbitRadius;
+        
+        // Vertical floating motion
+        const floatOffset = Math.sin((time + userData.phaseOffset) * userData.floatSpeed) * 0.5;
+        
+        sprite.position.set(
+          newX,
+          userData.initialPosition.y + floatOffset,
+          newZ
+        );
+        
+        // Gentle rotation
+        sprite.rotation.z += userData.rotationSpeed * deltaTime;
       });
 
       // Smooth grid rotation
@@ -161,7 +194,7 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="h-[70vh] bg-primary relative mb-3">
+      <div className="h-[70vh] bg-primary relative mb-3 pt-16">
         <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full"
