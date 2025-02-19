@@ -87,61 +87,71 @@ const FilesPage = () => {
       console.error('Error deleting scan:', error);
     }
   };
-
+  
   return (
-    <div className="max-w-[1200px] h-[80dvh] md:h-[75dvh] p-6 mt-[1vh] mx-auto overflow-y-auto snap-y snap-mandatory">
-      <div ref={(el) => slidesRef.current[0] = el} className="mb-4">
-        <ScanList
-          scans={scans}
-          onDelete={displayModal}
-          scroll={() => {
-            if (slidesRef.current[1]) {
-              slidesRef.current[1].scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-                inline: "nearest",
-              });
-            }
-          }}
-        />
-      </div>
-
-      <div ref={(el) => slidesRef.current[1] = el}>
-        <AddScan
-          onAddScan={handleAddScan}
-          scrollToTop={() => {
-            if (slidesRef.current[0]) {
-              slidesRef.current[0].scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-                inline: "nearest",
-              });
-            }
-          }}
-        />
-      </div>
-
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-[1000]">
-          <div className="bg-white w-1/2 max-w-full rounded-xl shadow-lg p-8 text-center">
-            <h2 className="text-black font-extrabold text-xl">Are you Sure?</h2>
-            <div className="flex justify-between items-center gap-5 mt-5">
-              <button
-                className="w-[48%] h-[7dvh] flex items-center justify-center bg-black text-white text-sm font-bold uppercase tracking-wide rounded-lg transition-transform duration-300 hover:bg-purple-300 hover:text-black active:translate-y-2"
-                onClick={handleCloseModal}
-              >
-                No
-              </button>
-              <button
-                className="w-[48%] h-[7dvh] flex items-center justify-center bg-red-600 text-white text-sm font-bold uppercase tracking-wide rounded-lg transition-transform duration-300 hover:bg-purple-300 hover:text-black active:translate-y-2"
-                onClick={handleDeleteScan}
-              >
-                Yes
-              </button>
-            </div>
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <div className="max-w-6xl mx-auto pt-[9dvh] px-4">
+        <div className="backdrop-blur-md bg-white/20 rounded-2xl shadow-lg p-8 mb-8">
+          <div ref={(el) => slidesRef.current[0] = el} className="mb-8">
+            <ScanList
+              scans={scans}
+              onDelete={displayModal}
+              scroll={() => {
+                if (slidesRef.current[1]) {
+                  slidesRef.current[1].scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                    inline: "nearest",
+                  });
+                }
+              }}
+            />
+          </div>
+  
+          <div ref={(el) => slidesRef.current[1] = el}>
+            <AddScan
+              onAddScan={handleAddScan}
+              scrollToTop={() => {
+                if (slidesRef.current[0]) {
+                  slidesRef.current[0].scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                    inline: "nearest",
+                  });
+                }
+              }}
+            />
           </div>
         </div>
-      )}
+  
+        {showModal && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-[1000]">
+            <div className="bg-white p-8 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.1)] hover:shadow-[0_0_50px_rgba(0,0,0,0.15)] w-full max-w-md">
+              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-[#67d7cc] to-[#2c5d63] bg-clip-text text-transparent">
+                Are you Sure?
+              </h2>
+              <div className="flex justify-between items-center gap-5">
+                <button
+                  className="px-8 py-4 bg-black text-white rounded-xl 
+                           hover:bg-[#67d7cc] hover:text-black transition-all duration-300 
+                           transform hover:-translate-y-1 active:translate-y-1 w-1/2"
+                  onClick={handleCloseModal}
+                >
+                  No
+                </button>
+                <button
+                  className="px-8 py-4 bg-red-600 text-white rounded-xl 
+                           hover:bg-[#67d7cc] hover:text-black transition-all duration-300 
+                           transform hover:-translate-y-1 active:translate-y-1 w-1/2"
+                  onClick={handleDeleteScan}
+                >
+                  Yes
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

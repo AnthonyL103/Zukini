@@ -47,20 +47,42 @@ const Study = () => {
 
     if (!currentScan) {
         return (
-            <div className="max-w-[1200px] h-[80dvh] md:h-[75dvh] p-6 mt-[1vh] mx-auto overflow-y-auto snap-y snap-mandatory">
-                <div ref={(el) => slidesRef.current[0] = el} className="relative flex flex-col h-full p-6 bg-[rgba(15,6,71,0.4)] rounded-xl mb-4 snap-start">
-                    <p className="text-white text-[clamp(1.5rem,3vw,2.5rem)] font-semibold">Study Page</p>
-                    <p className="text-white text-[clamp(1rem,2vw,2rem)] mt-5">No scan selected. Please go back and choose a scan or a previous study.</p>
-                    <div className="flex justify-center w-full mt-4">
-                        <button 
-                            className="w-1/3 h-[10dvh] bg-black text-white font-bold uppercase rounded-xl transition-all duration-300 hover:bg-purple-300 hover:text-black active:translate-y-2"
-                            onClick={() => navigate('/files')}>
-                            Select Scan
-                        </button>
-                    </div>
+            <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+                <div className="max-w-6xl mx-auto pt-[9dvh] px-4">
+                        <div className="flex justify-between items-center mb-8">
+                            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#67d7cc] to-[#2c5d63] bg-clip-text text-transparent">
+                                Study
+                            </h1>
+                        </div>
+    
+                        <div className="bg-white p-6 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.1)] hover:shadow-[0_0_50px_rgba(0,0,0,0.15)] mb-8">
+                            <p className="text-xl text-gray-700 mb-6">
+                                No scan selected. Please go back and choose a scan or a previous study.
+                            </p>
+                            <div className="flex justify-center">
+                                <button 
+                                    onClick={() => navigate('/files')}
+                                    className="px-8 py-4 bg-black text-white rounded-xl 
+                                            hover:bg-primary hover:text-black transition-all duration-300 
+                                            transform hover:-translate-y-1 active:translate-y-1"
+                                >
+                                    Select Scan
+                                </button>
+                            </div>
+                        </div>
+    
+                    <PastFlashCardList 
+                        NewFCEntry={NewFCEntry} 
+                        scroll={scrollToNextSlide} 
+                        slidesRef={slidesRef} 
+                    />
+    
+                    <PastMocktestList 
+                        NewMTEntry={NewMTEntry} 
+                        backtoTop={scrollToTop} 
+                        slidesRef={slidesRef} 
+                    />
                 </div>
-                <PastFlashCardList NewFCEntry={NewFCEntry} scroll={scrollToNextSlide} slidesRef={slidesRef} />
-                <PastMocktestList NewMTEntry={NewMTEntry} backtoTop={scrollToTop} slidesRef={slidesRef} />
             </div>
         );
     }
@@ -100,69 +122,88 @@ const Study = () => {
     };
 
     return (
-        <div className="max-w-[1200px] h-[80dvh] md:h-[75dvh] p-6 mt-[1vh] mx-auto overflow-y-auto snap-y snap-mandatory">
-            <div ref={(el) => slidesRef.current[0] = el} className="relative flex flex-col h-full p-6 bg-[rgba(15,6,71,0.4)] rounded-xl mb-4 snap-start">
-                <div className="flex justify-between items-center">
-                    <p className="text-black text-[clamp(1.5rem,3vw,2.5rem)] font-semibold">Study</p>
-                    <button className="w-[30dvh] min-h-[5vw] bg-black text-white font-bold uppercase rounded-xl transition-all duration-300 hover:bg-purple-300 hover:text-black active:translate-y-2"
-                        onClick={scrollToNextSlide}>
-                        View Saved
-                    </button>
+        <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+            <div className="max-w-6xl mx-auto pt-[9dvh] px-4">
+                <div className="backdrop-blur-md bg-white/20 rounded-2xl shadow-lg p-8 mb-8">
+                    <div className="flex justify-between items-center mb-8">
+                        <h1 className="text-4xl font-bold bg-gradient-to-r from-[#67d7cc] to-[#2c5d63] bg-clip-text text-transparent">
+                            Study
+                        </h1>
+                        <button 
+                            className="px-8 py-4 bg-black text-white rounded-xl 
+                                     hover:bg-primary hover:text-black transition-all duration-300 
+                                     transform hover:-translate-y-1 active:translate-y-1"
+                            onClick={scrollToNextSlide}
+                        >
+                            View Saved
+                        </button>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.1)] hover:shadow-[0_0_50px_rgba(0,0,0,0.15)] mb-8">
+                        <div className="space-y-4 mb-6">
+                            <div className="flex items-center space-x-4">
+                                <span className="text-primary font-semibold">Scan name:</span>
+                                <span className="text-gray-700">{scanname}</span>
+                            </div>
+                            <div className="flex items-center space-x-4">
+                                <span className="text-primary font-semibold">Date:</span>
+                                <span className="text-gray-600"><small>{date}</small></span>
+                            </div>
+                        </div>
+                        
+                        <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6">
+                            <h3 className="text-xl font-semibold text-primary mb-4">Content:</h3>
+                            <p className="text-gray-700 leading-relaxed">{text}</p>
+                        </div>
+                    </div>
+
+                    <StudyMenu 
+                        onCardsClick={handleGenerateFlashcards} 
+                        onTestClick={handleGenerateMocktests} 
+                        onSwitchScanClick={goToSwitchScan} 
+                        clickedButton={clickedButton} 
+                    />
                 </div>
 
-                <div className="bg-[#deded8] rounded-xl p-4 text-lg h-[60dvh] flex flex-col overflow-y-auto">
-                    <span><strong>Scan name:</strong> {scanname}</span>
-                    <span><strong>Date:</strong> <small>{date}</small></span>
-                    <br />
-                    <span><strong>Content:</strong></span>
-                    <span>{text}</span>
-                </div>
+                {/* Existing modals and lists with updated styling */}
+                {showFlashCards && (
+                    <AddFlashCards
+                        filepath={filepath}
+                        scanname={scanname}
+                        text={text}
+                        date={date}
+                        onClose={handleCloseFlashcards}
+                        onAddFlashCard={onAddFlashCard}
+                        Past={false}
+                        prevFC={null}
+                    />
+                )}
 
-                <StudyMenu 
-                    onCardsClick={handleGenerateFlashcards} 
-                    onTestClick={handleGenerateMocktests} 
-                    onSwitchScanClick={goToSwitchScan} 
-                    clickedButton={clickedButton} 
+                {showMockTests && (
+                    <AddMockTest
+                        filepath={filepath}
+                        scanname={scanname}
+                        text={text}
+                        date={date}
+                        onClose={handleCloseMocktests}
+                        onAddMockTest={onAddMockTest}
+                        Past={false}
+                        prevMT={null}
+                    />
+                )}
+
+                <PastFlashCardList 
+                    NewFCEntry={NewFCEntry} 
+                    scroll={scrollToNextSlide} 
+                    slidesRef={slidesRef} 
+                />
+
+                <PastMocktestList 
+                    NewMTEntry={NewMTEntry} 
+                    backtoTop={scrollToTop} 
+                    slidesRef={slidesRef} 
                 />
             </div>
-
-            {showFlashCards && (
-                <AddFlashCards
-                    filepath={filepath}
-                    scanname={scanname}
-                    text={text}
-                    date={date}
-                    onClose={handleCloseFlashcards}
-                    onAddFlashCard={onAddFlashCard}
-                    Past={false}
-                    prevFC={null}
-                />
-            )}
-
-            {showMockTests && (
-                <AddMockTest
-                    filepath={filepath}
-                    scanname={scanname}
-                    text={text}
-                    date={date}
-                    onClose={handleCloseMocktests}
-                    onAddMockTest={onAddMockTest}
-                    Past={false}
-                    prevMT={null}
-                />
-            )}
-
-            <PastFlashCardList 
-                NewFCEntry={NewFCEntry} 
-                scroll={scrollToNextSlide} 
-                slidesRef={slidesRef} 
-            />
-
-            <PastMocktestList 
-                NewMTEntry={NewMTEntry} 
-                backtoTop={scrollToTop} 
-                slidesRef={slidesRef} 
-            />
         </div>
     );
 };
