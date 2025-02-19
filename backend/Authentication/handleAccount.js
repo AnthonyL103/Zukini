@@ -76,34 +76,6 @@ async function appendnewusertoDB(newEntry) {
     }
 }
 
-async function checklogin(entry) {
-    try {
-        console.log("checking for ", entry.email);
-        const user = await userinfos.findOne({ where: { email: entry.email } });
-        
-
-        if (!user) {
-            return { success: false, message: "User not found" };
-        }
-
-        if (!user.verified) {
-            console.log('User not verified');
-            return { success: false, message: "Please verify your email before logging in." };
-        }
-
-        const isMatch = await bcrypt.compare(entry.password, user.password);
-
-        if (!isMatch) {
-            return { success: false, message: "Incorrect password" };
-        }
-
-        return { success: true, message: "Login successful", userId: user.id, email: user.email, name: user.name };
-    } catch (error) {
-        console.error('Error checking login:', error);
-        return { success: false, message: "Database error" };
-    }
-}
-
 
 router.post('/signup', async (req, res) => {
     const { Email, Password, Name } = req.body;
@@ -285,18 +257,36 @@ router.post('/verifyCode', (req, res) => {
 
 
 router.post('/login', async (req, res) => {
-    const { Email, Password } = req.body;
+    const { email, password } = req.body;
 
-    if (!Email || !Password) {
+    if (!email || !password) {
         return res.status(400).json({ success: false, message: "Missing email or password" });
     }
 
-    const result = await checklogin({ email: Email, password: Password });
+    try {
+        console.log("checking for ", email);
+        const user = await userinfos.findOne({ where: { email: email } });
+        
+        console.log("made it");
+        if (!user) {
+            return { success: false, message: "User not found" };
+        }
+        console.log("made it1")
+        if (!user.verified) {
+            console.log('User not verified');
+            return { success: false, message: "Please verify your email before logging in." };
+        }
+        console.log("made it2")
+        const isMatch = await bcrypt.compare(password, user.password);
 
-    if (result.success) {
-        return res.status(200).json(result);
-    } else {
-        return res.status(401).json(result);
+        if (!isMatch) {
+            return { success: false, message: "Incorrect password" };
+        }
+        console.log("made it3")
+        return { success: true, message: "Login successful", userId: user.id, email: user.email, name: user.name };
+    } catch (error) {
+        console.error('Error checking login:', error);
+        return { success: false, message: "Database error" };
     }
 });
 
