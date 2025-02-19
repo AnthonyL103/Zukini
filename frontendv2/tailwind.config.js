@@ -9,13 +9,17 @@ export default {
       extend: {
         colors: {
           primary: {
-            DEFAULT: '#000000',
-            hover: 'rgb(181, 160, 255)'
+            DEFAULT: '#283739',
           },
-          background: '#aaaaa7',
-          surface: '#deded8',
-          danger: '#eb4408',
-          overlay: 'rgba(15, 6, 71, 0.4)'
+          secondary: {
+            DEFAULT: '#2c5d63',
+          },
+          tertiery: {
+            DEFAULT: '#a9c52f',
+          },
+          quaternary: {
+            DEFAULT: '#f5f5f5',
+          },
         },
         height: {
           'screen-80': '80dvh',
@@ -24,4 +28,5 @@ export default {
       },
     },
     plugins: [],
+
   }
