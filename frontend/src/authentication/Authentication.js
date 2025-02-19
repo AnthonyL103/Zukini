@@ -23,6 +23,7 @@ const Authentication = () => {
     const [verificationCode, setVerificationCode] = useState("");
     const [countdown, setCountdown] = useState(300); // 5-minute timer (300s)
     const [timerActive, setTimerActive] = useState(false);
+    const [isforgot, setIsForgot] = useState(false);
     
     useEffect(() => {
         if (timerActive && countdown > 0) {
@@ -81,7 +82,6 @@ const Authentication = () => {
         e.preventDefault();
         try {
             const response = await fetch("https://api.zukini.com/account/login", {
-                //api.zukini.com
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -89,17 +89,20 @@ const Authentication = () => {
                     Password: password,
                 }),
             });
-
+    
             const data = await response.json();
-
+    
             if (data.success) {
-                setUserId(data.userId);
-                setEmail(data.email);
-                setName(data.name);
-                console.log(data.email);
+                console.log("User logged in:", data.email);
+    
+                setUserId((prev) => (prev !== data.userId ? data.userId : prev));
+                setEmail((prev) => (prev !== data.email ? data.email : prev));
+                setName((prev) => (prev !== data.name ? data.name : prev));
+    
                 localStorage.setItem("userId", data.userId);
                 localStorage.setItem("email", data.email);
                 localStorage.setItem("name", data.name);
+                
                 setShowLoginModal(false);
             } else {
                 setErrorMessage(data.message);
@@ -108,12 +111,13 @@ const Authentication = () => {
         } catch (error) {
             console.log("Error logging in:", error);
         }
-
+    
         setErrorMessage("");
         setUserEmail("");
         setPassword("");
         setUserName("");
     };
+    
     
     const handleLoginForgot = async (email) => {
         setErrorMessage("");
@@ -136,10 +140,11 @@ const Authentication = () => {
                 localStorage.setItem("name", data.name);
     
                 setShowForgotPasswordModal(false);
-                setIsCodeSent(false);
                 setVerificationCode("");
                 setCountdown(300);
                 setTimerActive(false);
+                setIsForgot(true);
+                setShowChangePasswordModal(true);
     
                 alert("Login successful!");
             } else {
@@ -237,10 +242,17 @@ const Authentication = () => {
     const handleConfirmChangePassword = async (e) => {
         e.preventDefault();
         
+        
         if (newPassword !== confirmNewPassword) {
             setErrorMessage("New passwords do not match");
             return;
         }
+        if (newPassword === oldPassword) {
+            setErrorMessage("New password cannot be the same as the old password");
+            return;
+        }
+        
+        console.log(userId, oldPassword, newPassword);
     
         try {
             const response = await fetch("https://api.zukini.com/account/changepassword", {
@@ -250,6 +262,7 @@ const Authentication = () => {
                     userId,
                     oldPassword,
                     newPassword,
+                    isforgot,
                 }),
             });
     
@@ -261,6 +274,8 @@ const Authentication = () => {
                 setOldPassword("");
                 setNewPassword("");
                 setConfirmNewPassword("");
+                setIsCodeSent(false);
+                setIsForgot(false);
             } else {
                 setErrorMessage(data.message);
             }
@@ -317,7 +332,7 @@ const Authentication = () => {
                 setVerificationCode("");
                 setCountdown(300);
                 setTimerActive(false);
-                setIsCodeSent(false);
+                
             } else {
                 setErrorMessage("Invalid or expired code.");
             }
@@ -450,7 +465,8 @@ const Authentication = () => {
             {showChangePasswordModal && (
             <form className="signupform" onSubmit={handleConfirmChangePassword}>
                 <p className="signupform-title">Change Password</p>
-                <div className="signupinput-container">
+                {!isCodeSent &&(
+                    <div className="signupinput-container">
                     <input 
                         type="password" 
                         placeholder="Enter old password" 
@@ -459,6 +475,8 @@ const Authentication = () => {
                         onChange={(e) => setOldPassword(e.target.value)} 
                     />
                 </div>
+                    
+                )}
                 <div className="signupinput-container">
                     <input 
                         type="password" 
