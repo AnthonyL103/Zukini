@@ -8,18 +8,10 @@ export default {
     theme: {
       extend: {
         colors: {
-          primary: {
-            DEFAULT: '#283739',
-          },
-          secondary: {
-            DEFAULT: '#2c5d63',
-          },
-          tertiery: {
-            DEFAULT: '#a9c52f',
-          },
-          quaternary: {
-            DEFAULT: '#f5f5f5',
-          },
+          primary: '#283739',
+          secondary: '#2c5d63',
+          tertiary: '#a9c52f',
+          quaternary: '#f5f5f5',
         },
         height: {
           'screen-80': '80dvh',

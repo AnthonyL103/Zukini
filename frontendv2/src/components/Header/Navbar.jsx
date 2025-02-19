@@ -8,13 +8,13 @@ const Navbar = () => {
   const isHomePage = location.pathname === '/';
 
   return (
-    <header className={`fixed w-full z-50 transition-colors duration-300 ${
-      isHomePage ? 'bg-transparent pt-[1vh]' : 'bg-white'
+    <header className={`w-full h-[7dvh] z-50 absolute top-0 ${
+      isHomePage ? 'bg-transparent' : 'bg-white'
     }`}>
-      <div className={`max-w-7xl mx-auto px-4 ${
+      <div className={`max-w-7xl h-full mx-auto px-4 ${
         isHomePage ? 'bg-transparent' : 'bg-white'
       }`}>
-        <div className={`flex h-16 items-center justify-between ${
+        <div className={`flex h-full items-center justify-between ${
           isHomePage ? 'bg-transparent' : 'bg-white'
         }`}>
           <div className="flex items-center">
