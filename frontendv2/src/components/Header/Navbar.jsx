@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
   return (
-    <nav className="bg-none shadow-md relative z-50">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo Section */}
-          <div className="flex-shrink-0 flex items-center">
-            <Link to="/">
-              <div className="w-32 h-8 bg-gray-200 rounded">
-                {/* Placeholder for logo */}
-              </div>
+    <header className={`fixed w-full z-50 transition-colors duration-300 ${
+      isHomePage ? 'bg-transparent pt-[1vh]' : 'bg-white'
+    }`}>
+      <div className={`max-w-7xl mx-auto px-4 ${
+        isHomePage ? 'bg-transparent' : 'bg-white'
+      }`}>
+        <div className={`flex h-16 items-center justify-between ${
+          isHomePage ? 'bg-transparent' : 'bg-white'
+        }`}>
+          <div className="flex items-center">
+            <Link to="/" className={`text-2xl font-bold ${
+              isHomePage ? 'text-white' : 'text-gray-900'
+            }`}>
+              Zukini
             </Link>
           </div>
 
@@ -21,8 +29,10 @@ const Navbar = () => {
           <div className="md:hidden flex items-center justify-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-black focus:outline-none"
-            >
+              className={`inline-flex items-center justify-center p-2 rounded-md ${
+                isHomePage ? 'text-white hover:text-gray-200' : 'text-gray-700 hover:text-gray-900'
+              }`}            
+              >
               <div className="w-6 h-6 relative flex items-center justify-center">
                 <span className={`absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out ${isMenuOpen ? 'rotate-45 translate-y-0' : '-translate-y-2'}`}></span>
                 <span className={`absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`}></span>
@@ -32,21 +42,33 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex-1 md:flex md:justify-center md:space-x-8">
-            <Link to="/files" className="text-gray-700 hover:text-black px-3 py-2 text-sm font-medium">
+          <div className={`hidden md:flex-1 md:flex md:justify-center md:space-x-8 ${
+            isHomePage ? 'bg-transparent' : 'bg-white'
+          }`}>
+            <Link to="/files" className={`px-3 py-2 text-sm font-medium ${
+                isHomePage ? 'text-white hover:text-gray-200' : 'text-gray-700 hover:text-gray-900'
+              }`}>
               Files
             </Link>
-            <Link to="/study" className="text-gray-700 hover:text-black px-3 py-2 text-sm font-medium">
+            <Link to="/study" className={`px-3 py-2 text-sm font-medium ${
+                isHomePage ? 'text-white hover:text-gray-200' : 'text-gray-700 hover:text-gray-900'
+              }`}>              
               Study
             </Link>
-            <Link to="/account" className="text-gray-700 hover:text-black px-3 py-2 text-sm font-medium">
+            <Link to="/account" className={`px-3 py-2 text-sm font-medium ${
+                isHomePage ? 'text-white hover:text-gray-200' : 'text-gray-700 hover:text-gray-900'
+              }`}>              
               Account
             </Link>
           </div>
 
           {/* Desktop Auth Buttons */}
-          <div className="hidden md:flex md:items-center md:space-x-4">
-            <button className="text-gray-700 hover:text-black px-3 py-2 text-sm font-medium">
+          <div className={`hidden md:flex md:items-center md:space-x-4 ${
+            isHomePage ? 'bg-transparent' : 'bg-white'
+          }`}>
+            <button className={`px-3 py-2 text-sm font-medium ${
+              isHomePage ? 'text-white hover:text-gray-200' : 'text-gray-700 hover:text-black'
+            }`}>
               Login
             </button>
             <button className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium">
@@ -88,7 +110,7 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-    </nav>
+    </header>
   );
 };
 
