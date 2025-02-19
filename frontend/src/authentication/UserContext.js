@@ -60,26 +60,34 @@ export const UserProvider = ({ children }) => {
     // Save userId and email to localStorage
     
     useEffect(() => {
-        if (userId.startsWith("guest-")) {
-            sessionStorage.setItem("guestUserId", userId);
-        } else {
-            localStorage.setItem("userId", userId);
-            localStorage.setItem("email", email);
-            localStorage.setItem("name", name);
+        if (userId && !userId.startsWith("guest-")) {
+            const storedUserId = localStorage.getItem("userId");
+            const storedEmail = localStorage.getItem("email");
+            const storedName = localStorage.getItem("name");
+    
+            // Only update localStorage if the values have changed
+            if (storedUserId !== userId || storedEmail !== email || storedName !== name) {
+                localStorage.setItem("userId", userId);
+                localStorage.setItem("email", email);
+                localStorage.setItem("name", name);
+            }
+    
+            // Delete guest data once the user logs in
             if (sessionStorage.getItem("guestUserId")) {
                 deleteGuestData(sessionStorage.getItem("guestUserId"));
-                sessionStorage.removeItem("guestUserId"); 
-                
+                sessionStorage.removeItem("guestUserId");
             }
         }
-        
-    }, [userId, email, name]);
+    }, [userId, email, name]);  
+    
 
     // Fetch total scans, flashcards, and mock tests when userId changes
     
     useEffect(() => {
-        if (!userId) return;
-
+        if (!userId || userId.startsWith("guest-")) return;
+    
+        let isMounted = true; // Track component mount state
+    
         const fetchUserStats = async () => {
             try {
                 const [fcRes, mtRes, scanRes] = await Promise.allSettled([
@@ -87,30 +95,33 @@ export const UserProvider = ({ children }) => {
                     fetch(`https://api.zukini.com/display/displaymocktests?userId=${userId}`),
                     fetch(`https://api.zukini.com/display/displayscans?userId=${userId}`)
                 ]);
-                
-
+    
                 const parseResponse = async (res) => 
-                    res.status === "fulfilled" && res.value.ok 
-                        ? res.value.json() 
-                        : [];
+                    res.status === "fulfilled" && res.value.ok ? res.value.json() : [];
     
                 const [FC, MT, Scans] = await Promise.all([
                     parseResponse(fcRes),
                     parseResponse(mtRes),
                     parseResponse(scanRes),
                 ]);
-
-                setTotalFlashcards(FC?.length || 0);
-                setTotalMockTests(MT?.length || 0);
-                setTotalScans(Scans?.length || 0);
+    
+                if (isMounted) {
+                    setTotalFlashcards(FC?.length || 0);
+                    setTotalMockTests(MT?.length || 0);
+                    setTotalScans(Scans?.length || 0);
+                }
             } catch (error) {
                 console.error("Error fetching user stats:", error);
             }
         };
-
+    
         fetchUserStats();
         
+        return () => {
+            isMounted = false; 
+        };
     }, [userId]);
+    
 
     return (
         <UserContext.Provider value={{
