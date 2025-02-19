@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useUser } from '../authentication/UserContext';
 
 
-const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
+const AddScan = ({onAddScan, scrollToTop })  => {
     const [showModal, setShowModal] = useState(false);
     const [parsedText, setParsedText] = useState("");
     const [currFile, setCurrFile] = useState("");
@@ -189,8 +189,8 @@ const AddScan = ({onAddScan, scrollToTop, slidesRef})  => {
     
   return (
     <>
-        <div ref={(el) => slidesRef.current[1] = el} className="relative flex flex-col p-5 bg-[rgba(15,6,71,0.4)] rounded-xl mb-4 snap-start">
-            <p className="text-white text-[clamp(1.5rem,3vw,2.5rem)] font-semibold">Create New Scan:</p>
+          <div className="relative flex flex-col p-5 bg-[rgba(15,6,71,0.4)] rounded-xl mb-4 snap-start">
+           <p className="text-white text-[clamp(1.5rem,3vw,2.5rem)] font-semibold">Create New Scan:</p>
             <form onSubmit={(e) => e.preventDefault()} encType="multipart/form-data">
                 <div className="flex flex-col gap-4 mt-4">
                     <input

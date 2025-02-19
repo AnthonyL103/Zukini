@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Scan from './Scan';
 
-const ScanList = ({ scans, onDelete, scroll, slidesRef}) => {
+const ScanList = ({ scans, onDelete, scroll }) => {
     const [startIndex, setStartIndex] = useState(0);
     const [isFading, setIsFading] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
@@ -62,14 +62,13 @@ const ScanList = ({ scans, onDelete, scroll, slidesRef}) => {
         ? filteredScans.slice(0, itemsPerView)// Show all filtered scans when searching
         : scans.slice(startIndex, startIndex + itemsPerView);
     
-    const scrolltoNext = () => {
+    const scrollToNext = () => {
         scroll();
         
     };
     
     return (
         <div
-            ref={(el) => slidesRef.current[0] = el}
             className="relative flex flex-col p-5 bg-[rgba(15,6,71,0.4)] rounded-xl mb-4 snap-start"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => scanName.trim() === "" && setIsPaused(false)}
