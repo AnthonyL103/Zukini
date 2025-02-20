@@ -55,13 +55,10 @@ const client = new vision.ImageAnnotatorClient({
         let fullText = '';
 
         // Ensure all pages are processed
-        responses.forEach((res, index) => {
-            if (res.fullTextAnnotation && res.fullTextAnnotation.text) {
-                fullText += `\n\n--- Page ${index + 1} ---\n\n${res.fullTextAnnotation.text}`;
-            } else {
-                console.warn(`⚠️ No text detected on Page ${index + 1}`);
-            }
-        });
+        
+        for (let index = 0; index < totalPages; index++) {
+            fullText += `\n\n--- Page ${index + 1} ---\n\n${responses[index].fullTextAnnotation.text}`;
+        }
 
         // ✅ If detected pages are fewer than total pages, warn about missing pages
         if (totalPages > responses.length) {
