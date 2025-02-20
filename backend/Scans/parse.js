@@ -29,6 +29,7 @@ const client = new vision.ImageAnnotatorClient({
     try {
         const base64File = buffer.toString('base64');
 
+        // Create the request for document text detection
         const request = {
             requests: [
                 {
@@ -41,23 +42,31 @@ const client = new vision.ImageAnnotatorClient({
             ],
         };
 
+        // Perform text detection
         const [response] = await client.batchAnnotateFiles(request);
 
-        console.log("Full API Response:", JSON.stringify(response, null, 2)); // ✅ Log full API response
+        // Extract the total number of pages
+        const totalPages = response.responses[0]?.totalPages || 0;
+        const responses = response.responses[0]?.responses || [];
 
-        const responses = response.responses[0].responses || [];
+        console.log(`Total pages in PDF: ${totalPages}`);
         console.log(`Total pages detected: ${responses.length}`);
 
         let fullText = '';
 
+        // Ensure all pages are processed
         responses.forEach((res, index) => {
             if (res.fullTextAnnotation && res.fullTextAnnotation.text) {
                 fullText += `\n\n--- Page ${index + 1} ---\n\n${res.fullTextAnnotation.text}`;
             } else {
                 console.warn(`⚠️ No text detected on Page ${index + 1}`);
             }
-            console.log(`Processed Page ${index + 1}`);
         });
+
+        // ✅ If detected pages are fewer than total pages, warn about missing pages
+        if (totalPages > responses.length) {
+            console.warn(`⚠️ WARNING: Expected ${totalPages} pages, but only ${responses.length} were processed.`);
+        }
 
         return fullText.trim() || 'No text detected.';
     } catch (error) {
