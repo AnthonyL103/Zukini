@@ -24,39 +24,42 @@ const client = new vision.ImageAnnotatorClient({
       throw error; 
     }
   }
+  
   async function parseTextFromPDF(buffer) {
     try {
-      // Create the request for document text detection
-      const request = {
-        inputConfig: {
-          content: buffer.toString('base64'), // PDF must be base64, so we swicth the buffer 
-          mimeType: 'application/pdf',
-        },
-        features: [
-          {
-            type: 'DOCUMENT_TEXT_DETECTION',
-          },
-        ],
-        pages:[-1],
-      };
-  
-      // Perform text detection
-      const [response] = await client.batchAnnotateFiles({ requests: [request] });
-  
-      // Extract the text from the response
-      let fullText = '';
-      response.responses[0].responses.forEach((res) => {
-          if (res.fullTextAnnotation && res.fullTextAnnotation.text) {
-              fullText += res.fullTextAnnotation.text + '\n';
-          }
-      });
+        // Convert buffer to base64 (required for PDF input)
+        const base64File = buffer.toString('base64');
 
-      return fullText || 'No text detected.';
-      
+        // Create the request for document text detection
+        const request = {
+            requests: [
+                {
+                    inputConfig: {
+                        content: base64File,
+                        mimeType: 'application/pdf',
+                    },
+                    features: [{ type: 'DOCUMENT_TEXT_DETECTION' }],
+                },
+            ],
+        };
+
+        const [response] = await client.batchAnnotateFiles(request);
+
+        let fullText = '';
+        const responses = response.responses[0].responses; 
+
+        responses.forEach((res, index) => {
+            if (res.fullTextAnnotation && res.fullTextAnnotation.text) {
+                fullText += `\n\n--- Page ${index + 1} ---\n\n${res.fullTextAnnotation.text}`;
+            }
+        });
+
+        return fullText.trim() || 'No text detected.';
     } catch (error) {
-      console.error('Error during PDF text parsing:', error);
-      throw error;
+        console.error('Error during PDF text parsing:', error);
+        throw error;
     }
-  }
+}
+
   
   module.exports = { parseTextFromBuffer, parseTextFromPDF };
