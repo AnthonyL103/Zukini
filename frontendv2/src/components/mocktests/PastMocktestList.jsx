@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import MTentry from "./MTentry";
+import MTentry from "../mocktests/MTentry";
 import { useUser } from '../authentication/UserContext';
 
 
@@ -14,6 +14,8 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
     const [isPaused, setIsPaused] = useState(false);
     const [itemsPerView, setItemsPerView] = useState(window.innerWidth < 768 ? 1 : 2);
     const [MTName, setMTName] = useState("");
+    const [VAMTName, setVAMTName] = useState("");
+    const [viewAll, setShowViewAll] = useState(false);
     const { userId, setTotalMockTests} = useUser();
 
     const scrollDelay = 7000; // Adjust this value to change delay time
@@ -23,7 +25,7 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
         
         const fetchMT = async () => {
             try {
-                const response = await fetch(`http://18.236.227.203:5001/displaymocktests?userId=${userId}`);
+                const response = await fetch(`https://api.zukini.com/display/displaymocktests?userId=${userId}`);
                 if (!response.ok) {
                   throw new Error('Failed to fetch mt');
                 }
@@ -67,7 +69,7 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
     
     const handleDeleteEntry = async () => {
         try {
-            let endpoint = `http://18.236.227.203:5001/deleteMT?userId=${userId}&key=${entryToDelete}`;
+            let endpoint = `https://api.zukini.com/display/deleteMT?userId=${userId}&key=${entryToDelete}`;
     
             const response = await fetch(endpoint, {
                 method: 'DELETE',
@@ -141,6 +143,10 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
     const filteredMT = MTentries.filter(mt =>
         mt.mtsessionname.toLowerCase().includes(MTName.toLowerCase())
     );
+    
+    const filteredVAMT = MTentries.filter(mt => 
+        mt.mtsessionname.toLowerCase().includes(VAMTName.toLowerCase())
+    );
 
     const displayedMT = MTName.trim()
         ? filteredMT.slice(0, itemsPerView) // Show all filtered mock tests when searching
@@ -149,32 +155,47 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
     const back = () => {
         backtoTop();
     }
+    
+    const viewall = () => {
+        setShowViewAll(true);
+    }
+    const closeviewall = () => {
+        setShowViewAll(false);
+    }
 
     return (
-        <div 
+        <div
             ref={(el) => {
                 if (!slidesRef.current) slidesRef.current = [];
                 slidesRef.current[2] = el;
             }}
-            className="relative h-full flex flex-col p-5 bg-overlay rounded-2xl mb-4 scroll-snap-start scroll-snap-stop-always"
-            onMouseEnter={() => setIsPaused(true)}  
+            className="relative h-full flex flex-col p-5 bg-indigo-900/40 rounded-xl mb-4 snap-start snap-always"
+            onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => MTName.trim() === "" && setIsPaused(false)}
             onTouchStart={() => setIsPaused(true)}
             onTouchEnd={() => MTName.trim() === "" && setIsPaused(false)}
         >
-            <div className="w-full h-auto flex items-center justify-between mb-4">
-                <p className="text-[clamp(1.5rem,3vw,2.5rem)] font-semibold text-white mt-[5px]">
-                    Mocktests:
-                </p>
-                <input 
-                    className="p-[5px] border-2 border-gray-300 w-[30vw] min-h-[2vw] rounded-2xl text-base text-gray-600 outline-none"
-                    value={MTName}
-                    onChange={(e) => setMTName(e.target.value)}
-                    placeholder="Search..."
-                />
+            {/* Header */}
+            <div className="w-full flex items-center justify-between mb-4">
+                <p className="text-white font-semibold text-2xl">Mocktests:</p>
+                <div className="flex w-2/3 justify-between">
+                    <input
+                        className="px-2 py-1 border-2 border-gray-300 rounded-lg text-gray-700 w-2/3 focus:border-blue-500 focus:ring focus:ring-blue-300"
+                        value={MTName}
+                        onChange={(e) => setMTName(e.target.value)}
+                        placeholder="Search..."
+                    />
+                    <button
+                        className="border-none flex w-1/3 px-4 py-2 bg-black text-white font-bold uppercase tracking-wide rounded-lg transition-all duration-300 hover:bg-purple-300 hover:text-black"
+                        onClick={viewall}
+                    >
+                        View All
+                    </button>
+                </div>
             </div>
-    
-            <div className={`grid gap-4 grid-cols-[repeat(auto-fit,minmax(400px,1fr))] transition-opacity duration-500 ease-in-out md:grid-cols-[repeat(auto-fill,minmax(350px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(250px,1fr))] ${isFading ? "opacity-0" : ""}`}>
+
+            {/* Mock Test List */}
+            <div className={`grid gap-4 grid-cols-1 sm:grid-cols-2 transition-opacity duration-500 ${isFading ? "opacity-0" : ""}`}>
                 {displayedMT.length > 0 ? (
                     displayedMT.map((entry) => (
                         <MTentry
@@ -191,37 +212,87 @@ const PastMocktestList = ({NewMTEntry, backtoTop, slidesRef}) => {
                         />
                     ))
                 ) : (
-                    <p className="text-[clamp(1rem,2vw,2rem)] text-white">No mock tests found.</p>
+                    <p className="text-white text-lg">No mock tests found.</p>
                 )}
             </div>
-    
-            <div className="mt-auto pt-[1vw] pb-[1vw] static flex justify-around items-center w-full">
-                <button 
+
+            {/* View All Modal */}
+            <div className={`fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black/50 transition-opacity duration-300 ${viewAll ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
+                {viewAll && (
+                    <div className="bg-white rounded-xl shadow-lg p-6 w-full h-full text-center overflow-y-auto">
+                        <div className="flex items-center justify-between mb-4">
+                            <p className="text-black font-semibold text-2xl">Mocktests:</p>
+                            <input
+                                className="px-2 py-1 border-2 border-gray-300 rounded-lg text-gray-700 w-2/3 focus:border-blue-500 focus:ring focus:ring-blue-300"
+                                value={VAMTName}
+                                onChange={(e) => setVAMTName(e.target.value)}
+                                placeholder="Search scans..."
+                            />
+                        </div>
+
+                        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
+                            {filteredVAMT.length > 0 ? (
+                                filteredVAMT.map((entry) => (
+                                    <MTentry
+                                        key={entry.mocktestkey}
+                                        mocktestkey={entry.mocktestkey}
+                                        filepath={entry.filepath}
+                                        scanname={entry.scanname}
+                                        Questions={entry.questions}
+                                        MTName={entry.mtsessionname}
+                                        date={entry.date}
+                                        entryType="mocktest"
+                                        displayModal={displayModal}
+                                        pausescroll={setIsStudyModalOpen}
+                                        closeVA={closeviewall}
+                                        viewall={viewall}
+                                    />
+                                ))
+                            ) : (
+                                <p className="text-black text-lg">No Mocktests found.</p>
+                            )}
+                        </div>
+
+                        <div className="flex justify-around p-4">
+                            <button
+                                className="border-none flex w-1/3 px-4 py-2 bg-black text-white font-bold uppercase tracking-wide rounded-lg transition-all duration-300 hover:bg-purple-300 hover:text-black"
+                                onClick={closeviewall}
+                            >
+                                Done
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Go Back Button */}
+            <div className="mt-auto py-4 flex justify-around">
+                <button
+                    className="border-none flex w-1/3 px-4 py-2 bg-black text-white font-bold uppercase tracking-wide rounded-lg transition-all duration-300 hover:bg-purple-300 hover:text-black"
                     onClick={back}
-                    className="max-w-[70px] max-h-[70px] w-[10vw] h-[10vw] rounded-full bg-primary border-none font-semibold flex items-center justify-center shadow-[0px_0px_0px_4px_rgba(180,160,255,0.253)] cursor-pointer transition-all duration-300 overflow-hidden relative"
                 >
-                    <svg className="w-3 transition-all duration-300" viewBox="0 0 384 512">
-                        <path className="fill-white"
-                            d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"
-                        />
+                    <svg className="w-6 h-6 mr-2" viewBox="0 0 384 512">
+                        <path d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"></path>
                     </svg>
+                    Back
                 </button>
             </div>
-            
-            <div className={`fixed inset-0 bg-black/30 flex items-center justify-center ${showModal ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
+
+            {/* Delete Confirmation Modal */}
+            <div className={`fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black/50 transition-opacity duration-300 ${showModal ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
                 {showModal && (
-                    <div className="bg-white w-1/2 rounded-2xl shadow-md p-8 text-center">
-                        <h2 className="text-black font-bold">Are you Sure?</h2>
-                        <div className="w-full h-auto flex items-center justify-between gap-5">
+                    <div className="bg-white rounded-xl shadow-lg p-6 w-1/2 text-center">
+                        <h2 className="text-black font-bold text-2xl mb-4">Are you Sure?</h2>
+                        <div className="flex justify-between">
                             <button
+                                className="border-none flex w-1/3 px-4 py-2 bg-red-600 text-white font-bold uppercase tracking-wide rounded-lg transition-all duration-300 hover:bg-purple-300 hover:text-black"
                                 onClick={handleDeleteEntry}
-                                className="w-[48%] border-none flex px-6 py-3 bg-danger text-white justify-center text-sm font-bold uppercase rounded-2xl transition-all duration-600 hover:bg-primary-hover hover:text-black"
                             >
                                 Yes
                             </button>
                             <button
+                                className="border-none flex w-1/3 px-4 py-2 bg-black text-white font-bold uppercase tracking-wide rounded-lg transition-all duration-300 hover:bg-purple-300 hover:text-black"
                                 onClick={handleCloseModal}
-                                className="w-[48%] border-none flex px-6 py-3 bg-primary text-white justify-center text-sm font-bold uppercase rounded-2xl transition-all duration-600 hover:bg-primary-hover hover:text-black"
                             >
                                 No
                             </button>

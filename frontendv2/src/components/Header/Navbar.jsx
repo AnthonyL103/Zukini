@@ -4,14 +4,12 @@ import { useUser } from '../authentication/UserContext';
 import { v4 as uuidv4 } from 'uuid';
 
 const Navbar = () => {
-    console.log("🚪 Logging out and resetting user state...");
       
   const navigate = useNavigate();
-  const { userId, setUserId, setEmail, setTotalScans, setTotalFlashcards, setTotalMockTests, setName} = useUser();
+  const { userId, setUserId, setEmail, setTotalScans, setTotalFlashcards, setTotalMockTests, setName, setisforgot} = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   const handleLogout = () => {
-    console.log("🚪 Logging out and resetting user state...");
 
     // Clear all stored user data
     localStorage.removeItem("currentScan");
@@ -31,6 +29,7 @@ const Navbar = () => {
     setTotalScans(0);
     setTotalFlashcards(0);
     setTotalMockTests(0);
+    setisforgot(false);
 
     // Reload the page *after* all state updates to ensure a clean reset
     setTimeout(() => {

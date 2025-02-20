@@ -4,7 +4,8 @@ import { useUser } from '../authentication/UserContext';
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
-    const { setUserId, setEmail, setName, userId, name, email} = useUser();
+    const Navigate = useNavigate();
+    const { setUserId, setEmail, setName, userId, name, email, setisforgot} = useUser();
     const [useremail, setUserEmail] = useState("");
     const [password, setPassword] = useState("");
     const [verificationCode, setVerificationCode] = useState("");
@@ -55,6 +56,7 @@ const LoginPage = () => {
                 setErrorMessage("");
                 setUserEmail("");
                 setPassword("");
+                Navigate("/account");
                 alert("Login successful!");
             } else {
                 setErrorMessage(data.message);
@@ -81,6 +83,7 @@ const LoginPage = () => {
             const data = await response.json();
     
             if (data.success) {
+                console.log("Login successful via forgot password:", data);
                 setUserId(data.userId);
                 setEmail(data.email);
                 setName(data.name);
@@ -93,6 +96,8 @@ const LoginPage = () => {
                 setVerificationCode("");
                 setCountdown(300);
                 setTimerActive(false);
+                setisforgot(true);
+                Navigate("/account");
                     
                 alert("Login successful!");
             } else {

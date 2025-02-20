@@ -3,7 +3,7 @@ import QuestionsList from './QuestionsList';
 import { useUser } from '../authentication/UserContext';
 import { v4 as uuidv4 } from 'uuid';
 
-const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, onClosePrevMT, onAddMockTest, Past, prevMT }) => {
+const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, onClosePrevMT, onAddMockTest, Past, prevMT, setisLoading }) => {
     const [questions, setQuestions] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [showMTNameModal, setShowMTNameModal] = useState(false);
@@ -18,7 +18,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
         }
         const generateMockTestQuestions = async () => {
             try {
-                const response = await fetch('http://18.236.227.203:5005/callparseMockTests', {
+                const response = await fetch('https://api.zukini.com/mocktests/callparseMockTests', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -107,6 +107,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
     const showNameModal = () => {
         setShowModal(false);
         setShowMTNameModal(true);
+        setisLoading(false);
       }
       
     const closeNameModal = () => {
@@ -137,7 +138,7 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
                 currDate: date,
                 userId: userId,
             }
-            const onsaveresponse = await fetch('http://18.236.227.203:5005/saveMockTest', {
+            const onsaveresponse = await fetch('https://api.zukini.com/mocktests/saveMockTest', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -171,11 +172,14 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
 // AddMockTest.js
     return (
         <>
-            <div className={`fixed inset-0 bg-black/30 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 ${showModal ? "opacity-100 pointer-events-auto" : ""}`}>
+            <div className={`fixed inset-0 bg-black/50 flex items-center justify-center transition-opacity duration-300 
+        ${showModal ? "opacity-100 pointer-events-auto z-50" : "opacity-0 pointer-events-none"}`}>
                 {showModal && (
-                    <div className="bg-white w-full h-full overflow-y-auto rounded-2xl p-5 text-center flex flex-col touch-manipulation">
+                    <div className="relative bg-white w-full h-full md:w-3/5 md:max-h-[90vh] overflow-y-auto rounded-2xl p-5 text-center flex flex-col touch-manipulation z-50 shadow-lg overscroll-contain">
                         <p className="text-xl font-semibold mb-3">Rendered Questions:</p>
+                        <div className="flex-1 overflow-y-auto p-4">
                         <QuestionsList questions={questions} />
+                        </div>
                         <div className="mt-auto flex justify-between sticky bottom-0 p-4">
                             {Past ? (
                                 <>
@@ -214,27 +218,26 @@ const AddMockTest = ({ filepath, scanname, text, date, onClose, onDeletePrevMT, 
             </div>
 
             {showMTNameModal && (
-                <div className="fixed inset-0 bg-black/30 flex items-center justify-center">
-                    <div className="bg-white w-1/2 rounded-2xl shadow-md p-8 text-center">
-                        <h2 className="text-lg font-bold text-black mb-4">Enter Mock Test Name</h2>
-                        <div className="flex flex-col gap-4">
-                            <input
-                                type="text"
-                                className="p-3 border-2 border-gray-300 h-10 rounded-2xl text-base text-gray-600 outline-none"
-                                placeholder="Enter name..."
-                                value={MTName}
-                                onChange={(e) => setMTName(e.target.value)}
-                            />
-                            <button 
-                                className="h-[50px] border-none flex px-6 py-3 bg-primary text-white justify-center text-sm font-bold uppercase rounded-2xl transition-all duration-600 hover:bg-primary-hover hover:text-black"
-                                onClick={confirmNameAndSave}
-                            >
-                                Confirm
-                            </button>
-                        </div>
-                    </div>
+             <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
+                <div className="bg-white p-6 rounded-xl shadow-lg text-center max-w-md w-full">
+                    <h2 className="text-xl font-semibold text-gray-900">Enter Mocktest Set Name</h2>
+                        <input
+                            type="text"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+                            placeholder="Enter name..."
+                            value={MTName}
+                            onChange={(e) => setMTName(e.target.value)}
+                        />
+                        <button 
+                            className="w-1/2 bg-red-600 text-white py-2 rounded-lg hover:bg-red-500 transition"
+                            onClick={confirmNameAndSave}
+                        >
+                            Confirm
+                        </button>
+                    
                 </div>
-            )}
+            </div>
+        )}
         </>
     );
     };

@@ -4,17 +4,26 @@ import { useLocation, useNavigate} from "react-router-dom";
 
 const AccountPage = () => {
     
-  const { userId, name, email, totalScans, totalFlashcards, totalMockTests} = useUser();
+  const { userId, name, email, totalScans, totalFlashcards, totalMockTests, isforgot, setisforgot} = useUser();
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [isforgot, setisforgot] = useState(false);
-  console.log("AccountPage Rendered", { userId, name, email });
+  console.log("AccountPage Rendered", { userId, name, email, isforgot });
+  
+  useEffect(() => {
+    if (isforgot) {
+      console.log("isforgot changed:", isforgot);
 
-
+      setShowChangePasswordModal(true);
+    }
+  }, [isforgot]);
+    
+ 
+  
   const handleClose = () => {
+    setisforgot(false);
     setShowChangePasswordModal(false);
     setOldPassword("");
     setNewPassword("");
@@ -50,7 +59,6 @@ const AccountPage = () => {
 
       if (data.success) {
         alert("Password changed successfully!");
-        setisforgot(false);
         handleClose();
       } else {
         setErrorMessage(data.message);

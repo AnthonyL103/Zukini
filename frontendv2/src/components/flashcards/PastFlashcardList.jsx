@@ -14,6 +14,8 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
     const [isStudyModalOpen, setIsStudyModalOpen] = useState(false); 
     const [itemsPerView, setItemsPerView] = useState(window.innerWidth < 768 ? 1 : 2);
     const [FCName, setFCName] = useState("");
+    const [VAFCName, setVAFCName] = useState("");
+    const [viewAll, setShowViewAll] = useState(false);
     const { userId, setTotalFlashcards} = useUser();
 
     const scrollDelay = 7000; // Adjust this value to change delay time
@@ -21,7 +23,7 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
     useEffect(() => {
         const fetchFC = async () => {
             try {
-                const response = await fetch(`http://18.236.227.203:5001/displayflashcards?userId=${userId}`);
+                const response = await fetch(`https://api.zukini.com/display/displayflashcards?userId=${userId}`);
                 if (!response.ok) {
                   throw new Error('Failed to fetch fc');
                 }
@@ -66,7 +68,7 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
     
     const handleDeleteEntry = async () => {
         try {
-            let endpoint = `http://18.236.227.203:5001/deleteFC?userId=${userId}&key=${entryToDelete}`;
+            let endpoint = `https://api.zukini.com/display/deleteFC?userId=${userId}&key=${entryToDelete}`;
     
             const response = await fetch(endpoint, {
                 method: 'DELETE',
@@ -143,6 +145,10 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
     const filteredFC = FCentries.filter(fc =>
         fc.fcsessionname.toLowerCase().includes(FCName.toLowerCase())
     );
+    
+    const filteredVAFC = FCentries.filter(fc => 
+        fc.fcsessionname.toLowerCase().includes(VAFCName.toLowerCase())
+    );
 
     const displayedFC = FCName.trim()
         ? filteredFC.slice(0, itemsPerView)// Show all filtered scans when searching
@@ -152,32 +158,46 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
         scroll();
         
     };
+    const viewall = () => {
+        setShowViewAll(true);
+    }
+    const closeviewall = () => {
+        setShowViewAll(false);
+    }
     
     return (
-        <div 
+        <div
             ref={(el) => {
                 if (!slidesRef.current) slidesRef.current = [];
-                slidesRef.current[1] = el; 
+                slidesRef.current[1] = el;
             }}
-            className="relative h-full flex flex-col p-5 bg-overlay rounded-2xl mb-4 scroll-snap-start scroll-snap-stop-always"
-            onMouseEnter={() => setIsPaused(true)}  
+            className="relative h-full flex flex-col p-5 bg-indigo-900/40 rounded-xl mb-4 snap-start snap-always"
+            onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => FCName.trim() === "" && setIsPaused(false)}
             onTouchStart={() => setIsPaused(true)}
             onTouchEnd={() => FCName.trim() === "" && setIsPaused(false)}
         >
-            <div className="w-full h-auto flex items-center justify-between mb-4">
-                <p className="text-[clamp(1.5rem,3vw,2.5rem)] font-semibold text-white mt-[5px]">
-                    Flashcards:
-                </p>
-                <input 
-                    className="p-[5px] border-2 border-gray-300 w-[30vw] min-h-[2vw] rounded-2xl text-base text-gray-600 outline-none"
-                    value={FCName}
-                    onChange={(e) => setFCName(e.target.value)}
-                    placeholder="Search..."
-                />
+            {/* Header */}
+            <div className="w-full flex items-center justify-between mb-4">
+                <p className="text-white font-semibold text-2xl">Flashcards:</p>
+                <div className="flex w-2/3 justify-between">
+                    <input
+                        className="px-2 py-1 border-2 border-gray-300 rounded-lg text-gray-700 w-2/3 focus:border-blue-500 focus:ring focus:ring-blue-300"
+                        value={FCName}
+                        onChange={(e) => setFCName(e.target.value)}
+                        placeholder="Search..."
+                    />
+                    <button
+                        className="border-none flex w-1/3 px-4 py-2 bg-black text-white font-bold uppercase tracking-wide rounded-lg transition-all duration-300 hover:bg-purple-300 hover:text-black"
+                        onClick={viewall}
+                    >
+                        View All
+                    </button>
+                </div>
             </div>
     
-            <div className={`grid gap-4 grid-cols-[repeat(auto-fit,minmax(400px,1fr))] transition-opacity duration-500 ease-in-out ${isFading ? "opacity-0" : ""} md:grid-cols-[repeat(auto-fill,minmax(350px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(250px,1fr))]`}>
+            {/* Flashcard List */}
+            <div className={`grid gap-4 grid-cols-1 sm:grid-cols-2 transition-opacity duration-500 ${isFading ? "opacity-0" : ""}`}>
                 {displayedFC.length > 0 ? (
                     displayedFC.map((entry) => (
                         <FCentry
@@ -194,33 +214,84 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
                         />
                     ))
                 ) : (
-                    <p className="text-[clamp(1rem,2vw,2rem)] text-white">No flashcards found.</p>
+                    <p className="text-white text-lg">No flashcards found.</p>
                 )}
             </div>
-            
-            <div className="mt-auto pt-[1vw] pb-[1vw] static flex justify-around items-center w-full">
-                <button 
+    
+            {/* View All Modal */}
+            <div className={`fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black/50 transition-opacity duration-300 ${viewAll ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
+                {viewAll && (
+                    <div className="bg-white rounded-xl shadow-lg p-6 w-full h-full text-center overflow-y-auto">
+                        <div className="flex items-center justify-between mb-4">
+                            <p className="text-black font-semibold text-2xl">Flashcards:</p>
+                            <input
+                                className="px-2 py-1 border-2 border-gray-300 rounded-lg text-gray-700 w-2/3 focus:border-blue-500 focus:ring focus:ring-blue-300"
+                                value={VAFCName}
+                                onChange={(e) => setVAFCName(e.target.value)}
+                                placeholder="Search scans..."
+                            />
+                        </div>
+    
+                        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
+                            {filteredVAFC.length > 0 ? (
+                                filteredVAFC.map((entry) => (
+                                    <FCentry
+                                        key={entry.flashcardkey}
+                                        flashcardkey={entry.flashcardkey}
+                                        filepath={entry.filepath}
+                                        scanname={entry.scanname}
+                                        FlashCards={entry.flashcards}
+                                        FCName={entry.fcsessionname}
+                                        date={entry.date}
+                                        entryType="flashcard"
+                                        displayModal={displayModal}
+                                        pausescroll={setIsStudyModalOpen}
+                                        closeVA={closeviewall}
+                                        viewall={viewall}
+                                    />
+                                ))
+                            ) : (
+                                <p className="text-black text-lg">No Flashcards found.</p>
+                            )}
+                        </div>
+    
+                        <div className="flex justify-around p-4">
+                            <button
+                                className="border-none flex w-1/3 px-4 py-2 bg-black text-white font-bold uppercase tracking-wide rounded-lg transition-all duration-300 hover:bg-purple-300 hover:text-black"
+                                onClick={closeviewall}
+                            >
+                                Done
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+    
+            {/* View Mock Tests Button */}
+            <div className="mt-auto py-4 flex justify-around">
+                <button
+                    className="border-none flex w-1/3 px-4 py-2 bg-black text-white font-bold uppercase tracking-wide rounded-lg transition-all duration-300 hover:bg-purple-300 hover:text-black"
                     onClick={scrolltoNext}
-                    className="w-[30%] h-[6dvh] border-none flex px-6 py-3 bg-primary text-white justify-center text-sm font-bold uppercase rounded-2xl shadow-[0px_0px_0px_4px_rgba(180,160,255,0.253)] transition-all duration-600 hover:bg-primary-hover hover:text-black"
                 >
                     View Mocktests
                 </button>
             </div>
-            
-            <div className={`fixed inset-0 bg-black/30 flex items-center justify-center ${showModal ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
+    
+            {/* Delete Confirmation Modal */}
+            <div className={`fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black/50 transition-opacity duration-300 ${showModal ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
                 {showModal && (
-                    <div className="bg-white w-1/2 rounded-2xl shadow-md p-8 text-center">
-                        <h2 className="text-black font-bold">Are you Sure?</h2>
-                        <div className="w-full h-auto flex items-center justify-between gap-5">
+                    <div className="bg-white rounded-xl shadow-lg p-6 w-1/2 text-center">
+                        <h2 className="text-black font-bold text-2xl mb-4">Are you Sure?</h2>
+                        <div className="flex justify-between">
                             <button
+                                className="border-none flex w-1/3 px-4 py-2 bg-red-600 text-white font-bold uppercase tracking-wide rounded-lg transition-all duration-300 hover:bg-purple-300 hover:text-black"
                                 onClick={handleDeleteEntry}
-                                className="w-[48%] border-none flex px-6 py-3 bg-danger text-white justify-center text-sm font-bold uppercase rounded-2xl transition-all duration-600 hover:bg-primary-hover hover:text-black"
                             >
                                 Yes
                             </button>
                             <button
+                                className="border-none flex w-1/3 px-4 py-2 bg-black text-white font-bold uppercase tracking-wide rounded-lg transition-all duration-300 hover:bg-purple-300 hover:text-black"
                                 onClick={handleCloseModal}
-                                className="w-[48%] border-none flex px-6 py-3 bg-primary text-white justify-center text-sm font-bold uppercase rounded-2xl transition-all duration-600 hover:bg-primary-hover hover:text-black"
                             >
                                 No
                             </button>
@@ -230,6 +301,6 @@ const PastFlashCardList = ({NewFCEntry, scroll, slidesRef}) => {
             </div>
         </div>
     );
-};
-
+}  
+    
 export default PastFlashCardList;
