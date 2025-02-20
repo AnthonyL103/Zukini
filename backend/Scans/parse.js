@@ -47,11 +47,13 @@ const client = new vision.ImageAnnotatorClient({
 
         let fullText = '';
         const responses = response.responses[0].responses; 
-
+        
+        console.log(responses.length);
         responses.forEach((res, index) => {
             if (res.fullTextAnnotation && res.fullTextAnnotation.text) {
                 fullText += `\n\n--- Page ${index + 1} ---\n\n${res.fullTextAnnotation.text}`;
             }
+            console.log(index);
         });
 
         return fullText.trim() || 'No text detected.';
