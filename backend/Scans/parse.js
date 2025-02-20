@@ -24,13 +24,12 @@ const client = new vision.ImageAnnotatorClient({
       throw error; 
     }
   }
-  
   async function parseTextFromPDF(buffer) {
     try {
         const base64File = buffer.toString('base64');
 
-        // Create the request for document text detection
-        const request = {
+        // Create initial request to get the total number of pages
+        const initialRequest = {
             requests: [
                 {
                     inputConfig: {
@@ -42,30 +41,41 @@ const client = new vision.ImageAnnotatorClient({
             ],
         };
 
-        // Perform text detection
-        const [response] = await client.batchAnnotateFiles(request);
-
-        // Extract the total number of pages
-        const totalPages = response.responses[0]?.totalPages || 0;
-        const responses = response.responses[0]?.responses || [];
+        const [initialResponse] = await client.batchAnnotateFiles(initialRequest);
+        const totalPages = initialResponse.responses[0]?.totalPages || 0;
 
         console.log(`Total pages in PDF: ${totalPages}`);
-        console.log(`Total pages detected: ${responses.length}`);
 
         let fullText = '';
 
-        for (let index = 0; index < responses.length; index++) {
-            console.log(`🔍 Checking Page ${index + 1}:`, responses[index]); // ✅ Log entire response for debugging
+        // Process pages in batches of 5
+        for (let i = 0; i < totalPages; i += 5) {
+            const pageBatch = Array.from({ length: Math.min(5, totalPages - i) }, (_, j) => i + j + 1);
+            console.log(`Processing pages: ${pageBatch}`);
 
-            if (responses[index]?.fullTextAnnotation?.text) {
-                fullText += `\n\n--- Page ${index + 1} ---\n\n${responses[index].fullTextAnnotation.text}`;
-            } else {
-                console.warn(`⚠️ No text detected on Page ${index + 1} (Check response structure).`);
-            }
-        }
+            const request = {
+                requests: [
+                    {
+                        inputConfig: {
+                            content: base64File,
+                            mimeType: 'application/pdf',
+                        },
+                        features: [{ type: 'DOCUMENT_TEXT_DETECTION' }],
+                        pages: pageBatch, // Select the specific batch of 5 pages
+                    },
+                ],
+            };
 
-        if (totalPages > responses.length) {
-            console.warn(`⚠️ WARNING: Expected ${totalPages} pages, but only ${responses.length} were processed.`);
+            const [response] = await client.batchAnnotateFiles(request);
+            const responses = response.responses[0]?.responses || [];
+
+            responses.forEach((res, index) => {
+                if (res.fullTextAnnotation && res.fullTextAnnotation.text) {
+                    fullText += `\n\n--- Page ${pageBatch[index]} ---\n\n${res.fullTextAnnotation.text}`;
+                } else {
+                    console.warn(`⚠️ No text detected on Page ${pageBatch[index]}`);
+                }
+            });
         }
 
         return fullText.trim() || 'No text detected.';
@@ -74,6 +84,7 @@ const client = new vision.ImageAnnotatorClient({
         throw error;
     }
 }
+
 
 
 
