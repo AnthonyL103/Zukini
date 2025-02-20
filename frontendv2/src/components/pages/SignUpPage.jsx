@@ -1,15 +1,117 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
+import { motion, AnimatePresence } from "framer-motion";
+
+
+/* ++++++++++ BACKGROUND ++++++++++ */
+import * as THREE from 'three';
+
+/* ++++++++++ PASSWORD VALIDATIONS ++++++++++ */
+import { Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
+
 
 const SignUpPage = () => {
     const navigate = useNavigate();
 
-    // Define state variables
+    /* ++++++++++ BACKGROUND ++++++++++ */
+    const canvasRef = useRef(null);
+
+    /* ++++++++++ FORM STATE ++++++++++ */
     const [useremail, setUserEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [username, setUserName] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    /* ++++++++++ PASSWORD VALIDATIONS ++++++++++ */
+    const passwordValidations = {
+        hasLength: password.length >= 8,
+        hasCapital: /[A-Z]/.test(password),
+        hasNumber: /\d/.test(password),
+        hasSpecial: /[!@#$%^&*]/.test(password),
+    };
+
+/* ++++++++++ BACKGROUND ++++++++++ */
+    useEffect(() => {
+        const scene = new THREE.Scene();
+        
+        // Create camera with initial viewport dimensions
+        const camera = new THREE.OrthographicCamera(
+            window.innerWidth / -2,
+            window.innerWidth / 2,
+            window.innerHeight / 2,
+            window.innerHeight / -2,
+            1,
+            1000
+        );
+        
+        const renderer = new THREE.WebGLRenderer({ 
+            canvas: canvasRef.current,
+            alpha: true,
+            antialias: true 
+        });
+        
+        // Set initial size
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Optimize for high DPI displays
+        
+        // Camera position for top-down view
+        camera.position.set(0, 0, 10);
+        camera.lookAt(0, 0, 0);
+        camera.rotation.z = Math.PI;
+
+        // Create grid that's larger than screen
+        const size = Math.max(window.innerWidth, window.innerHeight) * 4;
+        const divisions = Math.floor(size / 50); // Maintain consistent grid size
+        const gridHelper = new THREE.GridHelper(size, divisions, 0x67d7cc, 0x67d7cc);
+        gridHelper.material.opacity = 0.2;
+        gridHelper.material.transparent = true;
+        gridHelper.rotation.x = Math.PI / 2;
+        scene.add(gridHelper);
+
+        // Animation loop
+        const animate = () => {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        };
+        animate();
+
+        // Resize handler
+        const handleResize = () => {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            // Camera
+            camera.left = width / -2;
+            camera.right = width / 2;
+            camera.top = height / 2;
+            camera.bottom = height / -2;
+            camera.updateProjectionMatrix();
+
+            // Renderer
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // Update grid scale based on new viewport size
+            const newSize = Math.max(width, height) * 4;
+            const scale = newSize / size;
+            gridHelper.scale.set(scale, scale, scale);
+        };
+
+        window.addEventListener('resize', handleResize);
+
+
+        // Cleanup
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            scene.remove(gridHelper);
+            renderer.dispose();
+            gridHelper.material.dispose();
+        };
+    }, []);
 
     // Handle SignUp
     const handleSignUp = async (e) => {
@@ -50,73 +152,166 @@ const SignUpPage = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="bg-white shadow-md rounded-xl p-8 w-full max-w-md">
-                <form className="space-y-6" onSubmit={handleSignUp}>
-                    <h2 className="text-2xl font-semibold text-center text-gray-900">
-                        Create an Account
-                    </h2>
+        <div className="min-h-screen relative">
+            <canvas
+                ref={canvasRef}
+                className="absolute inset-0 w-full h-full"
+                style={{ 
+                    background: 'linear-gradient(to bottom, #0f0647, #67d7cc)',
+                    zIndex: 0 
+                }}
+            />
+            
+            <motion.div 
+                className="relative z-10 min-h-screen flex items-center justify-center px-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ 
+                    duration: 0.5, 
+                    ease: "easeInOut"
+                }}
+            >
 
-                    <div className="space-y-4">
-                        <input 
-                            type="text" 
-                            placeholder="Enter name" 
-                            required 
-                            value={username} 
-                            onChange={(e) => setUserName(e.target.value)} 
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none"
-                        />
+                <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-md">
 
-                        <input 
-                            type="email" 
-                            placeholder="Enter email" 
-                            required 
-                            value={useremail} 
-                            onChange={(e) => setUserEmail(e.target.value)} 
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none"
-                        />
-
-                        <input 
-                            type="password" 
-                            placeholder="Enter password" 
-                            required 
-                            value={password} 
-                            onChange={(e) => setPassword(e.target.value)} 
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none"
-                        />
-
-                        <input 
-                            type="password" 
-                            placeholder="Enter password again" 
-                            required 
-                            value={confirmPassword} 
-                            onChange={(e) => setConfirmPassword(e.target.value)} 
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none"
-                        />
+                    <div className="text-center pb-4">
+                        <Link to="/" className={`text-5xl font-bold`}>
+                            Zukini
+                        </Link>
                     </div>
 
-                    {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
+                    <motion.form 
+                        className="space-y-6"
+                        onSubmit={handleSignUp}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                                            
+                        <h2 className="text-2xl font-semibold text-center text-gray-900">
+                            Create an Account
+                        </h2>
 
-                    <div className="flex justify-between text-sm text-indigo-500">
-                        <button 
-                            type="button" 
-                            className="hover:underline"
-                            onClick={() => navigate("/login")}
-                        >
-                            Have an account? Log in
-                        </button>
-                    </div>
+                        <div className="space-y-4">
+                            <input 
+                                type="text" 
+                                placeholder="Enter name" 
+                                required 
+                                value={username} 
+                                onChange={(e) => setUserName(e.target.value)} 
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+                            />
 
-                    <div className="flex justify-between">
-                        <button 
-                            className="w-full bg-indigo-600 text-white font-semibold py-2 rounded-lg hover:bg-indigo-500 transition"
-                            type="submit"
-                        >
-                            Sign Up
-                        </button>
-                    </div>
-                </form>
-            </div>
+                            <input 
+                                type="email" 
+                                placeholder="Enter email" 
+                                required 
+                                value={useremail} 
+                                onChange={(e) => setUserEmail(e.target.value)} 
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+                            />
+
+                            <div className="relative">
+                                <input 
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter password" 
+                                    required 
+                                    value={password} 
+                                    onChange={(e) => setPassword(e.target.value)} 
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                >
+                                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                </button>
+                            </div>
+
+                            <div className="space-y-1 text-sm">
+                                <div className="flex items-center">
+                                    {passwordValidations.hasLength ? (
+                                        <CheckCircle className="text-green-500 mr-2" size={16} />
+                                    ) : (
+                                        <XCircle className="text-red-500 mr-2" size={16} />
+                                    )}
+                                    <span>At least 8 characters</span>
+                                </div>
+                                <div className="flex items-center">
+                                    {passwordValidations.hasCapital ? (
+                                        <CheckCircle className="text-green-500 mr-2" size={16} />
+                                    ) : (
+                                        <XCircle className="text-red-500 mr-2" size={16} />
+                                    )}
+                                    <span>One uppercase letter</span>
+                                </div>
+                                <div className="flex items-center">
+                                    {passwordValidations.hasNumber ? (
+                                        <CheckCircle className="text-green-500 mr-2" size={16} />
+                                    ) : (
+                                        <XCircle className="text-red-500 mr-2" size={16} />
+                                    )}
+                                    <span>One number</span>
+                                </div>
+                                <div className="flex items-center">
+                                    {passwordValidations.hasSpecial ? (
+                                        <CheckCircle className="text-green-500 mr-2" size={16} />
+                                    ) : (
+                                        <XCircle className="text-red-500 mr-2" size={16} />
+                                    )}
+                                    <span>One special character (!@#$...)</span>
+                                </div>
+                            </div>
+
+                            <div className="relative">
+                                <input 
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter password again" 
+                                    required 
+                                    value={confirmPassword} 
+                                    onChange={(e) => setConfirmPassword(e.target.value)} 
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                >
+                                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                </button>
+                            </div>
+                        </div>
+
+                        {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
+
+                        <div className="flex justify-between">
+                            <button 
+                                className="w-full bg-indigo-600 hover:cursor-pointer text-white font-semibold py-2 rounded-lg hover:bg-indigo-500 transition"
+                                type="submit"
+                            >
+                                Sign Up
+                            </button>
+                        </div>
+
+                        <div className="flex justify-between items-center gap-4">
+                            <Link
+                                to="/"
+                                className="flex-1 text-center bg-indigo-300 hover:bg-indigo-700 duration-250 text-white px-4 py-2 rounded-md text-sm font-medium">
+                                Go Home
+                            </Link>
+
+                            <Link
+                                to="/login"
+                                className="flex-1 text-center bg-indigo-300 hover:bg-indigo-700 duration-250 text-white px-4 py-2 rounded-md text-sm font-medium">
+                                Log in
+                            </Link>
+                        </div>
+                    </motion.form>
+                </div>
+            </motion.div>
         </div>
     );
 };

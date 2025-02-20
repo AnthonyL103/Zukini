@@ -48,14 +48,25 @@ useEffect(() => {
 
   const location = useLocation();
   const isHomePage = location.pathname === '/';
+  const hideNavbar = location.pathname === '/signup' || location.pathname === '/login';
+
+  if (hideNavbar) {
+    return null;
+  }
 
   return (
     <header className={`w-full h-[7dvh] z-50 absolute top-0 ${isHomePage ? 'bg-transparent' : 'bg-white'}`}>
       <div className={`max-w-7xl h-full mx-auto px-4 ${isHomePage ? 'bg-transparent' : 'bg-white'}`}>
         <div className={`flex h-full items-center justify-between ${isHomePage ? 'bg-transparent' : 'bg-white'}`}>
           <div className="flex items-center">
-            <Link to="/" className={`text-2xl font-bold ${isHomePage ? 'text-white' : 'text-gray-900'}`}>
+            <Link 
+
+              to="/"
+              onClick={() => setIsMenuOpen(false)}
+              className={`text-2xl font-bold ${isHomePage ? 'text-white' : 'text-gray-900'}`}>
+              
               Zukini
+            
             </Link>
           </div>
 
@@ -94,12 +105,17 @@ useEffect(() => {
               </button>
             ) : (
               <>
-                <button onClick={() => navigate("/login")} className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-black">
-                  Login
-                </button>
-                <button onClick={() => navigate("/signup")} className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium">
-                  Sign up
-                </button>
+              <Link 
+                to="/login" 
+                className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-black">
+                Login
+              </Link>
+              
+              <Link
+                to="/signup"
+                className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium">
+                Sign up
+              </Link>
               </>
             )}
           </div>
@@ -131,17 +147,29 @@ useEffect(() => {
             </Link>
 
             {!isGuestUser ? (
-              <button onClick={handleLogout} className="w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50 rounded-md">
+              <Link 
+                to="/"
+                onClick={handleLogout} 
+                className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-black"
+              >
                 Logout
-              </button>
+              </Link>
             ) : (
               <>
-                <button onClick={() => navigate("/login")} className="w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50 rounded-md">
+                <Link 
+                  to="/login" 
+                  className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50 rounded-md"
+                  onClick={() => setIsMenuOpen(false)}
+                >
                   Login
-                </button>
-                <button onClick={() => navigate("/signup")} className="w-full text-left px-3 py-2 text-base font-medium bg-blue-600 text-white hover:bg-blue-700 rounded-md">
+                </Link>
+                <Link 
+                  to="/signup"
+                  className="block w-full text-left px-3 py-2 text-base font-medium bg-blue-600 text-white hover:bg-blue-700 rounded-md"
+                  onClick={() => setIsMenuOpen(false)}
+                >
                   Sign up
-                </button>
+                </Link>
               </>
             )}
           </div>
