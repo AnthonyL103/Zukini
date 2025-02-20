@@ -37,19 +37,22 @@ const client = new vision.ImageAnnotatorClient({
             type: 'DOCUMENT_TEXT_DETECTION',
           },
         ],
+        pages:[-1],
       };
   
       // Perform text detection
       const [response] = await client.batchAnnotateFiles({ requests: [request] });
   
       // Extract the text from the response
-      const result = response.responses[0].responses[0].fullTextAnnotation;
-  
-      if (result && result.text) {
-        return result.text; 
-      } else {
-        return 'No text detected.';
-      }
+      let fullText = '';
+      response.responses[0].responses.forEach((res) => {
+          if (res.fullTextAnnotation && res.fullTextAnnotation.text) {
+              fullText += res.fullTextAnnotation.text + '\n';
+          }
+      });
+
+      return fullText || 'No text detected.';
+      
     } catch (error) {
       console.error('Error during PDF text parsing:', error);
       throw error;
