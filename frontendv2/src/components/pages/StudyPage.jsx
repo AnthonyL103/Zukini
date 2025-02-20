@@ -44,7 +44,7 @@ const Study = () => {
 
   if (!currentScan) {
     return (
-      <div className="max-w-5xl h-[80vh] mx-auto p-6 overflow-y-auto">
+      <div className="max-w-5xl h-[80vh] mt-[7dvh] mx-auto p-6 overflow-y-auto">
         <div ref={(el) => (slidesRef.current[0] = el)} className="flex flex-col p-6 bg-blue-900/40 rounded-lg">
           <p className="text-2xl font-semibold text-white">Study Page</p>
           <p className="text-lg text-gray-300">

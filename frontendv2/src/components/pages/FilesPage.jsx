@@ -91,7 +91,7 @@ const FilesPage = () => {
   };
 
   return (
-    <div className="max-w-6xl h-[80dvh] p-6 mt-4 mx-auto overflow-y-auto scroll-snap-y-mandatory">
+    <div className="max-w-6xl h-[80dvh] mt-[7dvh] p-6 mt-4 mx-auto overflow-y-auto scroll-snap-y-mandatory">
       <ScanList
         scans={scans}
         onDelete={displayModal}
