@@ -27,10 +27,8 @@ const client = new vision.ImageAnnotatorClient({
   
   async function parseTextFromPDF(buffer) {
     try {
-        // Convert buffer to base64 (required for PDF input)
         const base64File = buffer.toString('base64');
 
-        // Create the request for document text detection
         const request = {
             requests: [
                 {
@@ -45,15 +43,20 @@ const client = new vision.ImageAnnotatorClient({
 
         const [response] = await client.batchAnnotateFiles(request);
 
+        console.log("Full API Response:", JSON.stringify(response, null, 2)); // ✅ Log full API response
+
+        const responses = response.responses[0].responses || [];
+        console.log(`Total pages detected: ${responses.length}`);
+
         let fullText = '';
-        const responses = response.responses[0].responses; 
-        
-        console.log(responses.length);
+
         responses.forEach((res, index) => {
             if (res.fullTextAnnotation && res.fullTextAnnotation.text) {
                 fullText += `\n\n--- Page ${index + 1} ---\n\n${res.fullTextAnnotation.text}`;
+            } else {
+                console.warn(`⚠️ No text detected on Page ${index + 1}`);
             }
-            console.log(index);
+            console.log(`Processed Page ${index + 1}`);
         });
 
         return fullText.trim() || 'No text detected.';
@@ -62,6 +65,7 @@ const client = new vision.ImageAnnotatorClient({
         throw error;
     }
 }
+
 
   
   module.exports = { parseTextFromBuffer, parseTextFromPDF };
