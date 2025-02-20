@@ -54,13 +54,14 @@ const client = new vision.ImageAnnotatorClient({
 
         let fullText = '';
 
-        // Ensure all pages are processed
-        
         for (let index = 0; index < totalPages; index++) {
-            fullText += `\n\n--- Page ${index + 1} ---\n\n${responses[index].fullTextAnnotation.text}`;
+            if (responses[index]?.fullTextAnnotation?.text) {
+                fullText += `\n\n--- Page ${index + 1} ---\n\n${responses[index].fullTextAnnotation.text}`;
+            } else {
+                console.warn(`⚠️ No text detected on Page ${index + 1} or page is missing from API response.`);
+            }
         }
 
-        // ✅ If detected pages are fewer than total pages, warn about missing pages
         if (totalPages > responses.length) {
             console.warn(`⚠️ WARNING: Expected ${totalPages} pages, but only ${responses.length} were processed.`);
         }
@@ -71,6 +72,7 @@ const client = new vision.ImageAnnotatorClient({
         throw error;
     }
 }
+
 
 
   
