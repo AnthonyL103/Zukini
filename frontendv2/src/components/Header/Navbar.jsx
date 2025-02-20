@@ -117,7 +117,7 @@ useEffect(() => {
               <>
               <Link 
                 to="/login" 
-                className="px-3 py-2 text-sm font-medium text-white hover:text-indigo-200">
+                className={`px-3 py-2 text-sm font-medium ${isHomePage ? 'text-white hover:text-indigo-200' : 'text-gray-700 hover:text-gray-900'}`}>
                 Login
               </Link>
               
