@@ -204,19 +204,19 @@ const HomePage = () => {
       </div>
   
       <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 max-w-xl w-full px-4">
-        <div className="backdrop-blur-md bg-white/20 rounded-2xl shadow-lg p-8 mb-8">
-          <h1 className="text-4xl font-bold text-center mb-4 bg-gradient-to-r from-primary to-[#67d7cc] bg-clip-text text-transparent">
+        <div className="backdrop-blur-sm bg-white/20 rounded-2xl shadow-lg p-8 mb-8">
+          <h1 className="text-4xl font-bold text-center mb-4 bg-gradient-to-r from-[#f0f0f0] to-[#67d7cc] bg-clip-text text-transparent">
             AI Study Buddy
           </h1>
-          <p className="text-lg text-center text-primary mb-4">
+          <p className="text-lg text-center text-[#f0f0f0] mb-4">
             Transform your study materials into interactive learning experiences. 
             Upload your notes and let our AI create personalized flashcards and 
             mock tests to enhance your learning journey.
           </p>
         </div>
 
-        <div className="backdrop-blur-md bg-white/20 rounded-2xl shadow-lg p-8 text-center">
-          <h2 className="text-2xl font-semibold mb-4">Ready to Start?</h2>
+        <div className="backdrop-blur-sm bg-white/20 rounded-2xl shadow-lg p-8 text-center">
+          <h2 className="text-3xl font-semibold mb-4 text-[#67d7cc]">Ready to Start?</h2>
           <button
             onClick={() => navigate('/files')}
             className="px-8 py-4 bg-black text-white rounded-xl 

@@ -168,7 +168,7 @@ const SignUpPage = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ 
-                    duration: 0.5, 
+                    duration: 0.25, 
                     ease: "easeInOut"
                 }}
             >
@@ -299,13 +299,13 @@ const SignUpPage = () => {
                         <div className="flex justify-between items-center gap-4">
                             <Link
                                 to="/"
-                                className="flex-1 text-center bg-indigo-300 hover:bg-indigo-700 duration-250 text-white px-4 py-2 rounded-md text-sm font-medium">
+                                className="flex-1 text-center bg-indigo-600 hover:bg-indigo-500 duration-250 text-white px-4 py-2 rounded-md text-sm font-medium">
                                 Go Home
                             </Link>
 
                             <Link
                                 to="/login"
-                                className="flex-1 text-center bg-indigo-300 hover:bg-indigo-700 duration-250 text-white px-4 py-2 rounded-md text-sm font-medium">
+                                className="flex-1 text-center bg-indigo-600 hover:bg-indigo-500 duration-250 text-white px-4 py-2 rounded-md text-sm font-medium">
                                 Log in
                             </Link>
                         </div>
