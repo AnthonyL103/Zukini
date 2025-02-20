@@ -54,11 +54,13 @@ const client = new vision.ImageAnnotatorClient({
 
         let fullText = '';
 
-        for (let index = 0; index < totalPages; index++) {
+        for (let index = 0; index < responses.length; index++) {
+            console.log(`🔍 Checking Page ${index + 1}:`, responses[index]); // ✅ Log entire response for debugging
+
             if (responses[index]?.fullTextAnnotation?.text) {
                 fullText += `\n\n--- Page ${index + 1} ---\n\n${responses[index].fullTextAnnotation.text}`;
             } else {
-                console.warn(`⚠️ No text detected on Page ${index + 1} or page is missing from API response.`);
+                console.warn(`⚠️ No text detected on Page ${index + 1} (Check response structure).`);
             }
         }
 
