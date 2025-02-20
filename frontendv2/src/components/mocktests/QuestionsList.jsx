@@ -37,7 +37,7 @@ const QuestionsList = ({questions = [] }) => {
                 </div>
                 <button 
                     onClick={handleSubmit}
-                    className="w-[48%] border-none flex px-6 py-3 bg-primary text-white justify-center text-sm font-bold uppercase rounded-2xl transition-all duration-600 hover:bg-primary-hover hover:text-black"
+                    className="w-[48%] border-none flex px-6 py-3 bg-black text-white justify-center text-sm font-bold uppercase rounded-2xl transition-all duration-600 hover:bg-primary-hover hover:text-black"
                 >
                     Submit
                 </button>

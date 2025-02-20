@@ -1,14 +1,7 @@
 import React, { useState} from 'react';
 
-const Question = ({ question,updateChosenAnswer}) => { 
-    const [chosen, setChosen] = useState(question.chosen || null);
-    
-    const handleAnswerChange = (answer) => {
-        console.log("Hello");
-        setChosen(answer);
-        updateChosenAnswer(question.number, answer);
-    };
-    
+const Question = ({ question,updateChosenAnswer}) => {     
+
     return (
         <div className="bg-surface rounded-2xl p-4 mb-4">
             <div className="mb-4">
@@ -23,7 +16,7 @@ const Question = ({ question,updateChosenAnswer}) => {
                         key={index}
                         className={`p-3 text-left rounded-xl transition-all duration-300 ${
                             question.chosenAnswer === answer
-                                ? 'bg-primary text-white'
+                                ? 'bg-gray-100 text-black'
                                 : 'bg-white hover:bg-gray-100'
                         }`}
                         onClick={() => updateChosenAnswer(question.number, answer)}
