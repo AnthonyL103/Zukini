@@ -143,7 +143,6 @@ const LoginPage = () => {
                 setUserEmail("");
                 setPassword("");
                 navigate("/dashboard");
-                alert("Login successful!");
             } else {
                 setErrorMessage(data.message);
             }
