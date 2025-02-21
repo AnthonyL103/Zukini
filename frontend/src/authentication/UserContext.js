@@ -162,6 +162,5 @@ export const UserProvider = ({ children }) => {
 };
 
 export const useUser = () => {
-    console.log("📌 useUser Hook Called");
     return useContext(UserContext);
 };

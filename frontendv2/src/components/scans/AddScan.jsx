@@ -8,23 +8,12 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
   const [parsedText, setParsedText] = useState("");
   const [currFile, setCurrFile] = useState("");
   const [file, setFile] = useState(null);
-  const [displayedText, setDisplayedText] = useState("");
   const fileInputRef = useRef(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [currDate, setCurrDate] = useState("");
   const [scanName, setScanName] = useState("");
   const { userId } = useUser();
-
-  const handleFileChange = async (e) => {
-    e.preventDefault();
-    const selectedFile = e.target.files[0];
-    setFile(selectedFile);
-    if (!selectedFile) return;
-    setErrorMessage("");
-    await handleSubmit(selectedFile);
-    fileInputRef.current.value = "";
-  };
 
   const handleScanNameChange = (e) => {
     setScanName(e.target.value);
@@ -78,35 +67,8 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
     },
     multiple: false,
   });
-
-  const handleSubmit = async (selectedFile) => {
-    if (!scanName) {
-      setErrorMessage("Please enter a scan name");
-      return;
-    }
-    setIsLoading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-    try {
-      const parseResponse = await fetch("https://api.zukini.com/scans/callparse", {
-        method: "POST",
-        body: formData,
-      });
-      const parseResult = await parseResponse.json();
-      setCurrDate(parseResult.date);
-      setCurrFile(parseResult.filePath);
-      setParsedText(parseResult.text);
-      setShowModal(true);
-    } catch (error) {
-      console.error("Error in handleSubmit:", error);
-      setErrorMessage("Failed to process file");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  
   const handleCloseModal = () => {
-    setDisplayedText("");
     setIsLoading(false);
     setShowModal(false);
     onsave();
@@ -129,7 +91,6 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
         throw new Error("Failed to re-scan the file");
       }
       const parseResult = await parseResponse.json();
-      setDisplayedText("");
       setParsedText(parseResult.text);
       setShowModal(true);
     } catch (error) {
@@ -179,7 +140,6 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
         setCurrFile("");
         setScanName("");
         setFile(null);
-        setDisplayedText("");
         scrollToTop();
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
@@ -192,22 +152,6 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
     }
   };
 
-  useEffect(() => {
-    if (showModal && parsedText.trim() !== "") {
-      const words = parsedText.split(" ");
-      let currentIndex = -1;
-      const interval = setInterval(() => {
-        currentIndex++;
-        if (currentIndex < words.length) {
-          setDisplayedText((prev) =>
-            prev ? `${prev} ${words[currentIndex]}` : words[currentIndex]
-          );
-        } else {
-          clearInterval(interval);
-        }
-      }, 50);
-    }
-  }, [showModal, parsedText]);
 
   return (
     <div ref={(el) => (slidesRef.current[1] = el)} className="p-6">
