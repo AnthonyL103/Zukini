@@ -142,7 +142,7 @@ const LoginPage = () => {
                 setErrorMessage("");
                 setUserEmail("");
                 setPassword("");
-                navigate("/account");
+                navigate("/dashboard");
                 alert("Login successful!");
             } else {
                 setErrorMessage(data.message);

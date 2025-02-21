@@ -1,10 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { v4 as uuidv4 } from "uuid";
 import { useUser } from "../authentication/UserContext";
 
 const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
-  const [showModal, setShowModal] = useState(false);
   const [parsedText, setParsedText] = useState("");
   const [currFile, setCurrFile] = useState("");
   const [file, setFile] = useState(null);
@@ -50,7 +49,7 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
       setCurrDate(parseResult.date);
       setCurrFile(parseResult.filePath);
       setParsedText(parseResult.text);
-      setShowModal(true);
+      await handleSave(parseResult.text, parseResult.filePath, parseResult.date);
     } catch (error) {
       console.error("Error in handleUpload:", error);
       setErrorMessage("Failed to process file");
@@ -67,54 +66,24 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
     },
     multiple: false,
   });
-  
-  const handleCloseModal = () => {
-    setIsLoading(false);
-    setShowModal(false);
-    onsave();
-  };
 
-  const handleReScan = async () => {
-    setShowModal(false);
-    if (!file) {
-      console.error("No file available for re-scan");
-      return;
-    }
-    const formData = new FormData();
-    formData.append("file", file);
+  const handleSave = async (text, filePath, date) => {
     try {
-      const parseResponse = await fetch("https://api.zukini.com/scans/callparse", {
-        method: "POST",
-        body: formData,
-      });
-      if (!parseResponse.ok) {
-        throw new Error("Failed to re-scan the file");
-      }
-      const parseResult = await parseResponse.json();
-      setParsedText(parseResult.text);
-      setShowModal(true);
-    } catch (error) {
-      console.error("Error during re-scan:", error);
-    }
-  };
-
-  const onsave = async () => {
-    try {
-      if (parsedText.length === 0) {
+      if (text.length === 0) {
         setErrorMessage("Please upload a file");
         return;
       }
       const key = uuidv4();
       const payload = {
         scankey: key,
-        filePath: currFile,
+        filePath: filePath,
         scanName,
-        parsedText,
-        currDate,
+        parsedText: text,
+        currDate: date,
         userId: userId,
       };
 
-      const onsaveresponse = await fetch(
+      const response = await fetch(
         "https://api.zukini.com/scans/saveandexit",
         {
           method: "POST",
@@ -124,18 +93,18 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
           body: JSON.stringify(payload),
         }
       );
-      if (onsaveresponse.ok) {
+
+      if (response.ok) {
         if (onAddScan) {
           onAddScan({
             scankey: key,
-            filepath: currFile,
+            filepath: filePath,
             scanname: scanName,
-            value: parsedText,
-            date: currDate,
+            value: text,
+            date: date,
             userId: userId,
           });
         }
-        setShowModal(false);
         setParsedText("");
         setCurrFile("");
         setScanName("");
@@ -151,7 +120,6 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
       console.error("Error during saving:", error);
     }
   };
-
 
   return (
     <div ref={(el) => (slidesRef.current[1] = el)} className="p-6">
@@ -223,36 +191,6 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
           <p className="text-red-500 text-center text-sm">{errorMessage}</p>
         )}
       </div>
-
-      {/* Preview Modal */}
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 overrflow:hidden backdrop-blur-sm z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-2xl w-full m-4">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              Parsed Text Preview
-            </h3>
-            <div className="bg-gray-100 rounded-lg p-4 max-h-96 overflow-y-auto mb-4">
-              <p className="text-gray-700 whitespace-pre-wrap">
-                {parsedText}
-              </p>
-            </div>
-            <div className="flex gap-4">
-              <button
-                className="hover:cursor-pointer flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:opacity-90 transition-all"
-                onClick={handleCloseModal}
-              >
-                Accept
-              </button>
-              <button
-                className="hover:cursor-pointer flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-all"
-                onClick={handleReScan}
-              >
-                Re-Scan
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -141,7 +141,7 @@ const ScansTab = ({ autoOpenScan = null }) => {
               >
                 <h3 className="font-semibold text-lg mb-1 group-hover:text-white">Flashcards</h3>
                 <p className="text-gray-600 text-sm group-hover:text-gray-200">
-                  Generate interactive flashcards from yourhover:cursor-pointer  notes
+                  Generate interactive flashcards from your notes
                 </p>
               </button>
 
