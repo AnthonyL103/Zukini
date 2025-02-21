@@ -1,19 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useUser } from "../authentication/UserContext";
 import ScansTab from "./ScansTab";
 import FlashcardsTab from "./FlashcardsTab";
 import TestsTab from "./TestsTab";
+import { useLocation } from "react-router-dom";
 
 const Library = () => {
   const [activeTab, setActiveTab] = useState("scans");
   const { userId } = useUser();
+  const location = useLocation();
+  const autoOpenScan = location.state?.autoOpenScan;
+
+  useEffect(() => {
+    if (location.state?.autoOpenScan) {
+      setActiveTab('scans');
+    }
+  }, [location.state]);
 
   const tabs = [
     {
-      id: "scans",
-      label: "Scans",
-      component: <ScansTab />,
+      id: 'scans',
+      label: 'Scans',
+      component: <ScansTab autoOpenScan={activeTab === 'scans' ? autoOpenScan : null} />
     },
     {
       id: "flashcards",

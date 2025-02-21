@@ -67,6 +67,13 @@ const Create = () => {
         return updated;
       });
       showToast("Scan added successfully!");
+      
+      navigate('/library', { 
+        state: { 
+          autoOpenScan: newScan,
+          tabIndex: 0 
+        } 
+      });
     };
   
     const handleDeleteScan = async () => {
