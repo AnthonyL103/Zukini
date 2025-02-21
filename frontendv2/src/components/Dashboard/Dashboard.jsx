@@ -8,11 +8,13 @@ const Dashboard = () => {
   const { userId, totalScans, totalFlashcards, totalMockTests, name } = useUser();
 
   // Redirect if not logged in
+  /*
   useEffect(() => {
     if (!userId || userId.startsWith("guest-")) {
       navigate("/login");
     }
   }, [userId, navigate]);
+  */
 
   return (
     <motion.div

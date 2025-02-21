@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ScanProvider, useScan } from "../scans/ScanContext";
 import { FCProvider } from "../flashcards/FCcontext";
@@ -8,6 +8,7 @@ import TestMode from "./TestMode";
 import ReviewMode from "./ReviewMode";
 
 const StudyPage = () => {
+  const location = useLocation();
   const [activeMode, setActiveMode] = useState("review");
   const [annotations, setAnnotations] = useState([]);
   const [notes, setNotes] = useState("");
@@ -16,6 +17,12 @@ const StudyPage = () => {
     testsTaken: 0,
     averageScore: 0,
   });
+
+  useEffect(() => {
+    if (location.state?.initialMode) {
+      setActiveMode(location.state.initialMode);
+    }
+  }, [location.state]);
 
   // Mode Selection Tabs
   const StudyModeSelector = () => (

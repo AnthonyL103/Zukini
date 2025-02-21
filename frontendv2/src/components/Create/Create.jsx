@@ -114,12 +114,14 @@ const Create = () => {
     };
   
 
-  // Redirect if not logged in
+  // Redirect if not logged in\
+  /*
   useEffect(() => {
-    if (!userId || userId.startsWith('guest-')) {
+    if (!userId || userId.startsWith('guest')) {
       navigate('/login');
     }
   }, [userId, navigate]);
+  */
 
   return (
     <motion.div
