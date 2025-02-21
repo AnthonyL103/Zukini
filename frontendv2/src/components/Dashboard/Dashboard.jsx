@@ -5,7 +5,14 @@ import { motion } from "framer-motion";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { userId, totalScans, totalFlashcards, totalMockTests, name } = useUser();
+  const { userId, totalScans, totalFlashcards, totalMockTests, name, fetchUserStats } = useUser();
+
+  useEffect(() => {
+    // Fetch fresh stats whenever dashboard is mounted
+    if (userId) {
+      fetchUserStats();
+    }
+  }, [userId, fetchUserStats]);
 
   // Redirect if not logged in
   /*

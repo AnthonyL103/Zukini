@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useScan } from '../scans/ScanContext';
 
@@ -25,6 +25,34 @@ export const UserProvider = ({ children }) => {
     const [totalFlashcards, setTotalFlashcards] = useState(0);
     const [totalMockTests, setTotalMockTests] = useState(0);
     const [isforgot, setisforgot] = useState(false);
+
+
+    const fetchUserStats = useCallback(async () => {
+        if (!userId) return;
+        
+        try {
+            const [fcRes, mtRes, scanRes] = await Promise.allSettled([
+                fetch(`https://api.zukini.com/display/displayflashcards?userId=${userId}`),
+                fetch(`https://api.zukini.com/display/displaymocktests?userId=${userId}`),
+                fetch(`https://api.zukini.com/display/displayscans?userId=${userId}`)
+            ]);
+
+            const parseResponse = async (res) => 
+                res.status === "fulfilled" && res.value.ok ? await res.value.json() : [];
+
+            const [FC, MT, Scans] = await Promise.all([
+                parseResponse(fcRes),
+                parseResponse(mtRes), 
+                parseResponse(scanRes)
+            ]);
+
+            setTotalFlashcards(FC?.length || 0);
+            setTotalMockTests(MT?.length || 0); 
+            setTotalScans(Scans?.length || 0);
+        } catch (error) {
+            console.error('Error fetching user stats:', error);
+        }
+    }, [userId]);
     
     
     const deleteGuestData = (guestId) => {
@@ -80,44 +108,35 @@ export const UserProvider = ({ children }) => {
 
 
     useEffect(() => {
-        if (!userId || userId.startsWith("guest-")) return;
-
-        let isMounted = true;
-
         const fetchUserStats = async () => {
-            try {
-                console.log("📡 Fetching user stats...");
-                const [fcRes, mtRes, scanRes] = await Promise.allSettled([
-                    fetch(`https://api.zukini.com/display/displayflashcards?userId=${userId}`),
-                    fetch(`https://api.zukini.com/display/displaymocktests?userId=${userId}`),
-                    fetch(`https://api.zukini.com/display/displayscans?userId=${userId}`)
-                ]);
-
-                const parseResponse = async (res) => 
-                    res.status === "fulfilled" && res.value.ok ? res.value.json() : [];
-
-                const [FC, MT, Scans] = await Promise.all([
-                    parseResponse(fcRes),
-                    parseResponse(mtRes),
-                    parseResponse(scanRes),
-                ]);
-
-                if (isMounted) {
-                    setTotalFlashcards(FC?.length || 0);
-                    setTotalMockTests(MT?.length || 0);
-                    setTotalScans(Scans?.length || 0);
-                }
-            } catch (error) {
-                console.error("⚠️ Error fetching user stats:", error);
-            }
+          if (!userId) return;
+          
+          try {
+            const [fcRes, mtRes, scanRes] = await Promise.allSettled([
+              fetch(`https://api.zukini.com/display/displayflashcards?userId=${userId}`),
+              fetch(`https://api.zukini.com/display/displaymocktests?userId=${userId}`),
+              fetch(`https://api.zukini.com/display/displayscans?userId=${userId}`)
+            ]);
+    
+            const parseResponse = async (res) => 
+              res.status === "fulfilled" && res.value.ok ? await res.value.json() : [];
+    
+            const [FC, MT, Scans] = await Promise.all([
+              parseResponse(fcRes),
+              parseResponse(mtRes), 
+              parseResponse(scanRes)
+            ]);
+    
+            setTotalFlashcards(FC?.length || 0);
+            setTotalMockTests(MT?.length || 0); 
+            setTotalScans(Scans?.length || 0);
+          } catch (error) {
+            console.error('Error fetching user stats:', error);
+          }
         };
-
+    
         fetchUserStats();
-        
-        return () => {
-            isMounted = false;
-        };
-    }, [userId]);
+      }, [userId]);
 
     const contextValue = useMemo(() => ({
         userId, setUserId,
@@ -126,7 +145,8 @@ export const UserProvider = ({ children }) => {
         totalFlashcards, setTotalFlashcards,
         totalMockTests, setTotalMockTests,
         name, setName,
-        isforgot, setisforgot
+        isforgot, setisforgot,
+        fetchUserStats
     }), [userId, email, totalScans, totalFlashcards, totalMockTests, name, isforgot]);
 
     return (
