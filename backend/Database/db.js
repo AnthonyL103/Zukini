@@ -65,7 +65,8 @@ const userinfos = sequelize.define('userinfos', {
 const ParsedTextEntries = sequelize.define('ParsedTextEntries', {
     scankey: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
+      primaryKey: true,
     },
     filepath: {
       type: DataTypes.STRING, 
