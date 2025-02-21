@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 export const FlashcardMode = () => {
   const { currentFC, setCurrentFC } = useFC(); // Ensure correct context
   const { currentScan } = useScan();
-  const { userId } = useUser();
+  const { userId, setTotalFlashcards} = useUser();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [showFCNameModal, setShowFCNameModal] = useState(false);
@@ -118,6 +118,7 @@ export const FlashcardMode = () => {
       });
 
       if (onsaveresponse.ok) {
+        setTotalFlashcards((prev) => prev + 1);
         console.log('Flashcards saved successfully');
       } else {
         console.error('Failed to save flashcards');
@@ -140,8 +141,10 @@ export const FlashcardMode = () => {
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-lg">
-      <h2 className="text-2xl font-bold text-[#0f0647] mb-4">Flashcard Mode</h2>
       
+      <h2 className="text-2xl font-bold text-[#0f0647] mb-4">Flashcard Mode</h2>
+
+    
       {DisplayedFC.length > 0 ? (
         <>
           <div
@@ -181,6 +184,14 @@ export const FlashcardMode = () => {
               Next
             </button>
           </div>
+          <div className="flex justify-between gap-4 mb-6">
+            <button
+                onClick={handleSave}
+                className="flex-1 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-opacity-90"
+                >
+                Save Flashcard
+            </button>
+        </div>
 
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold mb-2">Progress</h3>
@@ -193,7 +204,9 @@ export const FlashcardMode = () => {
           </div>
         </>
       ) : (
+        <div className="flex justify-center items-center h-64"> 
         <PencilLoader/>
+        </div>
       )}
     </div>
   );
