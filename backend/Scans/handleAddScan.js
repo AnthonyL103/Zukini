@@ -34,7 +34,8 @@ async function ensureGuestUserExists(userId) {
 async function appendTextToDB(newEntry) {
     try {
       await ensureGuestUserExists(newEntry.userid);
-        
+      console.log("Received scankey:", newEntry.scankey);
+
       // Insert the new entry into the database
       await ParsedTextEntries.create({
         scankey: newEntry.scankey,

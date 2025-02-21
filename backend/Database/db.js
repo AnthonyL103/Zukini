@@ -66,6 +66,7 @@ const ParsedTextEntries = sequelize.define('ParsedTextEntries', {
     scankey: {
       type: DataTypes.STRING,
       allowNull: false,
+      primaryKey: true,
     },
     filepath: {
       type: DataTypes.STRING, 
@@ -117,6 +118,15 @@ const FlashCardEntries = sequelize.define('FlashCardEntries', {
     date: {
         type: DataTypes.STRING,
     },
+    scankey: {  
+        type: DataTypes.STRING,  
+        allowNull: false,
+        references: {
+            model: ParsedTextEntries, 
+            key: 'scankey',        
+        },
+        onDelete: 'CASCADE',
+    },
     userid: {
         type: DataTypes.STRING,  
         allowNull: false,
@@ -151,6 +161,15 @@ const MockTestEntries = sequelize.define('MockTestEntries', {
     date: {
         type: DataTypes.STRING,
     },
+    scankey: {  
+        type: DataTypes.STRING,  
+        allowNull: false,
+        references: {
+            model: ParsedTextEntries, 
+            key: 'scankey',        
+        },
+        onDelete: 'CASCADE',
+    },
     userid: {
         type: DataTypes.STRING,  
         allowNull: false,
@@ -170,6 +189,13 @@ FlashCardEntries.belongsTo(userinfos, { foreignKey: 'userid' });
 
 userinfos.hasMany(MockTestEntries, { foreignKey: 'userid', onDelete: 'CASCADE' });
 MockTestEntries.belongsTo(userinfos, { foreignKey: 'userid' });
+
+ParsedTextEntries.hasMany(FlashCardEntries, { foreignKey: 'scankey', onDelete: 'CASCADE' });
+FlashCardEntries.belongsTo(ParsedTextEntries, { foreignKey: 'scankey' });
+
+ParsedTextEntries.hasMany(MockTestEntries, { foreignKey: 'scankey', onDelete: 'CASCADE' });
+MockTestEntries.belongsTo(ParsedTextEntries, { foreignKey: 'scankey' });
+
 
 (async () => {
     try {
