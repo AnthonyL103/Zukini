@@ -116,6 +116,11 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
       } else {
         console.error("Failed to save data");
       }
+      navigate('/study', { 
+        state: { 
+          initialMode: 'flashcards'
+        } 
+      });
     } catch (error) {
       console.error("Error during saving:", error);
     }
