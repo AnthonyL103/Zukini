@@ -50,10 +50,6 @@ const Create = () => {
       setTimeout(() => setToast({ message: "", type: "" }), 3000);
     };
   
-    const displayModal = (key) => {
-      setScanToDelete(key);
-      setShowModal(true);
-    };
   
     const handleCloseModal = () => {
       setShowModal(false);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../authentication/UserContext';
 import { useScan } from '../scans/ScanContext';
+import { useFC } from '../flashcards/FCcontext';
 import { Trash2 } from 'lucide-react'
 
 const ScansTab = ({ autoOpenScan = null }) => {
@@ -13,6 +14,7 @@ const ScansTab = ({ autoOpenScan = null }) => {
   const [selectedScan, setSelectedScan] = useState(null);
   const { userId } = useUser();
   const { setCurrentScan } = useScan();
+  const { setCurrentFC } = useFC();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [scanToDelete, setScanToDelete] = useState(null);
 
@@ -42,7 +44,8 @@ const ScansTab = ({ autoOpenScan = null }) => {
 
   const handleStudyOption = (scan, type) => {
     setCurrentScan(scan);
-    setShowStudyModal(false);
+    setCurrentFC([]);
+    console.log("currentFC", setCurrentFC);
     navigate('/study', { state: { initialMode: type } });
   };
 
@@ -204,7 +207,7 @@ const ScansTab = ({ autoOpenScan = null }) => {
               {selectedScan.scanname}
             </h2>
             <div className="bg-gray-50 p-4 rounded-lg max-h-[60vh] overflow-y-auto mb-6">
-              <p className="text-gray-600 whitespace-pre-wrap">{selectedScan.text}</p>
+              <p className="text-gray-600 whitespace-pre-wrap">{selectedScan.value}</p>
             </div>
             <div className="flex justify-end">
               <button

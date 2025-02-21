@@ -11,6 +11,7 @@ export const ScanProvider = ({ children }) => {
 
   // Save state to localStorage whenever it changes (usefule for when user accidentilly refreshed or something)
   useEffect(() => {
+    console.log('currentScan:', currentScan);
     if (currentScan) {
       localStorage.setItem('currentScan', JSON.stringify(currentScan));
     } else {

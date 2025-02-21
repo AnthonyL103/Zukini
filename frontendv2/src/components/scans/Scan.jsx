@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useScan } from './ScanContext';
+import { useFC } from '../flashcards/FCcontext';
 
 const Scan = ({ scankey, filepath, scanname, text, date, onDelete }) => {
   const navigate = useNavigate();
+  const { setCurrentFC } = useFC();
   const { setCurrentScan } = useScan();
   const [showStudyModal, setShowStudyModal] = useState(false);
 
@@ -17,6 +19,7 @@ const Scan = ({ scankey, filepath, scanname, text, date, onDelete }) => {
 
   const handleStudyOption = (type) => {
     setCurrentScan({ filepath, scanname, text, date });
+    setCurrentFC(null);
     setShowStudyModal(false);
     navigate('/study', { state: { initialMode: type } });
   };
