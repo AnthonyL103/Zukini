@@ -85,7 +85,7 @@ router.post('/signup', async (req, res) => {
     }
 
     const newEntry = {
-        email: Email,
+        email: Email.toLowerCase(),
         password: Password,
         name: Name,
     };
@@ -263,8 +263,8 @@ router.post('/login', async (req, res) => {
     }
 
     try {
-        console.log("checking for ", email);
-        const user = await userinfos.findOne({ where: { email: email } });
+        console.log("checking for ", email.toLowerCase());
+        const user = await userinfos.findOne({ where: { email: email.toLowerCase() } });
 
         if (!user) {
             return res.status(400).json({ success: false, message: "User not found" });
