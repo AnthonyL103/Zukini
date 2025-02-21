@@ -1,11 +1,21 @@
 const axios = require('axios');
-// Load environment variables (if using dotenv for the OpenAI API key)
-//require('dotenv').config({ path: './apikey.env' });
 require('dotenv').config();
+
 const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
-console.log('Using OpenAI API Key:', OPENAI_API_KEY);
-async function parseFlashCards(text) {
+
+if (!OPENAI_API_KEY) {
+  console.error("⚠️ OpenAI API key is missing. Set REACT_APP_OPENAI_API_KEY in your .env file.");
+  process.exit(1);
+}
+
+console.log("Using OpenAI API Key:", OPENAI_API_KEY);
+
+async function parseFlashCards(text, retries = 5) {
   try {
+    // Limit text to avoid exceeding OpenAI's token limit
+    const maxTokenEstimate = 4000; // Rough token limit per request
+    const truncatedText = text.length > maxTokenEstimate * 4 ? text.slice(0, maxTokenEstimate * 4) : text;
+
     // Define the prompt
     const prompt = `
       Generate educational flashcards from Notestext. Use this format and create as many as you can:
@@ -13,13 +23,13 @@ async function parseFlashCards(text) {
         Answer: [Answer],
         Question: [Question],
         Answer: [Answer]
-        
+
       NotesText:
-      ${text}
+      ${truncatedText}
     `;
 
-    // Send a request to OpenAI API
-    console.log("made call")
+    console.log("📡 Sending request to OpenAI...");
+
     const response = await axios.post(
       'https://api.openai.com/v1/chat/completions',
       {
@@ -39,12 +49,25 @@ async function parseFlashCards(text) {
       }
     );
 
-    // Parse the API response
-    const flashcards = response.data.choices[0].message.content.trim();
-    return flashcards;
+    // Log rate limit headers
+    const headers = response.headers;
+    console.log(`✅ Flashcards generated. Remaining requests: ${headers['x-ratelimit-remaining-requests']}`);
+    
+    return response.data.choices[0].message.content.trim();
 
   } catch (error) {
-    console.error('Error during flashcard generation:', error);
+    if (error.response) {
+      const { status, headers } = error.response;
+      
+      if (status === 429 && retries > 0) {
+        const retryAfterMs = headers['retry-after-ms'] || 3000; // Default 3s retry if no header
+        console.warn(`⚠️ Rate limit exceeded. Retrying in ${retryAfterMs / 1000} seconds...`);
+        await new Promise(resolve => setTimeout(resolve, retryAfterMs));
+        return parseFlashCards(text, retries - 1);
+      }
+    }
+    
+    console.error('❌ Error during flashcard generation:', error);
     throw error;
   }
 }

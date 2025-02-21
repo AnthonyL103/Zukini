@@ -41,7 +41,7 @@ export const ReviewMode = () => {
       {/* Original Scan View */}
       <div className="bg-gray-50 p-4 rounded-lg mb-6 max-h-[400px] overflow-y-auto">
         <h3 className="font-semibold mb-2">{currentScan?.scanname}</h3>
-        <p className="text-gray-600">{currentScan?.text}</p>
+        <p className="text-gray-600">{currentScan?.value}</p>
       </div>
 
       {/* Notes Section */}

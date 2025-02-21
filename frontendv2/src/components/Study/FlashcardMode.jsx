@@ -2,17 +2,37 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useScan } from '../scans/ScanContext'; // Ensure correct import
 import { useUser } from '../authentication/UserContext'; // Ensure correct import
+import { useFC } from '../flashcards/FCcontext'; // Ensure correct import
+import PencilLoader from '../utils/pencilloader';
 import { v4 as uuidv4 } from 'uuid';
 
 export const FlashcardMode = () => {
+  const { currentFC, setCurrentFC } = useFC(); // Ensure correct context
   const { currentScan } = useScan();
   const { userId } = useUser();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [showFCNameModal, setShowFCNameModal] = useState(false);
   const [FCName, setFCName] = useState("");
-  const [flashcards, setFlashcards] = useState([]);
-  console.log(currentScan.scanname, currentScan.text, currentScan.date);
+  const [DisplayedFC, setDisplayedFC] = useState([])
+  const [isLoading, setisLoading] = useState(false);
+  console.log(currentScan, currentFC);
+  useEffect(() => {
+    if (currentFC) {
+      setDisplayedFC(currentFC);
+    } else {
+      setDisplayedFC([]);  // Ensure DisplayedFC resets if currentFC is null
+    }
+  }, [currentFC]); // Runs whenever currentFC changes
+  
+  useEffect(() => {
+    if (currentScan && currentFC.length === 0 ) {
+        console.log("here");
+      generateFlashcards();
+    }
+  }, [currentScan]); 
+  
+  
   
 
   const generateFlashcards = async () => {
@@ -20,10 +40,11 @@ export const FlashcardMode = () => {
       console.error("No scan selected.");
       return;
     }
+    setisLoading(true);
   
     const payload = {
       scanname: currentScan.scanname || "Unknown Scan",  // Ensure scanname is not undefined
-      text: currentScan.text || "",                      // Ensure text is provided
+      text: currentScan.value || "",                      // Ensure text is provided
       date: currentScan.date || new Date().toISOString() // Use current date if missing
     };
   
@@ -61,14 +82,17 @@ export const FlashcardMode = () => {
             answer: answer?.trim() || "No Answer Provided"
           };
         });
-  
-      setFlashcards(parsedFlashcards);
+        
+      setisLoading(false);
+      setCurrentFC(parsedFlashcards);
       console.log("Generated Flashcards:", parsedFlashcards);
     } catch (error) {
       console.error("Error generating flashcards:", error);
       alert("Failed to generate flashcards. Please try again.");
     }
   };
+  
+  
   
   const handleSave = async () => {
     setShowFCNameModal(true);
@@ -78,9 +102,10 @@ export const FlashcardMode = () => {
         flashcardkey: key,
         filePath: currentScan.filepath,
         scanName: currentScan.scanname,
-        FlashCardtext: flashcards,
+        FlashCardtext: currentFC,
         FCsession: FCName,
         currDate: currentScan.date,
+        scanId: currentScan.scankey,
         userId: userId,
       };
 
@@ -105,19 +130,19 @@ export const FlashcardMode = () => {
 
   const handleNext = () => {
     setIsFlipped(false);
-    setCurrentIndex((prev) => (prev + 1) % flashcards.length);
+    setCurrentIndex((prev) => (prev + 1) % DisplayedFC.length);
   };
 
   const handlePrevious = () => {
     setIsFlipped(false);
-    setCurrentIndex((prev) => (prev - 1 + flashcards.length) % flashcards.length);
+    setCurrentIndex((prev) => (prev - 1 + DisplayedFC.length) % DisplayedFC.length);
   };
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-lg">
       <h2 className="text-2xl font-bold text-[#0f0647] mb-4">Flashcard Mode</h2>
-
-      {flashcards.length > 0 ? (
+      
+      {DisplayedFC.length > 0 ? (
         <>
           <div
             onClick={() => setIsFlipped(!isFlipped)}
@@ -134,8 +159,8 @@ export const FlashcardMode = () => {
               >
                 <p className="text-xl text-center">
                   {isFlipped
-                    ? flashcards[currentIndex].answer
-                    : flashcards[currentIndex].question}
+                    ? DisplayedFC[currentIndex].answer
+                    : DisplayedFC[currentIndex].question}
                 </p>
               </motion.div>
             </AnimatePresence>
@@ -162,21 +187,13 @@ export const FlashcardMode = () => {
             <div className="h-2 bg-gray-200 rounded-full">
               <div
                 className="h-full bg-[#0f0647] rounded-full transition-all"
-                style={{ width: `${((currentIndex + 1) / flashcards.length) * 100}%` }}
+                style={{ width: `${((currentIndex + 1) / DisplayedFC.length) * 100}%` }}
               />
             </div>
           </div>
         </>
       ) : (
-        <div className="text-center">
-        <p className="text-gray-500 mb-4">No flashcards available.</p>
-        <button
-          onClick={generateFlashcards}
-          className="px-4 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-opacity-90"
-        >
-          Generate Flashcards
-        </button>
-      </div>
+        <PencilLoader/>
       )}
     </div>
   );
