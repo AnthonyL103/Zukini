@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from '../authentication/UserContext';
 import { v4 as uuidv4 } from 'uuid';
+import { Settings } from 'lucide-react';
 
 const Navbar = () => {
       
@@ -68,14 +69,36 @@ useEffect(() => {
   }
 
   return (
-    <header className={`w-full h-[7dvh] z-50 absolute top-0 ${isHomePage && !isMenuOpen ? 'bg-transparent' : 'bg-white'}`}>
-      <div className={`max-w-7xl h-full mx-auto px-4 ${isHomePage && !isMenuOpen ? 'bg-transparent' : 'bg-white'}`}>
-        <div className={`flex h-full items-center justify-between ${isHomePage && !isMenuOpen ? 'bg-transparent' : 'bg-white'}`}>
+  <header className={`w-full h-[7dvh] z-50 absolute top-0 ${
+      isMenuOpen
+        ? 'bg-white' 
+        : isHomePage 
+          ? 'bg-transparent'
+          : 'bg-gradient-to-b from-[#0f0647] to-[#2B446F]'
+  }`}>
+      <div className={`max-w-7xl h-full mx-auto px-4 ${
+        isMenuOpen
+          ? 'bg-white'
+          : isHomePage 
+            ? 'bg-transparent'
+            : 'bg-gradient-to-b from-[#0f0647] to-[#2B446F]'
+      }`}>
+        <div className={`flex h-full items-center justify-between ${
+          isMenuOpen
+            ? 'bg-white'
+            : isHomePage 
+              ? 'bg-transparent'  
+              : 'bg-gradient-to-b from-[#0f0647] to-[#2B446F]'
+        }`}>
           <div className="flex items-center">
             <Link 
               to="/"
               onClick={() => setIsMenuOpen(false)}
-              className={`text-2xl font-bold ${isHomePage && !isMenuOpen ? 'text-white' : 'text-gray-900'}`}>
+              className={`text-2xl font-bold ${
+                isMenuOpen 
+                  ? 'text-gray-900'
+                  : 'text-white'
+              }`}>
               Zukini
             </Link>
           </div>
@@ -84,42 +107,59 @@ useEffect(() => {
           <div className="md:hidden flex items-center justify-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`inline-flex items-center hover:cursor-pointer justify-center p-2 rounded-md ${isHomePage ? 'text-white hover:text-gray-200' : 'text-gray-700 hover:text-gray-900'}`}
+              className={`inline-flex items-center hover:cursor-pointer justify-center p-2 rounded-md ${
+                isMenuOpen
+                  ? 'text-gray-900 hover:text-gray-700' 
+                  : isHomePage 
+                    ? 'text-white hover:text-gray-200'
+                    : 'text-gray-700 hover:text-gray-900'
+              }`}
             >
               <div className="w-6 h-6 relative flex items-center justify-center">
-                <span className={`absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out ${isMenuOpen ? 'rotate-45 translate-y-0 text-black' : '-translate-y-2'}`}></span>
-                <span className={`absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`}></span>
-                <span className={`absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out ${isMenuOpen ? '-rotate-45 translate-y-0 text-black' : 'translate-y-2'}`}></span>
+                <span className={`absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out ${isMenuOpen ? 'rotate-45 translate-y-0 text-black' : '-translate-y-2 text-white'}`}></span>
+                <span className={`absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out ${isMenuOpen ? 'opacity-0' : 'opacity-100 text-white'}`}></span>
+                <span className={`absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out ${isMenuOpen ? '-rotate-45 translate-y-0 text-black' : 'translate-y-2 text-white'}`}></span>
               </div>
             </button>
           </div>
 
           {/* Desktop Navigation */}
-          <div className={`hidden md:flex-1 md:flex md:justify-center md:space-x-8 ${isHomePage ? 'bg-transparent' : 'bg-white'}`}>
-            <Link to="/files" className={`px-3 py-2 text-sm font-medium ${isHomePage ? 'text-white hover:text-indigo-200' : 'text-gray-700 hover:text-gray-900'}`}>
-              Files
+          <div className={`hidden md:flex-1 md:flex md:justify-center md:space-x-8 ${
+            isHomePage ? 'bg-transparent' : 'bg-none'
+          }`}>
+            <Link to="/dashboard" className={`px-3 py-2 text-sm font-medium text-white hover:text-indigo-200`}>
+              Dashboard
             </Link>
-            <Link to="/study" className={`px-3 py-2 text-sm font-medium ${isHomePage ? 'text-white hover:text-indigo-200' : 'text-gray-700 hover:text-gray-900'}`}>
-              Study
+            <Link to="/create" className={`px-3 py-2 text-sm font-medium text-white hover:text-indigo-200`}>
+              Create
             </Link>
-            <Link to="/account" className={`px-3 py-2 text-sm font-medium ${isHomePage ? 'text-white hover:text-indigo-200' : 'text-gray-700 hover:text-gray-900'}`}>
-              Account
+            <Link to="/library" className={`px-3 py-2 text-sm font-medium text-white hover:text-indigo-200`}>
+              Library
             </Link>
           </div>
 
           {/* Desktop Auth Buttons */}
-          <div className={`hidden md:flex md:items-center md:space-x-4 ${isHomePage ? 'bg-transparent' : 'bg-white'}`}>
+          <div className={`hidden md:flex md:items-center md:space-x-4 ${isHomePage ? 'bg-transparent' : 'bg-none'}`}>
             {!isGuestUser ? (
-              <button 
-                onClick={handleLogout}
-                className={`px-3 py-2 text-sm font-medium hover:cursor-pointer ${isHomePage ? 'text-white hover:text-indigo-200' : 'text-gray-700 hover:text-gray-900'}`}>
-                Logout
-              </button>
+              <>
+                <Link 
+                  to="/account" 
+                  className={`p-2 rounded-full hover:bg-white/10 transition-colors ${isHomePage ? 'text-white hover:text-indigo-200' : 'text-white hover:text-indigo-200'}`}
+                >
+                  <Settings size={20} />
+                </Link>
+                <button 
+                  onClick={handleLogout}
+                  className={`px-3 py-2 text-sm font-medium hover:cursor-pointer ${isHomePage ? 'text-white hover:text-indigo-200' : 'text-white hover:text-indigo-200'}`}
+                >
+                  Logout
+                </button>
+              </>
             ) : (
               <>
               <Link 
                 to="/login" 
-                className={`px-3 py-2 text-sm font-medium ${isHomePage ? 'text-white hover:text-indigo-200' : 'text-gray-700 hover:text-gray-900'}`}>
+                className={`px-3 py-2 text-sm font-medium ${isHomePage ? 'text-white hover:text-indigo-200' : 'text-white hover:text-indigo-200'}`}>
                 Login
               </Link>
               
@@ -150,12 +190,21 @@ useEffect(() => {
           <div className="px-2 pt-2 pb-3 space-y-1 items-center flex flex-col">
           
           {!isGuestUser ? (
+            <>
+              <Link
+                to="/account"
+                className="block text-center px-3 py-6 text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50 rounded-md w-full"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Settings
+              </Link>
               <Link 
                 to="/"
                 onClick={handleLogout} 
                 className="block text-center px-3 py-6 text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50 rounded-md w-full">
                 Logout
               </Link>
+            </>
             ) : (
               <>
               
@@ -182,25 +231,25 @@ useEffect(() => {
             )}
 
             <Link
-              to="/files"
+              to="/create"
               className="block text-center px-3 py-6 text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50 rounded-md w-full"
               onClick={() => setIsMenuOpen(false)}
             >
-              Files
+              Create
             </Link>
             <Link
-              to="/study"
+              to="/library"
               className="block text-center px-3 py-6 text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50 rounded-md w-full"
               onClick={() => setIsMenuOpen(false)}
             >
-              Study
+              Library
             </Link>
             <Link
-              to="/account"
+              to="/dashboard"
               className="block text-center px-3 py-6 text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50 rounded-md w-full"
               onClick={() => setIsMenuOpen(false)}
             >
-              Account
+              Dashboard
             </Link>
 
             <Link

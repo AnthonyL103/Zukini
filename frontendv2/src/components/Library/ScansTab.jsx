@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../authentication/UserContext';
 import { useScan } from '../scans/ScanContext';
+import { Trash2 } from 'lucide-react'
 
 const ScansTab = ({ autoOpenScan = null }) => {
   const navigate = useNavigate();
@@ -96,8 +97,15 @@ const ScansTab = ({ autoOpenScan = null }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredScans.map((scan) => (
-          <div key={scan.scankey} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-all">
-            <h3 className="font-semibold text-lg mb-2">{scan.scanname}</h3>
+          <div key={scan.scankey} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-all relative">
+            <button 
+              onClick={() => handleDelete(scan)}
+              className="absolute top-2 right-2 p-1.5 text-gray-400 hover:text-red-500 hover:cursor-pointer transition-colors rounded-full hover:bg-red-50"
+              aria-label="Delete scan"
+            >
+              <Trash2 size={20} />
+            </button>
+            <h3 className="font-semibold text-lg mb-2 pr-8">{scan.scanname}</h3>
             <p className="text-gray-600 text-sm mb-4">{new Date(scan.date).toLocaleDateString()}</p>
             <div className="flex space-x-2">
               <button 
@@ -111,12 +119,6 @@ const ScansTab = ({ autoOpenScan = null }) => {
                 className="hover:cursor-pointer flex-1 px-3 py-2 bg-[#67d7cc] text-white rounded-lg hover:bg-opacity-90 transition-all text-sm font-semibold"
               >
                 Preview
-              </button>
-              <button 
-                onClick={() => handleDelete(scan)}
-                className="hover:cursor-pointer flex-1 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-opacity-90 transition-all text-sm font-semibold"
-              >
-                Delete
               </button>
             </div>
           </div>

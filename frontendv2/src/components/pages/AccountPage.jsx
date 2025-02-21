@@ -83,23 +83,6 @@ useEffect(() => {
           Account Information
         </h1>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {[
-            { label: "Total Scans", value: totalScans },
-            { label: "Total Flashcards", value: totalFlashcards },
-            { label: "Total Mock Tests", value: totalMockTests },
-          ].map((stat, index) => (
-            <div
-              key={index}
-              className="bg-gradient-to-br from-[#67d7cc] to-[#2c5d63] p-6 rounded-3xl shadow-lg hover:shadow-xl text-center transition-all hover:-translate-y-2"
-            >
-              <p className="text-white text-3xl font-bold mb-2">{stat.value || 0}</p>
-              <p className="text-white/80 text-sm uppercase tracking-wider">{stat.label}</p>
-            </div>
-          ))}
-        </div>
-
         {/* User Info */}
         <div className="bg-white p-8 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300">
           <div className="space-y-4">
