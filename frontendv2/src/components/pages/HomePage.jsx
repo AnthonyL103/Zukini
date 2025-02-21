@@ -298,6 +298,7 @@ const HomePage = () => {
         </section>
 
         {/* What Do You Want to Make Section */}
+        {/*
         <section className="py-16 bg-white">
           <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-[#67d7cc] to-[#2c5d63] bg-clip-text text-transparent">
             What do you want to make?
@@ -342,6 +343,7 @@ const HomePage = () => {
             ))}
           </div>
         </section>
+        */}
       </div>
     </div>
   );
