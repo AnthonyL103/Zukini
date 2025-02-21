@@ -8,7 +8,7 @@ async function parseFlashCards(text) {
   try {
     // Define the prompt
     const prompt = `
-      Generate educational flashcards from Notestext. Use this format:
+      Generate educational flashcards from Notestext. Use this format and create as many as you can:
         Question: [Question],
         Answer: [Answer],
         Question: [Question],
