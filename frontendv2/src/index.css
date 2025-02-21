@@ -1,1 +1,51 @@
 @import "tailwindcss";
+
+:root {
+  --color-primary: #0f0647;
+  --color-secondary: #67d7cc;
+  --color-tertiary: #a9c52f;
+  --color-quaternary: #f0f0f0;
+}
+
+/* Background color utilities */
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.bg-secondary {
+  background-color: var(--color-secondary);
+}
+
+.bg-tertiary {
+  background-color: var(--color-tertiary);
+}
+
+.bg-quaternary {
+  background-color: var(--color-quaternary);
+}
+
+/* Text color utilities */
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-secondary {
+  color: var(--color-secondary);
+}
+
+.text-tertiary {
+  color: var(--color-tertiary);
+}
+
+.text-quaternary {
+  color: var(--color-quaternary);
+}
+
+/* Custom height utilities */
+.h-screen-80 {
+  height: 80dvh;
+}
+
+.h-screen-75 {
+  height: 75dvh;
+}

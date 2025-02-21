@@ -391,7 +391,7 @@ const LoginPage = () => {
                                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none"
                                             />
                                             <button 
-                                                className="w-full bg-indigo-600 text-white font-semibold py-2 rounded-lg hover:bg-indigo-500 transition"
+                                                className="w-full hover:cursor-pointer bg-indigo-600 text-white font-semibold py-2 rounded-lg hover:bg-indigo-500 transition"
                                                 type="submit"
                                             >
                                                 Send Code
@@ -409,7 +409,7 @@ const LoginPage = () => {
                                             />
                                             <p className="text-gray-500 text-sm">Code expires in: {formatTime(countdown)}</p>
                                             <button 
-                                                className="w-full bg-indigo-600 text-white font-semibold py-2 rounded-lg hover:bg-indigo-500 transition"
+                                                className="w-full hover:cursor-pointer bg-indigo-600 text-white font-semibold py-2 rounded-lg hover:bg-indigo-500 transition"
                                                 type="submit"
                                             >
                                                 Verify Code

@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useDropzone } from "react-dropzone";
 import { v4 as uuidv4 } from "uuid";
 import { useUser } from "../authentication/UserContext";
 
@@ -10,7 +11,7 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
   const [displayedText, setDisplayedText] = useState("");
   const fileInputRef = useRef(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const [isLoading, setisLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [currDate, setCurrDate] = useState("");
   const [scanName, setScanName] = useState("");
   const { userId } = useUser();
@@ -32,24 +33,65 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
     }
   };
 
+  const onDrop = useCallback(async (acceptedFiles) => {
+    const file = acceptedFiles[0];
+    if (!file) return;
+    setFile(file);
+    setErrorMessage("");
+  }, []);
+
+  const handleUpload = async () => {
+    if (!scanName.trim()) {
+      setErrorMessage("Please enter a scan name");
+      return;
+    }
+    if (!file) {
+      setErrorMessage("Please select a file");
+      return;
+    }
+    setIsLoading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+      const parseResponse = await fetch("https://api.zukini.com/scans/callparse", {
+        method: "POST", 
+        body: formData,
+      });
+      const parseResult = await parseResponse.json();
+      setCurrDate(parseResult.date);
+      setCurrFile(parseResult.filePath);
+      setParsedText(parseResult.text);
+      setShowModal(true);
+    } catch (error) {
+      console.error("Error in handleUpload:", error);
+      setErrorMessage("Failed to process file");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      "image/*": [".jpeg", ".jpg", ".png"],
+      "application/pdf": [".pdf"],
+    },
+    multiple: false,
+  });
+
   const handleSubmit = async (selectedFile) => {
     if (!scanName) {
       setErrorMessage("Please enter a scan name");
       return;
     }
-    setisLoading(true);
-
+    setIsLoading(true);
     const formData = new FormData();
-    formData.append("file", selectedFile);
-
+    formData.append("file", file);
     try {
-      const parseResponse = await fetch(
-        "https://api.zukini.com/scans/callparse",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const parseResponse = await fetch("https://api.zukini.com/scans/callparse", {
+        method: "POST",
+        body: formData,
+      });
       const parseResult = await parseResponse.json();
       setCurrDate(parseResult.date);
       setCurrFile(parseResult.filePath);
@@ -57,12 +99,15 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
       setShowModal(true);
     } catch (error) {
       console.error("Error in handleSubmit:", error);
+      setErrorMessage("Failed to process file");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleCloseModal = () => {
     setDisplayedText("");
-    setisLoading(false);
+    setIsLoading(false);
     setShowModal(false);
     onsave();
   };
@@ -76,13 +121,10 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const parseResponse = await fetch(
-        "https://api.zukini.com/scans/callparse",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const parseResponse = await fetch("https://api.zukini.com/scans/callparse", {
+        method: "POST",
+        body: formData,
+      });
       if (!parseResponse.ok) {
         throw new Error("Failed to re-scan the file");
       }
@@ -149,92 +191,116 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
       console.error("Error during saving:", error);
     }
   };
-  
+
   useEffect(() => {
-          if (showModal && parsedText.trim() !== "") {
-              console.log(showModal, parsedText);
-              const words = parsedText.split(" ");
-              let currentIndex = -1; // Start at -1 to include the first word
-      
-              const interval = setInterval(() => {
-                  currentIndex++; // Move index before using it
-      
-                  if (currentIndex < words.length) {
-                      setDisplayedText((prev) =>
-                          prev ? `${prev} ${words[currentIndex]}` : words[currentIndex]
-                      );
-                  } else {
-                      clearInterval(interval); // Stop when all words are displayed
-                  }
-              }, 50);
+    if (showModal && parsedText.trim() !== "") {
+      const words = parsedText.split(" ");
+      let currentIndex = -1;
+      const interval = setInterval(() => {
+        currentIndex++;
+        if (currentIndex < words.length) {
+          setDisplayedText((prev) =>
+            prev ? `${prev} ${words[currentIndex]}` : words[currentIndex]
+          );
+        } else {
+          clearInterval(interval);
         }
-    }, [showModal, parsedText]);
-    
+      }, 50);
+    }
+  }, [showModal, parsedText]);
 
   return (
-    <>
-      <div ref={(el) => (slidesRef.current[1] = el)} className="p-6">
-        <p className="text-xl font-bold text-gray-800">Create New Scan:</p>
-        <form onSubmit={(e) => e.preventDefault()} className="mt-4 space-y-4">
-          <input
-            type="text"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring focus:ring-indigo-400"
-            value={scanName}
-            onChange={handleScanNameChange}
-            placeholder="Enter scan name ex: Chemistry 101 Notes"
-          />
+    <div ref={(el) => (slidesRef.current[1] = el)} className="p-6">
+      <h2 className="text-2xl font-bold text-[#0f0647] mb-4">
+        Create New Scan
+      </h2>
 
-          <input
-            type="file"
-            className="hidden"
-            accept="image/*,application/pdf"
-            onChange={handleFileChange}
-            ref={fileInputRef}
-          />
+      <div className="space-y-5">
+        <input
+          type="text"
+          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+          value={scanName}
+          onChange={handleScanNameChange}
+          placeholder="Enter scan name, e.g., Chemistry 101 Notes"
+        />
 
-          <button
-            type="button"
-            className="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-500 transition"
-            onClick={() => fileInputRef.current.click()}
-          >
-            Upload and Scan
-            {isLoading && (
-              <svg className="w-5 h-5 animate-spin" viewBox="0 0 50 50">
-                <circle cx="25" cy="25" r="20" stroke="white" strokeWidth="4" fill="none" />
-              </svg>
+        <div
+          {...getRootProps()}
+          className={`relative border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all 
+            ${isDragActive ? "border-indigo-500 bg-indigo-50" : "border-gray-300"} ${
+            isLoading ? "pointer-events-none" : "hover:border-indigo-400"
+          }`}
+        >
+          <input {...getInputProps()} />
+          <div className="space-y-2">
+            {file ? (
+              <p className="text-gray-800 font-medium">
+                Selected file: {file.name}
+              </p>
+            ) : (
+              <>
+                <svg
+                  className="mx-auto h-12 w-12 text-gray-400"
+                  stroke="currentColor"
+                  fill="none"
+                  viewBox="0 0 48 48"
+                >
+                  <path
+                    d="M28 8H12a4 4 0 00-4 4v20m0 0v4a4 4 0 004 4h20a4 4 0 004-4V28m-4-4v-4m0 0v-8a4 4 0 00-4-4h-8m0 0V4"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <p className="text-gray-600">
+                  Drag & drop a file here, or click to select
+                </p>
+                <p className="text-sm text-gray-500">
+                  Supports PDF and images
+                </p>
+              </>
             )}
-          </button>
-
-          {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-        </form>
-
-        <div className="mt-4 flex justify-center">
-          <button
-            className="p-3 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
-            onClick={scrollToTop}
-          >
-            Go Back
-          </button>
+          </div>
         </div>
+
+        <button
+          onClick={handleUpload}
+          disabled={!file || !scanName.trim() || isLoading}
+          className={`w-full p-3 rounded-lg font-semibold transition-all 
+            ${
+              !file || !scanName.trim() || isLoading
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-gradient-to-r from-[#0f0647] to-[#67d7cc] text-white hover:opacity-90"
+            }`}
+        >
+          {isLoading ? "Processing..." : "Upload Scan"}
+        </button>
+
+        {errorMessage && (
+          <p className="text-red-500 text-center text-sm">{errorMessage}</p>
+        )}
       </div>
 
-      {/* Parsed Text Modal */}
+      {/* Preview Modal */}
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-            <p className="text-lg font-semibold text-gray-900 text-center">Parsed Text:</p>
-            <div className="p-4 bg-gray-100 rounded-lg h-48 overflow-y-auto mt-4">
-              <p className="text-black-700">{displayedText}</p>
+        <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 overrflow:hidden backdrop-blur-sm z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-2xl w-full m-4">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+              Parsed Text Preview
+            </h3>
+            <div className="bg-gray-100 rounded-lg p-4 max-h-96 overflow-y-auto mb-4">
+              <p className="text-gray-700 whitespace-pre-wrap">
+                {parsedText}
+              </p>
             </div>
-            <div className="flex justify-between mt-6">
+            <div className="flex gap-4">
               <button
-                className="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-500 transition"
+                className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:opacity-90 transition-all"
                 onClick={handleCloseModal}
               >
                 Accept
               </button>
               <button
-                className="w-1/2 bg-red-600 text-white py-2 rounded-lg hover:bg-red-500 transition"
+                className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-all"
                 onClick={handleReScan}
               >
                 Re-Scan
@@ -243,7 +309,7 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

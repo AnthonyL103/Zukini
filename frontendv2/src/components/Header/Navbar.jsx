@@ -110,7 +110,9 @@ useEffect(() => {
           {/* Desktop Auth Buttons */}
           <div className={`hidden md:flex md:items-center md:space-x-4 ${isHomePage ? 'bg-transparent' : 'bg-white'}`}>
             {!isGuestUser ? (
-              <button onClick={handleLogout} className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-black">
+              <button 
+                onClick={handleLogout}
+                className={`px-3 py-2 text-sm font-medium hover:cursor-pointer ${isHomePage ? 'text-white hover:text-indigo-200' : 'text-gray-700 hover:text-gray-900'}`}>
                 Logout
               </button>
             ) : (
@@ -151,8 +153,7 @@ useEffect(() => {
               <Link 
                 to="/"
                 onClick={handleLogout} 
-                className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-black"
-              >
+                className="block text-center px-3 py-6 text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50 rounded-md w-full">
                 Logout
               </Link>
             ) : (

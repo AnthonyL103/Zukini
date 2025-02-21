@@ -4,7 +4,7 @@ import { useUser } from "../authentication/UserContext";
 import AddScan from "../scans/AddScan";
 
 const FilesPage = () => {
-  const { userId, setTotalScans } = useUser();
+  const { userIdUpload, setTotalScans } = useUser();
   const [scans, setScans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -18,7 +18,7 @@ const FilesPage = () => {
       try {
         setLoading(true);
         const response = await fetch(
-          `https://api.zukini.com/display/displayscans?userId=${userId}`
+          `https://api.zukini.com/display/displayscans?userId=${userIdUpload}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch scans");
@@ -35,7 +35,7 @@ const FilesPage = () => {
     };
 
     fetchScans();
-  }, [userId, setTotalScans]);
+  }, [userIdUpload, setTotalScans]);
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });
@@ -63,7 +63,7 @@ const FilesPage = () => {
 
   const handleDeleteScan = async () => {
     try {
-      const endpoint = `https://api.zukini.com/display/deleteScan?userId=${userId}&key=${scanToDelete}`;
+      const endpoint = `https://api.zukini.com/display/deleteScan?userId=${userIdUpload}&key=${scanToDelete}`;
       const response = await fetch(endpoint, { method: "DELETE" });
       if (!response.ok) {
         throw new Error(`Failed to delete scan ${scanToDelete}`);

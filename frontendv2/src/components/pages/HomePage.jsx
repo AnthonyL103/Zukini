@@ -219,7 +219,7 @@ const HomePage = () => {
           <h2 className="text-3xl font-semibold mb-4 text-[#67d7cc]">Ready to Start?</h2>
           <button
             onClick={() => navigate('/files')}
-            className="px-8 py-4 bg-black text-white rounded-xl 
+            className="px-8 py-4 bg-primary text-white rounded-xl 
                       hover:bg-primary-hover transition-all duration-300 
                       transform hover:scale-105 active:translate-y-1"
           >
