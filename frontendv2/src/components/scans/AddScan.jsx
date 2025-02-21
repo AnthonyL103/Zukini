@@ -265,7 +265,7 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
         <button
           onClick={handleUpload}
           disabled={!file || !scanName.trim() || isLoading}
-          className={`w-full p-3 rounded-lg font-semibold transition-all 
+          className={`w-full p-3 rounded-lg font-semibold transition-all hover:cursor-pointer 
             ${
               !file || !scanName.trim() || isLoading
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -294,13 +294,13 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
             </div>
             <div className="flex gap-4">
               <button
-                className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:opacity-90 transition-all"
+                className="hover:cursor-pointer flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:opacity-90 transition-all"
                 onClick={handleCloseModal}
               >
                 Accept
               </button>
               <button
-                className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-all"
+                className="hover:cursor-pointer flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-all"
                 onClick={handleReScan}
               >
                 Re-Scan
