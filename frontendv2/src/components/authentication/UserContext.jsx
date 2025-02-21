@@ -103,6 +103,7 @@ export const UserProvider = ({ children }) => {
                 ]);
 
                 if (isMounted) {
+                    console.log("set amounts");
                     setTotalFlashcards(FC?.length || 0);
                     setTotalMockTests(MT?.length || 0);
                     setTotalScans(Scans?.length || 0);

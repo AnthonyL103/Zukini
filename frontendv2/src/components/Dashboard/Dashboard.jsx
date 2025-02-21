@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { userId, totalScans, totalFlashcards, totalMockTests, name } = useUser();
+  const { totalScans, totalFlashcards, totalMockTests, name } = useUser();
 
   // Redirect if not logged in
   /*

@@ -4,6 +4,7 @@ import { useScan } from '../scans/ScanContext'; // Ensure correct import
 import { useUser } from '../authentication/UserContext'; // Ensure correct import
 import { useFC } from '../flashcards/FCcontext'; // Ensure correct import
 import PencilLoader from '../utils/pencilloader';
+import PastFlashCardList from '../flashcards/PastFlashcardList';
 import { v4 as uuidv4 } from 'uuid';
 
 export const FlashcardMode = () => {
@@ -208,7 +209,9 @@ export const FlashcardMode = () => {
         <PencilLoader/>
         </div>
       )}
+      <PastFlashCardList/>
     </div>
+    
   );
 };
 

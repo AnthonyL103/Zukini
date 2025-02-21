@@ -18,7 +18,7 @@ const Scan = ({ scankey, filepath, scanname, text, date, onDelete }) => {
   };
 
   const handleStudyOption = (type) => {
-    setCurrentScan({ filepath, scanname, text, date });
+    setCurrentScan({ scankey,filepath, scanname, text, date });
     setCurrentFC(null);
     setShowStudyModal(false);
     navigate('/study', { state: { initialMode: type } });
