@@ -44,7 +44,7 @@ export const ReviewMode = () => {
         <p className="text-gray-600">{currentScan?.value}</p>
       </div>
 
-      {/* Notes Section */}
+      {/* Notes 
       <div className="mb-6">
         <h3 className="font-semibold mb-2">Study Notes</h3>
         <textarea
@@ -56,7 +56,7 @@ export const ReviewMode = () => {
         />
       </div>
 
-      {/* Annotation Tools */}
+      
       <div className="flex gap-2">
         <button 
           onClick={handleAddHighlight}
@@ -71,6 +71,7 @@ export const ReviewMode = () => {
           Add Comment
         </button>
       </div>
+      Section */}
     </div>
   );
 };

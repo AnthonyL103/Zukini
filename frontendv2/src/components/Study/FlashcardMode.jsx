@@ -184,9 +184,15 @@ export const FlashcardMode = () => {
   return (
     <div className="bg-white rounded-xl p-6 shadow-lg">
       
+      
+      
+      
       <h2 className="text-2xl font-bold text-[#0f0647] mb-4">
-        Flashcard Mode: {currentFC?.fcsessionname || "None"}
+        Flashcard Name: {currentFC?.fcsessionname || "None"}
       </h2>
+
+      
+      
 
     
       {DisplayedFC?.length > 0 ?(

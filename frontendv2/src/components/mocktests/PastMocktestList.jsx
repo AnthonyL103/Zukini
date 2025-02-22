@@ -69,17 +69,24 @@ const PastMockTestList = ({ NewMTEntry }) => {
   };
 
   return (
-    <div>
-      <div className="mb-6">
+    <div className="mt-6">
+        <h2 className="text-2xl font-bold text-[#0f0647]">
+          Past Tests
+        </h2>
+        <div className="mb-6 mt-6">
         <input
-          type="text"
-          placeholder="Search mock tests..."
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f0647] focus:border-transparent"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+            type="text"
+            placeholder={mocktests.length === 0 ? "No tests available" : "Search mock tests..."}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f0647] focus:border-transparent"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            disabled={mocktests.length === 0} 
+            style={{
+            backgroundColor: mocktests.length === 0 ? "#f0f0f0" : "white",
+            cursor: mocktests.length === 0 ? "not-allowed" : "text",
+            }}
         />
-      </div>
-
+        </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredMockTests.map((mocktest) => (
           <div key={mocktest.mocktestkey} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-all relative">

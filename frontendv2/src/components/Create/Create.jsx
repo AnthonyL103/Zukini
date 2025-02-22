@@ -66,11 +66,12 @@ const Create = () => {
         return updated;
       });
       showToast("Scan added successfully!");
-      
-      navigate('/library', { 
+      setCurrentScan(newScan);
+      setCurrentFC(null);
+      setCurrentMT(null);
+      navigate('/study', { 
         state: { 
-          autoOpenScan: newScan,
-          tabIndex: 0 
+          initialMode: 'review'
         } 
       });
     };

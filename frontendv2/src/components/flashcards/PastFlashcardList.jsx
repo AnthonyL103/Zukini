@@ -69,14 +69,22 @@ const PastFlashCardList = ({NewFCEntry}) => {
   };
 
   return (
-    <div>
-      <div className="mb-6">
-        <input
-          type="text"
-          placeholder="Search flashcards..."
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f0647] focus:border-transparent"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+    <div className="mt-6">
+        <h2 className="text-2xl font-bold text-[#0f0647]">
+          Past Flashcards
+        </h2>
+      <div className="mb-6 mt-6">
+      <input
+            type="text"
+            placeholder={flashcards.length === 0 ? "No Flashcards available" : "Search mock tests..."}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f0647] focus:border-transparent"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            disabled={flashcards.length === 0} 
+            style={{
+            backgroundColor: flashcards.length === 0 ? "#f0f0f0" : "white",
+            cursor: flashcards.length === 0 ? "not-allowed" : "text",
+            }}
         />
       </div>
 

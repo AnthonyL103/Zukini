@@ -214,7 +214,7 @@ export const TestMode = () => {
     <div className="bg-white rounded-xl p-6 shadow-lg">
       <div className="flex justify-between items-center gap-4 mt-6">
         <h2 className="text-2xl font-bold text-[#0f0647]">
-          Test Mode: {currentMT?.mtsessionname || "None"}
+          Test Name: {currentMT?.mtsessionname || "None"}
         </h2>
         
         {isSubmitted ? (

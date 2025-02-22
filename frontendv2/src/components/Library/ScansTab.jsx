@@ -40,6 +40,7 @@ const ScansTab = ({ autoOpenScan = null }) => {
   );
 
   const handleStudy = (scan) => {
+    console.log(scan);
     setSelectedScan(scan);
     setShowStudyModal(true);
   };
@@ -56,6 +57,9 @@ const ScansTab = ({ autoOpenScan = null }) => {
     useEffect(() => {
       if (autoOpenScan) {
         setSelectedScan(autoOpenScan);
+        setCurrentScan(autoOpenScan);
+        setCurrentFC(null);
+        setCurrentMT(null);
         console.log("here");
         setShowStudyModal(true);
       }
