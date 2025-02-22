@@ -33,7 +33,7 @@ async function parseFlashCards(text, retries = 5) {
     const response = await axios.post(
       'https://api.openai.com/v1/chat/completions',
       {
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: 'You are an assistant that generates text for flashcards.' },
           { role: 'user', content: prompt },
