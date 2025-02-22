@@ -17,7 +17,7 @@ async function appendflashCardToDB(newEntry) {
       flashcardkey: newEntry.flashcardkey,
       filepath: newEntry.filepath,
       scanname: newEntry.scanname,
-      flashcards: newEntry.flashcardtext,
+      flashcards: newEntry.flashcards,
       fcsessionname: newEntry.fcsessionname,
       date: newEntry.date,
       scankey: newEntry.scankey,
@@ -57,7 +57,7 @@ router.post('/callparseFlashCards', async (req, res) => {
 
 
 router.post('/saveFlashCards', async (req, res) => {
-  const { flashcardkey, filepath, scanname, flashcardtext, fcsessionname, date, scankey, userid } = req.body; // Extract variables
+  const { flashcardkey, filepath, scanname, flashcards, fcsessionname, date, scankey, userid } = req.body; // Extract variables
 
   if (!filepath || !flashcardtext) {
     return res.status(400).json({ message: 'filePath and FlashCardtext are required' });
@@ -67,7 +67,7 @@ router.post('/saveFlashCards', async (req, res) => {
     flashcardkey: flashcardkey,
     filepath: filepath,
     scanname: scanname,
-    flashcardtext: flashcardtext,
+    flashcards: flashcards,
     fcsessionname: fcsessionname,
     date: date,
     scankey: scankey,
