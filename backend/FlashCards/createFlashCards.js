@@ -59,7 +59,7 @@ router.post('/callparseFlashCards', async (req, res) => {
 router.post('/saveFlashCards', async (req, res) => {
   const { flashcardkey, filepath, scanname, flashcardtext, fcsessionname, date, scankey, userid } = req.body; // Extract variables
 
-  if (!filePath || !FlashCardtext) {
+  if (!filepath || !flashcardtext) {
     return res.status(400).json({ message: 'filePath and FlashCardtext are required' });
   }
 
