@@ -100,6 +100,31 @@ router.post('/callparse', async (req, res) => {
 });
 
 
+router.post('/getscan', async (req, res) => {
+    const { scankey } = req.body; 
+  
+    if (!scankey) {
+        return res.status(400).json({ message: 'scankey is required' });
+    }
+  
+    try {
+        const scanEntry = await ParsedTextEntries.findOne({ where: { scankey } });
+
+        if (!scanEntry) {
+            return res.status(404).json({ message: 'Scan not found' });
+        }
+
+        res.json({
+            message: 'Scan retrieved successfully',
+            scan: scanEntry
+        });
+
+    } catch (error) {
+        console.error('Error retrieving scan:', error);
+        res.status(500).json({ message: 'Failed to retrieve scan from the database' });
+    }
+});
+
 
 
 router.post('/saveandexit', async (req, res) => {
