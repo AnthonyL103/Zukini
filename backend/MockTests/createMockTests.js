@@ -55,7 +55,7 @@ router.post('/callparseMockTests', async (req, res) => {
 });
 
 router.post('/saveMockTest', async (req, res) => {
-    const { mocktestkey, filePath, scanName, questionstext, MTsessionname, currDate, scanId, userId } = req.body; // Extract variables
+    const { mocktestkey, filepath, scanname, questions, mtsessionname, date, scankey, userid } = req.body; // Extract variables
   
     if (!filePath || !questionstext) {
       return res.status(400).json({ message: 'filePath and FlashCardtext are required' });
@@ -63,13 +63,13 @@ router.post('/saveMockTest', async (req, res) => {
   
     const newEntry = {
       mocktestkey: mocktestkey,
-      filepath: filePath,
-      scanname: scanName,
-      questions: questionstext,
-      mtsessionname: MTsessionname,
-      date: currDate,
-      scankey: scanId,
-      userid: userId,
+      filepath: filepath,
+      scanname: scanname,
+      questions: questions,
+      mtsessionname: mtsessionname,
+      date: date,
+      scankey: scankey,
+      userid: userid,
     };
     
     try {
