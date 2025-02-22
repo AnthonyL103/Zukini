@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../authentication/UserContext';
+import { useFC } from '../flashcards/FCcontext';
+import { useScan } from '../scans/ScanContext';
+import { useNavigate } from 'react-router-dom';
+
 
 const FlashcardsTab = () => {
+  const navigate = useNavigate();
+  const { setCurrentFC } = useFC(); // Ensure correct context
+  const { setCurrentScan } = useScan();
   const [flashcardSets, setFlashcardSets] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [flashcardToDelete, setflashcardToDelete] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  
   const { userId } = useUser();
 
   useEffect(() => {
@@ -20,6 +30,79 @@ const FlashcardsTab = () => {
 
     fetchFlashcards();
   }, [userId]);
+  
+  
+  const handleStudy = (flashcards) => {
+    console.log(flashcards);
+    
+    setCurrentFC(flashcards);
+    getScan(flashcards.scankey)
+    navigate('/study', { 
+        state: { 
+          initialMode: 'flashcards'
+        } 
+      });
+    
+  };
+  
+  const getScan = async (scankey) => {
+    if (!scankey) {
+      console.error("scankey is missing");
+      return;
+    }
+  
+    try {
+      const response = await fetch(`https://api.zukini.com/scans/getscan?scankey=${scankey}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+  
+      if (!response.ok) throw new Error("Failed to fetch scan");
+  
+      const data = await response.json();
+  
+      if (!data.scan) {
+        console.error("No scan found for scankey:", scankey);
+        return;
+      }
+  
+      setCurrentScan(data.scan); // Update the scan context with retrieved scan
+      console.log("Scan retrieved successfully:", data.scan);
+    } catch (error) {
+      console.error("Error fetching scan:", error);
+    }
+  };
+  
+  
+  
+  const handleDelete = (set) => {
+    setflashcardToDelete(set);
+    console.log(flashcardToDelete);
+    setShowDeleteModal(true);
+  };
+
+ 
+  const confirmDelete = async () => {
+    try {
+      const response = await fetch(
+        `https://api.zukini.com/display/deleteFC?userId=${userId}&key=${flashcardToDelete.flashcardkey}`,
+        { method: 'DELETE' }
+      );
+
+      if (!response.ok) throw new Error('Failed to delete flashcard');
+
+      setFlashcards(prevFlashcards =>
+        prevFlashcards.filter(fc => fc.flashcardkey !== flashcardToDelete.flashcardkey)
+      );
+      setShowDeleteModal(false);
+      setFlashcardToDelete(null);
+    } catch (error) {
+      console.error('Error deleting flashcard:', error);
+    }
+  };
+
 
   const filteredSets = flashcardSets.filter(set => 
     set.fcsessionname.toLowerCase().includes(searchQuery.toLowerCase())
@@ -46,16 +129,52 @@ const FlashcardsTab = () => {
               Created: {new Date(set.date).toLocaleDateString()}
             </p>
             <div className="flex space-x-2">
-              <button className="px-3 py-1 bg-primary text-white rounded-md hover:bg-primary-dark">
+            <button 
+                onClick={() => handleStudy(set)}
+                className="hover:cursor-pointer flex-1 px-3 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-opacity-90 transition-all text-sm font-semibold"
+              >
                 Study
               </button>
-              <button className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600">
-                Delete
+              <button 
+                onClick={() => handleDelete(set)}
+                className="hover:cursor-pointer flex-1 px-3 py-2 bg-[#67d7cc] text-white rounded-lg hover:bg-opacity-90 transition-all text-sm font-semibold"
+              >
+                Preview
               </button>
             </div>
           </div>
         ))}
       </div>
+      
+      {showDeleteModal && flashcardToDelete && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300 z-50">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md m-4 shadow-xl">
+            <h2 className="text-2xl font-bold text-[#0f0647] mb-4">
+              Delete Flashcard Session
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete "{flashcardToDelete.fcsessionname}"? This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setFlashcardToDelete(null);
+                }}
+                className="hover:cursor-pointer px-6 py-2 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300 transition-all font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="hover:cursor-pointer px-6 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all font-semibold"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

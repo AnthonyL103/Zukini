@@ -1,25 +1,16 @@
 import { useState, useRef, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { v4 as uuidv4 } from "uuid";
-import { useNavigate } from 'react-router-dom';
-import { useScan } from '../scans/ScanContext';
-import { useFC } from '../flashcards/FCcontext';
-import { useMT } from '../mocktests/MTcontext';
+
 
 import { useUser } from "../authentication/UserContext";
 
 const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
-  const navigate = useNavigate();
-  const [parsedText, setParsedText] = useState("");
-  const [currFile, setCurrFile] = useState("");
   const [file, setFile] = useState(null);
   const fileInputRef = useRef(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { setCurrentScan } = useScan();
-  const { setCurrentFC } = useFC();
-  const { setCurrentMT } = useMT();
-  const [currDate, setCurrDate] = useState("");
+  
   const [scanName, setScanName] = useState("");
   const { userId, setTotalScans} = useUser();
 
@@ -55,9 +46,6 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
         body: formData,
       });
       const parseResult = await parseResponse.json();
-      setCurrDate(parseResult.date);
-      setCurrFile(parseResult.filePath);
-      setParsedText(parseResult.text);
       await handleSave(parseResult.text, parseResult.filePath, parseResult.date);
     } catch (error) {
       console.error("Error in handleUpload:", error);
@@ -116,7 +104,6 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
         }
         setTotalScans((prev) => prev + 1);
         setParsedText("");
-        setCurrFile("");
         setScanName("");
         setFile(null);
         scrollToTop();
