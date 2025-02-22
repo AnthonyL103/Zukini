@@ -45,6 +45,26 @@ router.get('/displayflashcards', async (req, res) => {
     }
 });
 
+router.get('/displayFCfromScanID', async (req, res) => {
+    const { scanId } = req.query;
+
+    if (!scanId) {
+        return res.status(400).json({ error: 'Scan ID is required' });
+    }
+
+    try {
+        // Retrieve all flashcards associated with the given scanId
+        const pastFC = await FlashCardEntries.findAll({
+            where: { scankey: scanId }
+        });
+
+        res.json(pastFC);
+    } catch (error) {
+        console.error('Error retrieving flashcards from database:', error);
+        res.status(500).json({ error: 'Failed to retrieve flashcard data.' });
+    }
+});
+
 router.get('/displaymocktests', async (req, res) => {
     const { userId } = req.query;
     if (!userId) {
@@ -60,6 +80,26 @@ router.get('/displaymocktests', async (req, res) => {
     } catch (error) {
       console.error('Error retrieving scans from database:', error);
       res.status(500).json({ error: 'Failed to retrieve scans data.' });
+    }
+});
+
+router.get('/displayMTfromScanID', async (req, res) => {
+    const { scanId } = req.query;
+
+    if (!scanId) {
+        return res.status(400).json({ error: 'Scan ID is required' });
+    }
+
+    try {
+        // Retrieve all flashcards associated with the given scanId
+        const pastMT = await MockTestEntries.findAll({
+            where: { scankey: scanId }
+        });
+
+        res.json(pastMT);
+    } catch (error) {
+        console.error('Error retrieving mocktests from database:', error);
+        res.status(500).json({ error: 'Failed to retrieve mocktest data.' });
     }
 });
   

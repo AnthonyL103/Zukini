@@ -12,7 +12,7 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [currDate, setCurrDate] = useState("");
   const [scanName, setScanName] = useState("");
-  const { userId } = useUser();
+  const { userId, setTotalScans} = useUser();
 
   const handleScanNameChange = (e) => {
     setScanName(e.target.value);
@@ -105,6 +105,7 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
             userId: userId,
           });
         }
+        setTotalScans((prev) => prev + 1);
         setParsedText("");
         setCurrFile("");
         setScanName("");
