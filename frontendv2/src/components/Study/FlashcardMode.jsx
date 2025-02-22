@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useScan } from '../scans/ScanContext'; // Ensure correct import
-import { useUser } from '../authentication/UserContext'; // Ensure correct import
 import { useFC } from '../flashcards/FCcontext'; // Ensure correct import
+import { useUser } from '../authentication/UserContext';
 import PencilLoader from '../utils/pencilloader';
 import PastFlashCardList from '../flashcards/PastFlashcardList';
 import { v4 as uuidv4 } from 'uuid';
@@ -17,6 +17,7 @@ export const FlashcardMode = () => {
   const [FCName, setFCName] = useState("");
   const [DisplayedFC, setDisplayedFC] = useState([])
   const [savenabled, setSaveEnabled] = useState(false);
+  const [showpastFC, setshowpastFC] = useState(true);
   const [FCentry, setFCEntry] = useState()
   
   useEffect(() => {
@@ -53,6 +54,7 @@ export const FlashcardMode = () => {
       console.error("No scan selected.");
       return;
     }
+    setshowpastFC(false);
     
     const flashcardStorageKey = `flashcards_${userId}_${currentScan.scankey}`;
 
@@ -108,6 +110,7 @@ export const FlashcardMode = () => {
         
       setSaveEnabled(true);
       setDisplayedFC(parsedFlashcards);
+      setshowpastFC(true);
       localStorage.setItem(flashcardStorageKey, JSON.stringify(parsedFlashcards));
       console.log("Generated Flashcards:", parsedFlashcards);
     } catch (error) {
@@ -138,7 +141,7 @@ export const FlashcardMode = () => {
         flashcardkey: key,
         filepath: currentScan.filepath,
         scanname: currentScan.scanname,
-        flashcardtext: DisplayedFC,
+        flashcards: DisplayedFC,
         fcsessionname: FCName,
         date: currentScan.date,
         scankey: currentScan.scankey,
@@ -156,6 +159,7 @@ export const FlashcardMode = () => {
       if (onsaveresponse.ok) {
         setTotalFlashcards((prev) => prev + 1);
         setSaveEnabled(false);
+        setCurrentFC(payload);
         setFCEntry(payload); 
         console.log('Flashcards saved successfully');
       } else {
@@ -185,7 +189,7 @@ export const FlashcardMode = () => {
       </h2>
 
     
-      { DisplayedFC?.length > 0 ?(
+      {DisplayedFC?.length > 0 ?(
         <>
           <div
             onClick={() => setIsFlipped(!isFlipped)}
@@ -254,8 +258,10 @@ export const FlashcardMode = () => {
         <PencilLoader/>
         </div>
       )}
-      <PastFlashCardList NewFCEntry={FCentry}/>
       
+      {showpastFC && (
+        <PastFlashCardList NewFCEntry={FCentry}/>
+      )}
       
       {showFCNameModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300 z-50">

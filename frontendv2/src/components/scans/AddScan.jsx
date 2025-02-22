@@ -1,9 +1,12 @@
 import { useState, useRef, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { v4 as uuidv4 } from "uuid";
+import { useNavigate } from 'react-router-dom';
+
 import { useUser } from "../authentication/UserContext";
 
 const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
+  const navigate = useNavigate();
   const [parsedText, setParsedText] = useState("");
   const [currFile, setCurrFile] = useState("");
   const [file, setFile] = useState(null);

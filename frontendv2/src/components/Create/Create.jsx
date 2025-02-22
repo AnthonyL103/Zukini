@@ -2,17 +2,20 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useUser } from '../authentication/UserContext';
+import { useScan } from '../scans/ScanContext';
+import { useFC } from '../flashcards/FCcontext';
+import { useMT } from '../mocktests/MTcontext';
 
 /* ++++++++++ DROPFIELD ++++++++++ */
 
-import ScanList from "../scans/ScanList";
 import AddScan from "../scans/AddScan";
 
 const Create = () => {
   const navigate = useNavigate();
-  const { userId } = useUser();
-
-  const { userIdUpload, setTotalScans } = useUser();
+  const { setCurrentScan } = useScan();
+  const { setCurrentFC } = useFC();
+  const { setCurrentMT } = useMT();
+  const { userId, setTotalScans } = useUser();
   const [scans, setScans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,7 +29,7 @@ const Create = () => {
         try {
           setLoading(true);
           const response = await fetch(
-            `https://api.zukini.com/display/displayscans?userId=${userIdUpload}`
+            `https://api.zukini.com/display/displayscans?userId=${userId}`
           );
           if (!response.ok) {
             throw new Error("Failed to fetch scans");
@@ -43,7 +46,7 @@ const Create = () => {
       };
   
       fetchScans();
-    }, [userIdUpload, setTotalScans]);
+    }, [userId, setTotalScans]);
   
     const showToast = (message, type = "success") => {
       setToast({ message, type });
@@ -74,7 +77,7 @@ const Create = () => {
   
     const handleDeleteScan = async () => {
       try {
-        const endpoint = `https://api.zukini.com/display/deleteScan?userId=${userIdUpload}&key=${scanToDelete}`;
+        const endpoint = `https://api.zukini.com/display/deleteScan?userId=${userId}&key=${scanToDelete}`;
         const response = await fetch(endpoint, { method: "DELETE" });
         if (!response.ok) {
           throw new Error(`Failed to delete scan ${scanToDelete}`);

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
 import { useScan } from '../scans/ScanContext'; // Ensure correct import
 import { useUser } from '../authentication/UserContext';
 import { useFC } from '../flashcards/FCcontext';

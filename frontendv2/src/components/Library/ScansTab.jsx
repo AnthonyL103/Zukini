@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../authentication/UserContext';
 import { useScan } from '../scans/ScanContext';
 import { useFC } from '../flashcards/FCcontext';
+import { useMT } from '../mocktests/MTcontext';
 import { Trash2 } from 'lucide-react'
 
 const ScansTab = ({ autoOpenScan = null }) => {
@@ -15,6 +16,7 @@ const ScansTab = ({ autoOpenScan = null }) => {
   const { userId } = useUser();
   const { setCurrentScan } = useScan();
   const { setCurrentFC } = useFC();
+  const { setCurrentMT } = useMT();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [scanToDelete, setScanToDelete] = useState(null);
 
@@ -44,7 +46,8 @@ const ScansTab = ({ autoOpenScan = null }) => {
 
   const handleStudyOption = (scan, type) => {
     setCurrentScan(scan);
-    setCurrentFC([]);
+    setCurrentFC(null);
+    setCurrentMT(null);
     console.log("currentFC", setCurrentFC);
     navigate('/study', { state: { initialMode: type } });
   };
@@ -53,6 +56,7 @@ const ScansTab = ({ autoOpenScan = null }) => {
     useEffect(() => {
       if (autoOpenScan) {
         setSelectedScan(autoOpenScan);
+        console.log("here");
         setShowStudyModal(true);
       }
     }, [autoOpenScan]);

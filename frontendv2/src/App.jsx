@@ -9,8 +9,9 @@ import AccountPage from './components/pages/AccountPage';
 import LoginPage from './components/pages/LoginPage';
 import SignUpPage from './components/pages/SignUpPage';
 import { UserProvider } from './components/authentication/UserContext';
-import { ScanProvider } from './components/scans/ScanContext';  // ✅ Import ScanProvider
-import { FCProvider } from './components/flashcards/FCcontext'; // ✅ Import FCProvider
+import { ScanProvider } from './components/scans/ScanContext';
+import { FCProvider } from './components/flashcards/FCcontext';
+import { MTProvider } from './components/mocktests/MTcontext'; // ✅ Import MTProvider
 import Dashboard from './components/Dashboard/Dashboard';
 import Library from './components/Library/Library';
 import Create from './components/Create/Create';
@@ -39,11 +40,13 @@ const App = () => {
   return (
     <UserProvider>
       <ScanProvider>  
-        <FCProvider>  
-          <Router>
-            <Navbar />
-            <AnimatedRoutes />
-          </Router>
+        <FCProvider>
+          <MTProvider>  
+            <Router>
+              <Navbar />
+              <AnimatedRoutes />
+            </Router>
+          </MTProvider>
         </FCProvider>
       </ScanProvider>
     </UserProvider>
