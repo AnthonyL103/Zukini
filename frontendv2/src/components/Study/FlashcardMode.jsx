@@ -277,17 +277,19 @@ export const FlashcardMode = () => {
             </h2>
             <input
               type="text"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 mb-6 focus:outline-none"
               placeholder="Enter name..."
               value={FCName}
               onChange={(e) => setFCName(e.target.value)}
             />
+            <div className="flex justify-around space-x-4">
             <button
                 onClick={confirmSaveFC}
-                className="hover:cursor-pointer px-6 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all font-semibold"
+                className="hover:cursor-pointer px-6 py-2 bg-green-500 text-white rounded-xl hover:bg-[#0f0647] transition-all font-semibold"
               >
                 Save
               </button>
+            </div>
           </div>
         </div>
       )}

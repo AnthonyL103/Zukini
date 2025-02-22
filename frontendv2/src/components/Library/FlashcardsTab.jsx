@@ -4,88 +4,90 @@ import { useFC } from '../flashcards/FCcontext';
 import { useScan } from '../scans/ScanContext';
 import { useNavigate } from 'react-router-dom';
 
-
 const FlashcardsTab = () => {
   const navigate = useNavigate();
-  const { setCurrentFC } = useFC(); // Ensure correct context
+  const { setCurrentFC } = useFC();
   const { setCurrentScan } = useScan();
   const [flashcardSets, setFlashcardSets] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [flashcardToDelete, setflashcardToDelete] = useState(null);
+  const [flashcardToDelete, setFlashcardToDelete] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  
+
   const { userId } = useUser();
 
+  // Fetch flashcards on component mount or when userId changes
   useEffect(() => {
-    const fetchFlashcards = async () => {
-      try {
-        const response = await fetch(`https://api.zukini.com/display/displayflashcards?userId=${userId}`);
-        if (!response.ok) throw new Error('Failed to fetch flashcards');
-        const data = await response.json();
-        setFlashcardSets(data);
-      } catch (error) {
-        console.error('Error fetching flashcards:', error);
-      }
-    };
-
     fetchFlashcards();
   }, [userId]);
-  
-  
-  const handleStudy = (flashcards) => {
-    console.log(flashcards);
-    
-    setCurrentFC(flashcards);
-    getScan(flashcards.scankey)
-    navigate('/study', { 
-        state: { 
-          initialMode: 'flashcards'
-        } 
-      });
-    
+
+  // Function to fetch flashcards from API
+  const fetchFlashcards = async () => {
+    try {
+      const response = await fetch(`https://api.zukini.com/display/displayflashcards?userId=${userId}`);
+      if (!response.ok) throw new Error('Failed to fetch flashcards');
+      const data = await response.json();
+      setFlashcardSets(data); // Ensure UI updates correctly
+    } catch (error) {
+      console.error('Error fetching flashcards:', error);
+    }
   };
-  
+
+  // Handle studying a flashcard set
+  const handleStudy = (flashcards) => {
+    console.log("flashcards", flashcards);
+    setCurrentFC(flashcards);
+    getScan(flashcards.scankey);
+    navigate('/study', { 
+      state: { initialMode: 'flashcards' } 
+    });
+  };
+
+  // Fetch scan data based on scankey
   const getScan = async (scankey) => {
     if (!scankey) {
       console.error("scankey is missing");
       return;
     }
-  
+
     try {
       const response = await fetch(`https://api.zukini.com/scans/getscan?scankey=${scankey}`, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        }
+        headers: { "Content-Type": "application/json" }
       });
-  
+
       if (!response.ok) throw new Error("Failed to fetch scan");
-  
+
       const data = await response.json();
-  
+      
+
       if (!data.scan) {
         console.error("No scan found for scankey:", scankey);
         return;
       }
-  
-      setCurrentScan(data.scan); // Update the scan context with retrieved scan
+
+      setCurrentScan(data.scan);
       console.log("Scan retrieved successfully:", data.scan);
     } catch (error) {
       console.error("Error fetching scan:", error);
     }
   };
-  
-  
-  
+
+  // Handle delete button click
   const handleDelete = (set) => {
-    setflashcardToDelete(set);
-    console.log(flashcardToDelete);
+    setFlashcardToDelete(set);
     setShowDeleteModal(true);
   };
 
- 
+  // Confirm deletion of flashcard set
   const confirmDelete = async () => {
+    if (!flashcardToDelete) {
+      console.error("No flashcard selected for deletion.");
+      return;
+    }
+
     try {
+      console.log("Deleting flashcard:", flashcardToDelete.flashcardkey);
+
       const response = await fetch(
         `https://api.zukini.com/display/deleteFC?userId=${userId}&key=${flashcardToDelete.flashcardkey}`,
         { method: 'DELETE' }
@@ -93,18 +95,22 @@ const FlashcardsTab = () => {
 
       if (!response.ok) throw new Error('Failed to delete flashcard');
 
-      setFlashcards(prevFlashcards =>
+      setFlashcardSets((prevFlashcards) =>
         prevFlashcards.filter(fc => fc.flashcardkey !== flashcardToDelete.flashcardkey)
       );
+
       setShowDeleteModal(false);
       setFlashcardToDelete(null);
+
+      // Ensure latest flashcards are fetched
+      fetchFlashcards();
     } catch (error) {
       console.error('Error deleting flashcard:', error);
     }
   };
 
-
-  const filteredSets = flashcardSets.filter(set => 
+  // Filter flashcard sets based on search query
+  const filteredSets = flashcardSets.filter(set =>
     set.fcsessionname.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -129,7 +135,7 @@ const FlashcardsTab = () => {
               Created: {new Date(set.date).toLocaleDateString()}
             </p>
             <div className="flex space-x-2">
-            <button 
+              <button 
                 onClick={() => handleStudy(set)}
                 className="hover:cursor-pointer flex-1 px-3 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-opacity-90 transition-all text-sm font-semibold"
               >
@@ -137,9 +143,9 @@ const FlashcardsTab = () => {
               </button>
               <button 
                 onClick={() => handleDelete(set)}
-                className="hover:cursor-pointer flex-1 px-3 py-2 bg-[#67d7cc] text-white rounded-lg hover:bg-opacity-90 transition-all text-sm font-semibold"
+                className="hover:cursor-pointer flex-1 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all text-sm font-semibold"
               >
-                Preview
+                Delete
               </button>
             </div>
           </div>
@@ -155,7 +161,7 @@ const FlashcardsTab = () => {
             <p className="text-gray-600 mb-6">
               Are you sure you want to delete "{flashcardToDelete.fcsessionname}"? This action cannot be undone.
             </p>
-            <div className="flex justify-end space-x-4">
+            <div className="flex justify-between space-x-4">
               <button
                 onClick={() => {
                   setShowDeleteModal(false);
