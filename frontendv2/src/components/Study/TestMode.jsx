@@ -20,6 +20,8 @@ export const TestMode = () => {
   const [savenabled, setSaveEnabled] = useState(false);
   const [showpastMT, setshowpastMT] = useState(true);
   const [MTentry, setMTEntry] = useState(null);
+  const [isloading, setisLoading] = useState(false);
+  
 
   useEffect(() => {
     if (currentMT) {
@@ -79,6 +81,7 @@ export const TestMode = () => {
       console.error("No scan selected.");
       return;
     }
+    setisLoading(true);
     setshowpastMT(false);
 
     const mocktestStorageKey = `mocktests_${userId}_${currentScan.scankey}`;
@@ -150,6 +153,7 @@ export const TestMode = () => {
     
     setSaveEnabled(true);
     setQuestions(parsedQuestions);
+    setisLoading(false);
     setshowpastMT(true);
     localStorage.setItem(mocktestStorageKey, JSON.stringify(parsedQuestions));
     console.log("here",parsedQuestions);
@@ -289,10 +293,10 @@ export const TestMode = () => {
 
 
           <div className="flex justify-between gap-4 mt-6">
-            <button onClick={() => setCurrentQuestion(prev => Math.max(prev - 1, 0))} className="flex-1 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-opacity-90">
+            <button onClick={() => setCurrentQuestion(prev => Math.max(prev - 1, 0))} className="flex-1 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-[#2c2099]">
               Previous
             </button>
-            <button onClick={() => setCurrentQuestion(prev => Math.min(prev + 1, questions.length - 1))} className="flex-1 py-2 bg-[#67d7cc] text-white rounded-lg hover:bg-opacity-90">
+            <button onClick={() => setCurrentQuestion(prev => Math.min(prev + 1, questions.length - 1))} className="flex-1 py-2 bg-[#67d7cc] text-white rounded-lg hover:bg-[#5bc2b8]">
               Next
             </button>
           </div>
@@ -303,7 +307,7 @@ export const TestMode = () => {
             className={`flex-1 py-2 rounded-lg text-white transition-opacity ${
                 !savenabled
                 ? "bg-gray-400 cursor-not-allowed opacity-50"  // Disabled state (gray)
-                : "bg-[#0f0647] hover:bg-opacity-90"           // Normal state (blue)
+                : "bg-[#0f0647] hover:bg-opacity-90 hover:bg-[#2c2099]"           // Normal state (blue)
             }`}
             disabled={!savenabled} 
             >
@@ -322,9 +326,13 @@ export const TestMode = () => {
             </div>
           </div>
         </>
-      ) : (
+      ) : isloading ? (
         <div className="flex justify-center items-center h-64">
           <PencilLoader />
+        </div>
+      ) : (
+        <div className="bg-red-100 p-4 rounded-lg text-red-700 text-center">
+        No test selected. Please select on or upload a scan.
         </div>
       )}
      {showpastMT && (
@@ -347,7 +355,7 @@ export const TestMode = () => {
             <div className="flex justify-around space-x-4">
             <button
                 onClick={confirmSaveMT}
-                className="hover:cursor-pointer px-6 py-2 bg-green-500 text-white rounded-xl hover:bg-[#0f0647] transition-all font-semibold"
+                className="hover:cursor-pointer px-6 py-2 bg-green-500 text-white rounded-xl hover:bg-[#2faa4d] transition-all font-semibold"
               >
                 Save
               </button>

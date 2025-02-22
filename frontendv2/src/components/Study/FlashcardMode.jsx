@@ -19,6 +19,7 @@ export const FlashcardMode = () => {
   const [savenabled, setSaveEnabled] = useState(false);
   const [showpastFC, setshowpastFC] = useState(true);
   const [FCentry, setFCEntry] = useState()
+  const [isloading, setisLoading] = useState(false);
   
   useEffect(() => {
     if (currentFC) {
@@ -54,6 +55,7 @@ export const FlashcardMode = () => {
       console.error("No scan selected.");
       return;
     }
+    setisLoading(true);
     setshowpastFC(false);
     
     const flashcardStorageKey = `flashcards_${userId}_${currentScan.scankey}`;
@@ -110,6 +112,7 @@ export const FlashcardMode = () => {
         
       setSaveEnabled(true);
       setDisplayedFC(parsedFlashcards);
+      setisLoading(false);
       setshowpastFC(true);
       localStorage.setItem(flashcardStorageKey, JSON.stringify(parsedFlashcards));
       console.log("Generated Flashcards:", parsedFlashcards);
@@ -223,13 +226,13 @@ export const FlashcardMode = () => {
             
             <button
               onClick={handlePrevious}
-              className="flex-1 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-opacity-90"
+              className="flex-1 py-2 bg-[#0f0647] hover:bg-[#2c2099] text-white rounded-lg hover:bg-opacity-90"
             >
               Previous
             </button>
             <button
               onClick={handleNext}
-              className="flex-1 py-2 bg-[#67d7cc] text-white rounded-lg hover:bg-opacity-90"
+              className="flex-1 py-2 bg-[#67d7cc] hover:bg-[#5bc2b8] text-white rounded-lg hover:bg-opacity-90"
             >
               Next
             </button>
@@ -240,7 +243,7 @@ export const FlashcardMode = () => {
             className={`flex-1 py-2 rounded-lg text-white transition-opacity ${
                 !savenabled
                 ? "bg-gray-400 cursor-not-allowed opacity-50"  // Disabled state (gray)
-                : "bg-[#0f0647] hover:bg-opacity-90"           // Normal state (blue)
+                : "bg-[#0f0647] hover:bg-opacity-90 hover:bg-[#2c2099]"           // Normal state (blue)
             }`}
             disabled={!savenabled} 
             >
@@ -259,10 +262,15 @@ export const FlashcardMode = () => {
             </div>
           </div>
         </>
-      ) : (
-        <div className="flex justify-center items-center h-64"> 
-        <PencilLoader/>
+      ) : isloading ? (
+        <div className="flex justify-center items-center h-64">
+          <PencilLoader />
         </div>
+      ) : (
+        <div className="bg-red-100 p-4 rounded-lg text-red-700 text-center">
+        No flashcard selected. Please select on or upload a scan.
+        </div>
+        
       )}
       
       {showpastFC && (
@@ -285,7 +293,7 @@ export const FlashcardMode = () => {
             <div className="flex justify-around space-x-4">
             <button
                 onClick={confirmSaveFC}
-                className="hover:cursor-pointer px-6 py-2 bg-green-500 text-white rounded-xl hover:bg-[#0f0647] transition-all font-semibold"
+                className="hover:cursor-pointer px-6 py-2 bg-green-500 text-white rounded-xl hover:bg-[#2faa4d] transition-all font-semibold"
               >
                 Save
               </button>

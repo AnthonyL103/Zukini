@@ -14,8 +14,14 @@ const PastMockTestList = ({ NewMTEntry }) => {
   const [mocktestToDelete, setMockTestToDelete] = useState(null);
 
   useEffect(() => {
+    if (!currentScan) {
+        return;
+    }
     const fetchMockTests = async () => {
       try {
+        if (!currentScan) {
+            return;
+        }
         const response = await fetch(`https://api.zukini.com/display/displayMTfromScanID?scanId=${currentScan.scankey}`);
         if (!response.ok) throw new Error('Failed to fetch mock tests');
         const data = await response.json();
@@ -44,7 +50,7 @@ const PastMockTestList = ({ NewMTEntry }) => {
   };
 
   const handleDelete = (mocktest) => {
-    setCurrentMT(null);
+    
     setMockTestToDelete(mocktest);
     setShowDeleteModal(true);
   };
@@ -62,6 +68,7 @@ const PastMockTestList = ({ NewMTEntry }) => {
         prevMockTests.filter(mt => mt.mocktestkey !== mocktestToDelete.mocktestkey)
       );
       setShowDeleteModal(false);
+      setCurrentMT(null);
       setMockTestToDelete(null);
     } catch (error) {
       console.error('Error deleting mock test:', error);
@@ -101,7 +108,7 @@ const PastMockTestList = ({ NewMTEntry }) => {
             <p className="text-gray-600 text-sm mb-4">{new Date(mocktest.date).toLocaleDateString()}</p>
             <button 
               onClick={() => handleTakeTest(mocktest)}
-              className="hover:cursor-pointer flex-1 px-3 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-opacity-90 transition-all text-sm font-semibold"
+              className="hover:cursor-pointer hover:bg-[#2c2099] flex-1 px-3 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-opacity-90 transition-all text-sm font-semibold"
             >
               Take Test
             </button>
@@ -119,7 +126,7 @@ const PastMockTestList = ({ NewMTEntry }) => {
             <p className="text-gray-600 mb-6">
               Are you sure you want to delete "{mocktestToDelete.mtsessionname}"? This action cannot be undone.
             </p>
-            <div className="flex justify-end space-x-4">
+            <div className="flex justify-between space-x-4">
               <button
                 onClick={() => {
                   setShowDeleteModal(false);

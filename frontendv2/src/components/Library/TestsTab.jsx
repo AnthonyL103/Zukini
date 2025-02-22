@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const TestsTab = () => {
   const navigate = useNavigate();
-  const { setCurrentMT } = useMT();
+  const { setCurrentMT, currentMT } = useMT();
   const { setCurrentScan } = useScan();
   const [tests, setTests] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -17,23 +17,23 @@ const TestsTab = () => {
 
   // Fetch tests on component mount or when userId changes
   useEffect(() => {
+    const fetchTests = async () => {
+        try {
+          const response = await fetch(`https://api.zukini.com/display/displaymocktests?userId=${userId}`);
+          if (!response.ok) throw new Error('Failed to fetch tests');
+          const data = await response.json();
+          setTests(data); // Ensure UI updates correctly
+        } catch (error) {
+          console.error('Error fetching tests:', error);
+        }
+      };
     fetchTests();
-  }, [userId]);
+  }, [userId], currentMT);
 
   // Function to fetch tests from API
-  const fetchTests = async () => {
-    try {
-      const response = await fetch(`https://api.zukini.com/display/displaymocktests?userId=${userId}`);
-      if (!response.ok) throw new Error('Failed to fetch tests');
-      const data = await response.json();
-      setTests(data); // Ensure UI updates correctly
-    } catch (error) {
-      console.error('Error fetching tests:', error);
-    }
-  };
+  
   
   const handleStudy = (test) => {
-    
     setCurrentMT(test);
     getScan(test.scankey);
     console.log("test", test);
@@ -45,6 +45,7 @@ const TestsTab = () => {
   const getScan = async (scankey) => {
     if (!scankey) {
       console.error("scankey is missing");
+      setCurrentScan(null);
       return;
     }
 
@@ -69,6 +70,7 @@ const TestsTab = () => {
       console.log("Scan retrieved successfully:", data.scan);
     } catch (error) {
       console.error("Error fetching scan:", error);
+      setCurrentScan(null);
     }
   };
 
@@ -101,9 +103,8 @@ const TestsTab = () => {
 
       setShowDeleteModal(false);
       setTestToDelete(null);
-
+      setCurrentMT(null);
       // Ensure latest tests are fetched
-      fetchTests();
     } catch (error) {
       console.error('Error deleting test:', error);
     }
@@ -137,7 +138,7 @@ const TestsTab = () => {
             <div className="flex space-x-2">
               <button 
                 onClick={() => handleStudy(test)}
-                className="hover:cursor-pointer flex-1 px-3 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-opacity-90 transition-all text-sm font-semibold"
+                className="hover:cursor-pointer flex-1 px-3 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-[#2c2099] transition-all text-sm font-semibold"
               >
                 Take Test
               </button>

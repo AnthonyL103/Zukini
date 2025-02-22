@@ -39,10 +39,16 @@ export const ReviewMode = () => {
       <h2 className="text-2xl font-bold text-[#0f0647] mb-4">Review Mode</h2>
       
       {/* Original Scan View */}
-      <div className="bg-gray-50 p-4 rounded-lg mb-6 max-h-[400px] overflow-y-auto">
-        <h3 className="font-semibold mb-2">{currentScan?.scanname}</h3>
-        <p className="text-gray-600">{currentScan?.value}</p>
-      </div>
+      {!currentScan ? (
+        <div className="bg-red-100 p-4 rounded-lg text-red-700 text-center">
+          No scan available. Please select or upload a scan.
+        </div>
+      ) : (
+        <div className="bg-gray-50 p-4 rounded-lg mb-6 max-h-[400px] overflow-y-auto">
+          <h3 className="font-semibold mb-2">{currentScan.scanname}</h3>
+          <p className="text-gray-600">{currentScan.value}</p>
+        </div>
+      )}
 
       {/* Notes 
       <div className="mb-6">

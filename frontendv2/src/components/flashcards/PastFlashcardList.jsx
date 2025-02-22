@@ -6,7 +6,7 @@ import { Trash2 } from 'lucide-react';
 
 const PastFlashCardList = ({NewFCEntry}) => {
   const { userId } = useUser();
-  const { setCurrentFC } = useFC();
+  const { setCurrentFC, currentFC } = useFC();
   const { currentScan } = useScan();
   const [flashcards, setFlashcards] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -14,19 +14,22 @@ const PastFlashCardList = ({NewFCEntry}) => {
   const [flashcardToDelete, setFlashcardToDelete] = useState(null);
 
   useEffect(() => {
+    if (!currentScan) {
+        return;
+    }
     const fetchFlashcards = async () => {
-      try {
-        const response = await fetch(`https://api.zukini.com/display/displayFCfromScanID?scanId=${currentScan.scankey}`);
-        if (!response.ok) throw new Error('Failed to fetch flashcards');
-        const data = await response.json();
-        setFlashcards(data);
-      } catch (error) {
-        console.error('Error fetching flashcards:', error);
-      }
+        try {
+            const response = await fetch(`https://api.zukini.com/display/displayFCfromScanID?scanId=${currentScan.scankey}`);
+            if (!response.ok) throw new Error('Failed to fetch flashcards');
+            const data = await response.json();
+            setFlashcards(data);
+        } catch (error) {
+            console.error('Error fetching flashcards:', error);
+        }
     };
 
     fetchFlashcards();
-  }, [userId]);
+}, [userId, currentFC, flashcards.length]);
   
   useEffect(() => {
     if (NewFCEntry) {
@@ -44,7 +47,7 @@ const PastFlashCardList = ({NewFCEntry}) => {
  };
   
   const handleDelete = (flashcard) => {
-    setCurrentFC(null);
+    
     setFlashcardToDelete(flashcard);
     setShowDeleteModal(true);
   };
@@ -62,7 +65,9 @@ const PastFlashCardList = ({NewFCEntry}) => {
         prevFlashcards.filter(fc => fc.flashcardkey !== flashcardToDelete.flashcardkey)
       );
       setShowDeleteModal(false);
+      setCurrentFC(null);
       setFlashcardToDelete(null);
+      
     } catch (error) {
       console.error('Error deleting flashcard:', error);
     }
@@ -99,10 +104,10 @@ const PastFlashCardList = ({NewFCEntry}) => {
               <Trash2 size={20} />
             </button>
             <h3 className="font-semibold text-lg mb-2 pr-8">{flashcard.fcsessionname}</h3>
-            <p className="text-gray-600 text-sm mb-4">{new Date(flashcard.date).toLocaleDateString()}</p>
+            <p className="text-gray-600 text-sm mb-4 ">{new Date(flashcard.date).toLocaleDateString()}</p>
             <button 
               onClick={() => handleStudyFC(flashcard)}
-              className="hover:cursor-pointer flex-1 px-3 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-opacity-90 transition-all text-sm font-semibold"
+              className="hover:cursor-pointer flex-1 px-3 py-2 bg-[#0f0647] hover:bg-[#2c2099] text-white rounded-lg hover:bg-opacity-90 transition-all text-sm font-semibold"
             >
               Study
             </button>
@@ -120,7 +125,7 @@ const PastFlashCardList = ({NewFCEntry}) => {
             <p className="text-gray-600 mb-6">
               Are you sure you want to delete "{flashcardToDelete.fcsessionname}"? This action cannot be undone.
             </p>
-            <div className="flex justify-end space-x-4">
+            <div className="flex justify-between space-x-4">
               <button
                 onClick={() => {
                   setShowDeleteModal(false);

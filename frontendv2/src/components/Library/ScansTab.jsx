@@ -121,13 +121,13 @@ const ScansTab = ({ autoOpenScan = null }) => {
             <div className="flex space-x-2">
               <button 
                 onClick={() => handleStudy(scan)}
-                className="hover:cursor-pointer flex-1 px-3 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-opacity-90 transition-all text-sm font-semibold"
+                className="hover:cursor-pointer flex-1 px-3 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-[#2c2099] transition-all text-sm font-semibold"
               >
                 Study
               </button>
               <button 
                 onClick={() => handlePreview(scan)}
-                className="hover:cursor-pointer flex-1 px-3 py-2 bg-[#67d7cc] text-white rounded-lg hover:bg-opacity-90 transition-all text-sm font-semibold"
+                className="hover:cursor-pointer flex-1 px-3 py-2 bg-[#67d7cc] text-white rounded-lg hover:bg-[#5bc2b8] transition-all text-sm font-semibold"
               >
                 Preview
               </button>
