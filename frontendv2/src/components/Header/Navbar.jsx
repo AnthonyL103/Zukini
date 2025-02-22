@@ -17,6 +17,11 @@ const Navbar = () => {
     localStorage.removeItem("userId");
     localStorage.removeItem("email");
     localStorage.removeItem("name");
+    Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith(`flashcards_${userId}_`)) {
+          localStorage.removeItem(key);
+        }
+      });
     sessionStorage.clear();
 
     // Generate a new guest user ID *after* clearing session storage

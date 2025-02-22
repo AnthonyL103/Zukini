@@ -16,22 +16,34 @@ export const FlashcardMode = () => {
   const [showFCNameModal, setShowFCNameModal] = useState(false);
   const [FCName, setFCName] = useState("");
   const [DisplayedFC, setDisplayedFC] = useState([])
-  const [isLoading, setisLoading] = useState(false);
-  console.log(currentScan, currentFC);
-  useEffect(() => {
-    if (currentFC) {
-      setDisplayedFC(currentFC);
-    } else {
-      setDisplayedFC([]);  // Ensure DisplayedFC resets if currentFC is null
-    }
-  }, [currentFC]); // Runs whenever currentFC changes
+  const [savenabled, setSaveEnabled] = useState(false);
+  const [FCentry, setFCEntry] = useState()
   
   useEffect(() => {
-    if (currentScan && currentFC.length === 0 ) {
-        console.log("here");
-      generateFlashcards();
+    if (currentFC) {
+      console.log("currentFC.flashcards", currentFC.flashcards);
+      setDisplayedFC(currentFC.flashcards); // Directly set it if it's an array
+      console.log(DisplayedFC);
+    } else {
+      setDisplayedFC([]);
+    }
+  }, [currentFC]); 
+  
+  
+  useEffect(() => {
+    if (currentScan) {
+      const flashcardStorageKey = `flashcards_${userId}_${currentScan.scankey}`;
+      const storedFlashcards = localStorage.getItem(flashcardStorageKey);
+      if (storedFlashcards) {
+        console.log("Using cached flashcards from local storage.");
+        setDisplayedFC(JSON.parse(storedFlashcards));
+        setSaveEnabled(false);
+      } else {
+        generateFlashcards();
+      }
     }
   }, [currentScan]); 
+  
   
   
   
@@ -41,7 +53,17 @@ export const FlashcardMode = () => {
       console.error("No scan selected.");
       return;
     }
-    setisLoading(true);
+    
+    const flashcardStorageKey = `flashcards_${userId}_${currentScan.scankey}`;
+
+    // Check if flashcards exist for this user and scan
+    const storedFlashcards = localStorage.getItem(flashcardStorageKey);
+    if (storedFlashcards) {
+        console.log("Loading flashcards from local storage for user:", userId);
+        setDisplayedFC(JSON.parse(storedFlashcards));
+        setSaveEnabled(false);
+        return;
+    }
   
     const payload = {
       scanname: currentScan.scanname || "Unknown Scan",  // Ensure scanname is not undefined
@@ -84,8 +106,9 @@ export const FlashcardMode = () => {
           };
         });
         
-      setisLoading(false);
-      setCurrentFC(parsedFlashcards);
+      setSaveEnabled(true);
+      setDisplayedFC(parsedFlashcards);
+      localStorage.setItem(flashcardStorageKey, JSON.stringify(parsedFlashcards));
       console.log("Generated Flashcards:", parsedFlashcards);
     } catch (error) {
       console.error("Error generating flashcards:", error);
@@ -93,21 +116,33 @@ export const FlashcardMode = () => {
     }
   };
   
+  const getFCName = () => {
+    setShowFCNameModal(true);
+  };
+  
+  const confirmSaveFC = () => {
+    if (FCName.trim().length === 0) {
+      alert("Please enter a flashcard name.");
+      return;
+    }
+    setShowFCNameModal(false);
+    setFCName("");
+    handleSave();
+  };
   
   
   const handleSave = async () => {
-    setShowFCNameModal(true);
     try {
       const key = uuidv4();
       const payload = {
         flashcardkey: key,
-        filePath: currentScan.filepath,
-        scanName: currentScan.scanname,
-        FlashCardtext: currentFC,
-        FCsession: FCName,
-        currDate: currentScan.date,
-        scanId: currentScan.scankey,
-        userId: userId,
+        filepath: currentScan.filepath,
+        scanname: currentScan.scanname,
+        flashcardtext: DisplayedFC,
+        fcsessionname: FCName,
+        date: currentScan.date,
+        scankey: currentScan.scankey,
+        userid: userId,
       };
 
       const onsaveresponse = await fetch('https://api.zukini.com/flashcards/saveFlashCards', {
@@ -120,6 +155,8 @@ export const FlashcardMode = () => {
 
       if (onsaveresponse.ok) {
         setTotalFlashcards((prev) => prev + 1);
+        setSaveEnabled(false);
+        setFCEntry(payload); 
         console.log('Flashcards saved successfully');
       } else {
         console.error('Failed to save flashcards');
@@ -143,10 +180,12 @@ export const FlashcardMode = () => {
   return (
     <div className="bg-white rounded-xl p-6 shadow-lg">
       
-      <h2 className="text-2xl font-bold text-[#0f0647] mb-4">Flashcard Mode</h2>
+      <h2 className="text-2xl font-bold text-[#0f0647] mb-4">
+        Flashcard Mode: {currentFC?.fcsessionname || "None"}
+      </h2>
 
     
-      {DisplayedFC.length > 0 ? (
+      { DisplayedFC?.length > 0 ?(
         <>
           <div
             onClick={() => setIsFlipped(!isFlipped)}
@@ -186,12 +225,18 @@ export const FlashcardMode = () => {
             </button>
           </div>
           <div className="flex justify-between gap-4 mb-6">
-            <button
-                onClick={handleSave}
-                className="flex-1 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-opacity-90"
-                >
-                Save Flashcard
+          <button
+            onClick={getFCName}
+            className={`flex-1 py-2 rounded-lg text-white transition-opacity ${
+                !savenabled
+                ? "bg-gray-400 cursor-not-allowed opacity-50"  // Disabled state (gray)
+                : "bg-[#0f0647] hover:bg-opacity-90"           // Normal state (blue)
+            }`}
+            disabled={!savenabled} 
+            >
+            Save Flashcard
             </button>
+
         </div>
 
           <div className="bg-gray-50 p-4 rounded-lg">
@@ -209,7 +254,31 @@ export const FlashcardMode = () => {
         <PencilLoader/>
         </div>
       )}
-      <PastFlashCardList/>
+      <PastFlashCardList NewFCEntry={FCentry}/>
+      
+      
+      {showFCNameModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300 z-50">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md m-4 shadow-xl">
+            <h2 className="text-2xl font-bold text-[#0f0647] mb-4">
+              Enter a flashcard name
+            </h2>
+            <input
+              type="text"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+              placeholder="Enter name..."
+              value={FCName}
+              onChange={(e) => setFCName(e.target.value)}
+            />
+            <button
+                onClick={confirmSaveFC}
+                className="hover:cursor-pointer px-6 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all font-semibold"
+              >
+                Save
+              </button>
+          </div>
+        </div>
+      )}
     </div>
     
   );

@@ -5,18 +5,14 @@ import { useUser } from '../authentication/UserContext';
 import { useFC } from '../flashcards/FCcontext';
 import { Trash2 } from 'lucide-react';
 
-const PastFlashCardList = () => {
-  const navigate = useNavigate();
+const PastFlashCardList = ({NewFCEntry}) => {
   const { userId } = useUser();
   const { setCurrentFC } = useFC();
   const { currentScan } = useScan();
   const [flashcards, setFlashcards] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showStudyModal, setShowStudyModal] = useState(false);
-  const [selectedFlashcard, setSelectedFlashcard] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [flashcardToDelete, setFlashcardToDelete] = useState(null);
-  console.log(currentScan.scankey);
 
   useEffect(() => {
     const fetchFlashcards = async () => {
@@ -32,22 +28,24 @@ const PastFlashCardList = () => {
 
     fetchFlashcards();
   }, [userId]);
+  
+  useEffect(() => {
+    if (NewFCEntry) {
+        console.log(NewFCEntry);
+        setFlashcards(prevEntries => [...prevEntries, NewFCEntry]);
+    }
+}, [NewFCEntry]);
 
   const filteredFlashcards = flashcards.filter(flashcard =>
     flashcard.fcsessionname.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleStudy = (flashcard) => {
-    setSelectedFlashcard(flashcard);
-    setShowStudyModal(true);
-  };
-
-  const handleStudyOption = (flashcard, type) => {
+  const handleStudyFC = (flashcard) => {
     setCurrentFC(flashcard);
-    navigate('/study', { state: { initialMode: type } });
-  };
-
+ };
+  
   const handleDelete = (flashcard) => {
+    setCurrentFC(null);
     setFlashcardToDelete(flashcard);
     setShowDeleteModal(true);
   };
@@ -96,54 +94,13 @@ const PastFlashCardList = () => {
             <h3 className="font-semibold text-lg mb-2 pr-8">{flashcard.fcsessionname}</h3>
             <p className="text-gray-600 text-sm mb-4">{new Date(flashcard.date).toLocaleDateString()}</p>
             <button 
-              onClick={() => handleStudy(flashcard)}
+              onClick={() => handleStudyFC(flashcard)}
               className="hover:cursor-pointer flex-1 px-3 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-opacity-90 transition-all text-sm font-semibold"
             >
               Study
             </button>
           </div>
         ))}
-      </div>
-
-      {/* Study Options Modal */}
-      <div className={`fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300
-        ${showStudyModal ? "opacity-100 pointer-events-auto z-50" : "opacity-0 pointer-events-none"}`}>
-        {showStudyModal && selectedFlashcard && (
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
-            <h2 className="text-2xl font-bold text-[#0f0647] mb-6 text-center">
-              Choose Study Mode
-            </h2>
-            
-            <div className="space-y-4">
-              <button
-                onClick={() => handleStudyOption(selectedFlashcard, 'flashcards')}
-                className="hover:cursor-pointer w-full p-4 text-left bg-white rounded-xl border-2 border-[#0f0647] hover:bg-[#0f0647] hover:text-white transition-colors group"
-              >
-                <h3 className="font-semibold text-lg mb-1 group-hover:text-white">Flashcards</h3>
-                <p className="text-gray-600 text-sm group-hover:text-gray-200">
-                  Study using flashcards generated from this session
-                </p>
-              </button>
-
-              <button
-                onClick={() => handleStudyOption(selectedFlashcard, 'test')}
-                className="hover:cursor-pointer w-full p-4 text-left bg-white rounded-xl border-2 border-[#67d7cc] hover:bg-[#67d7cc] hover:text-white transition-colors group"
-              >
-                <h3 className="font-semibold text-lg mb-1 group-hover:text-white">Mock Test</h3>
-                <p className="text-gray-600 text-sm group-hover:text-gray-200">
-                  Generate a mock test from these flashcards
-                </p>
-              </button>
-            </div>
-
-            <button
-              onClick={() => setShowStudyModal(false)}
-              className="hover:cursor-pointer mt-6 w-full px-6 py-3 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300 transition-colors font-semibold"
-            >
-              Cancel
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Delete Confirmation Modal */}
