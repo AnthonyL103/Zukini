@@ -19,6 +19,7 @@ export const FlashcardMode = () => {
   const [savenabled, setSaveEnabled] = useState(false);
   const [showpastFC, setshowpastFC] = useState(true);
   const [FCentry, setFCEntry] = useState()
+  const [showVA, setshowVA] = useState(false);
   const [isloading, setisLoading] = useState(false);
   
   useEffect(() => {
@@ -126,6 +127,8 @@ export const FlashcardMode = () => {
     setShowFCNameModal(true);
   };
   
+
+  
   const confirmSaveFC = () => {
     if (FCName.trim().length === 0) {
       alert("Please enter a flashcard name.");
@@ -189,15 +192,21 @@ export const FlashcardMode = () => {
       
       
       
-      
+      <div className="flex justify-between items-center gap-4 mt-6"> 
       <h2 className="text-2xl font-bold text-[#0f0647] mb-4">
         Flashcard Name: {currentFC?.fcsessionname || "None"}
       </h2>
-
+      
+      <button
+              onClick={() => setshowVA(true)}
+              className="py-2 px-6 bg-[#0f0647] hover:bg-[#2c2099] text-white rounded-lg hover:bg-opacity-90 w-32"
+            >
+              View All
+      </button>
+      
+      </div>
       
       
-
-    
       {DisplayedFC?.length > 0 ?(
         <>
           <div
@@ -301,6 +310,40 @@ export const FlashcardMode = () => {
           </div>
         </div>
       )}
+      
+      {showVA && (
+            <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300 z-50">
+                <div className="bg-white rounded-2xl p-6 w-full max-w-6xl mx-auto shadow-xl max-h-[90vh] overflow-y-auto">
+                    <h2 className="text-2xl font-bold text-[#0f0647] mb-4 text-center">
+                        All Flashcards
+                    </h2>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {DisplayedFC.map((fc, index) => (
+                            <div 
+                                key={index} 
+                                className="bg-gray-100 p-4 rounded-lg shadow hover:shadow-md transition cursor-pointer"
+                            >
+                                <h3 className="font-semibold text-lg">{fc.question}</h3>
+                                <p className="text-gray-600 mt-2">{fc.answer}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="flex justify-center mt-6">
+                        <button 
+                            onClick={() => setshowVA(false)} 
+                            className="flex-1 py-2 bg-[#0f0647] hover:bg-[#2c2099] text-white rounded-lg hover:bg-opacity-90"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
+
+      
+      
     </div>
     
   );

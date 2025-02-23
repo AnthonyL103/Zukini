@@ -101,8 +101,8 @@ useEffect(() => {
               onClick={() => setIsMenuOpen(false)}
               className={`text-2xl font-bold ${
                 isMenuOpen 
-                  ? 'text-gray-900'
-                  : 'text-white'
+                  ? 'text-gray-900 hover:text-gray-700'
+                  : 'text-white hover:text-indigo-200'
               }`}>
               Zukini
             </Link>

@@ -21,6 +21,8 @@ export const TestMode = () => {
   const [showpastMT, setshowpastMT] = useState(true);
   const [MTentry, setMTEntry] = useState(null);
   const [isloading, setisLoading] = useState(false);
+  const [showVA, setshowVA] = useState(false);
+  
   
 
   useEffect(() => {
@@ -225,7 +227,11 @@ export const TestMode = () => {
             <div className="flex justify-between gap-4 mt-6"> 
             <div 
                 className={`py-2 px-6 text-white rounded-lg text-center font-semibold
-                ${score < 5 ? 'bg-red-500' : score <= 8 ? 'bg-yellow-500' : 'bg-green-500'}
+                ${(score / questions.length) < 0.5 ? 'bg-red-500' 
+                : (score / questions.length) < 0.7 ? 'bg-yellow-500' 
+                : (score / questions.length) < 0.8 ? 'bg-green-500' 
+                : (score / questions.length) < 0.9 ? 'bg-blue-500' 
+                : 'bg-purple-500'}
                 `}
             >
                 Score: {score} / {questions.length}
@@ -239,12 +245,12 @@ export const TestMode = () => {
           </div>
             ) : (
             
-            <button 
-                onClick={handleSubmit} 
-                className="py-2 px-6 bg-[#67d7cc] text-white rounded-lg hover:bg-opacity-90 w-32"
-            >
-                Submit
-            </button>
+                <button
+                        onClick={() => setshowVA(true)}
+                        className="py-2 px-6 bg-[#0f0647] hover:bg-[#2c2099] text-white rounded-lg hover:bg-opacity-90 w-32"
+                    >
+                        View All
+                </button>
             
             
             )}
@@ -293,13 +299,32 @@ export const TestMode = () => {
 
 
           <div className="flex justify-between gap-4 mt-6">
-            <button onClick={() => setCurrentQuestion(prev => Math.max(prev - 1, 0))} className="flex-1 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-[#2c2099]">
-              Previous
+            {/* Previous Button */}
+            <button 
+                onClick={() => setCurrentQuestion(prev => Math.max(prev - 1, 0))} 
+                className="flex-1 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-[#2c2099]"
+            >
+                Previous
             </button>
-            <button onClick={() => setCurrentQuestion(prev => Math.min(prev + 1, questions.length - 1))} className="flex-1 py-2 bg-[#67d7cc] text-white rounded-lg hover:bg-[#5bc2b8]">
-              Next
-            </button>
-          </div>
+
+            {/* Show Submit button when at the last question, otherwise show Next button */}
+            {currentQuestion === questions.length - 1 ? (
+                <button 
+                onClick={handleSubmit} 
+                className="flex-1 py-2 bg-[#67d7cc] text-white rounded-lg hover:bg-[#5bc2b8] "
+                >
+                Submit
+                </button>
+            ) : (
+                <button 
+                onClick={() => setCurrentQuestion(prev => Math.min(prev + 1, questions.length - 1))} 
+                className="flex-1 py-2 bg-[#67d7cc] text-white rounded-lg hover:bg-[#5bc2b8]"
+                >
+                Next
+                </button>
+            )}
+            </div>
+
           
           <div className="flex justify-between gap-4 mt-6 mb-6">
           <button
@@ -360,6 +385,43 @@ export const TestMode = () => {
                 Save
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      
+      {showVA && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300 z-50">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-6xl mx-auto shadow-xl max-h-[90vh] overflow-y-auto">
+            <h2 className="text-2xl font-bold text-[#0f0647] mb-4 text-center">
+              View All Questions
+            </h2>
+            <div className="max-h-[70vh] overflow-y-auto space-y-6">
+              {questions.map((question, idx) => (
+                <div key={idx} className="p-4 border rounded-lg">
+                  <h3 className="font-semibold text-lg mb-2">
+                    {idx + 1}. {question.question}
+                  </h3>
+                  <div className="space-y-2">
+                    {question.answers.map((option, index) => (
+                      <p
+                        key={index}
+                        className={`p-2 rounded-lg ${
+                          option === question.rightAnswer ? 'bg-green-500 text-white' : 'bg-gray-200'
+                        }`}
+                      >
+                        {String.fromCharCode(65 + index)}. {option}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={() => setshowVA(false)}
+              className="w-full mt-4 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-[#2c2099]"
+            >
+              Close
+            </button>
           </div>
         </div>
       )}

@@ -15,6 +15,10 @@ const Library = () => {
   useEffect(() => {
     if (location.state?.autoOpenScan) {
       setActiveTab('scans');
+    } else if (location.state?.autoOpenFlashcards) {
+    setActiveTab("flashcards");
+    } else if (location.state?.autoOpenMocktests) {
+        setActiveTab("tests");
     }
   }, [location.state]);
 

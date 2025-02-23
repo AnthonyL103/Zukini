@@ -136,7 +136,7 @@ const Create = () => {
     >
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
-        <div className="text-center mb-10">
+        <div className="text-center">
           <h1 className="text-5xl font-extrabold text-[#0f0647]">
             Create New Content
           </h1>
@@ -219,36 +219,36 @@ const Create = () => {
 
           {/* Flashcard Creation Option */}
           <button
-            onClick={() => navigate('/study')}
+            onClick={() => navigate('/library', { state: { autoOpenFlashcards: true } })}
             className="w-full text-left"
           >
             <div className="flex rounded-xl p-1 bg-gradient-to-r from-[#0f0647] to-[#67d7cc] shadow-lg transition hover:shadow-2xl">
               <div className="bg-white rounded-xl p-6">
                 <h3 className="font-semibold text-xl text-gray-800 mb-2">
-                  Create Flashcards
+                  Past Flashcards
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  Generate flashcards from your existing scans or create new ones
+                  View existing flashcards or create new ones from uploaded scans.
                 </p>
-                <div className="text-sm text-primary">Create now →</div>
+                <div className="text-sm text-primary"> Go now →</div>
               </div>
             </div>
           </button>
 
-          {/* Mock Test Creation Option */}
+          
           <button
-            onClick={() => navigate('/study')}
+            onClick={() => navigate('/library', { state: { autoOpenMocktests: true } })}
             className="w-full text-left"
           >
             <div className="h-[100%] rounded-xl p-1 bg-gradient-to-r from-[#0f0647] to-[#67d7cc] shadow-lg transition hover:shadow-2xl">
               <div className=" h-[100%] bg-white rounded-xl p-6">
                 <h3 className="font-semibold text-xl text-gray-800 mb-2">
-                  Generate Mock Test
+                  Past Mock Test
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  Create practice tests from your study materials
+                View existing mocktests or create new ones from uploaded scans.
                 </p>
-                <div className="text-sm text-primary">Start now →</div>
+                <div className="text-sm text-primary">Go now →</div>
               </div>
             </div>
           </button>
