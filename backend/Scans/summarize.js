@@ -35,7 +35,7 @@ async function summarizeNotes(text, retries = MAX_RETRIES) {
   - Make important equations and formulas stand out using a different color or font style (e.g., <p style="color:#E74C3C; font-weight:bold;">).
   - Ensure proper spacing and alignment so that the summary is visually clear and easy to skim.
   - Keep the formatting consistent throughout the summary for a professional and structured look.
-  - **Do not include introductory text**—the response should start directly with an HTML tag (e.g., <h2>).  
+  - **Do not include introductory text**—the response should start directly with an HTML tag (e.g., <h2>) NOT '''html.  
   - **Do not use Markdown-style code blocks **—output **only the HTML elements**.  
   
   
