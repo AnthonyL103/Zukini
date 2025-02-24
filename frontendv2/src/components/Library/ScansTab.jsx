@@ -165,6 +165,16 @@ const ScansTab = ({ autoOpenScan = null }) => {
                   Create a practice test from your study material
                 </p>
               </button>
+              
+               <button
+                onClick={() => handleStudyOption(selectedScan, 'review')}
+                className="hover:cursor-pointer w-full p-4 text-left bg-white rounded-xl border-2 border-[#67d7cc] hover:bg-[#67d7cc] hover:text-white transition-colors group"
+              >
+                <h3 className="font-semibold text-lg mb-1 group-hover:text-white">Review</h3>
+                <p className="text-gray-600 text-sm group-hover:text-gray-200">
+                  Review notes and generate a summary
+                </p>
+              </button>
             </div>
 
             <button

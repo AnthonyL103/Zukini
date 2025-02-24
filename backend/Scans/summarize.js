@@ -23,6 +23,25 @@ async function summarizeNotes(text, retries = MAX_RETRIES) {
       - Highlight key concepts, definitions, and relationships.
       - Focus on readability and study efficiency.
       - Include whitespace and new lines for organized structure
+      
+      Here is an example template to follow: 
+      📌 Key Takeaways 
+        - The mitochondria are the powerhouse of the cell, generating ATP through cellular respiration.  
+        - Photosynthesis occurs in the chloroplasts of plant cells, converting light energy into glucose.  
+
+      🔬 Scientific Concepts  
+        - Cellular Respiration: The process where glucose is broken down to produce ATP (energy).  
+        - Takes place in the mitochondria.  
+        - Involves glycolysis, the Krebs cycle, and the electron transport chain.  
+        - Photosynthesis: The process where plants convert sunlight into energy.  
+        - Takes place in chloroplasts.  
+        - Produces glucose and oxygen as byproducts.  
+
+      🧪 Key Equations  
+        - Cellular Respiration:  
+        C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + ATP  
+        - Photosynthesis:  
+        6CO₂ + 6H₂O + Light → C₆H₁₂O₆ + 6O₂  
 
       NotesText:
       ${truncatedText}

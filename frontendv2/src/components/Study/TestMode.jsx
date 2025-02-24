@@ -218,8 +218,8 @@ export const TestMode = () => {
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-lg">
-      <div className="flex justify-between items-center gap-4 mt-6">
-        <h2 className="text-2xl font-bold text-[#0f0647]">
+      <div className="flex justify-between items-center gap-4">
+        <h2 className="text-2xl font-bold text-[#0f0647] mb-4">
           Test Name: {currentMT?.mtsessionname || "None"}
         </h2>
         
@@ -356,7 +356,7 @@ export const TestMode = () => {
           <PencilLoader />
         </div>
       ) : (
-        <div className="bg-red-100 p-4 rounded-lg text-red-700 text-center">
+        <div className="bg-red-100 p-4 mt-6 rounded-lg text-red-700 text-center">
         No test selected. Please select on or upload a scan.
         </div>
       )}

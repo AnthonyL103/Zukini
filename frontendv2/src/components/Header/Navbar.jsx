@@ -17,12 +17,16 @@ const Navbar = () => {
     localStorage.removeItem("userId");
     localStorage.removeItem("email");
     localStorage.removeItem("name");
-    const keysToRemove = Object.keys(localStorage).filter(
-        (key) => key.startsWith(`flashcards_${userId}_`) || key.startsWith(`mocktests_${userId}_`)
-      );
-  
-      // Remove each collected key
-      keysToRemove.forEach((key) => localStorage.removeItem(key));
+    if (userId) {
+        const keysToRemove = Object.keys(localStorage).filter(
+            (key) =>
+                key.startsWith(`flashcards_${userId}_`) ||
+                key.startsWith(`mocktests_${userId}_`) ||
+                key.startsWith(`summary_${userId}_`)
+        );
+
+        keysToRemove.forEach((key) => localStorage.removeItem(key));
+    }
     sessionStorage.clear();
 
     const newGuestId = `guest-${uuidv4()}`;
