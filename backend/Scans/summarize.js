@@ -111,7 +111,7 @@ async function sendOpenAiRequest(prompt, systemRole, retries) {
     // Log rate limit headers
     const headers = response.headers;
     console.log(`✅ OpenAI request successful. Remaining requests: ${headers['x-ratelimit-remaining-requests'] || 'unknown'}`);
-
+    console.log("response",response)
     return response.data.choices[0].message.content.trim();
   } catch (error) {
     if (error.response) {
