@@ -59,6 +59,8 @@ async function summarizeNotes(text, retries = MAX_RETRIES) {
   - Use <strong> for bold key terms and concepts.  
   - Organize information into **sections with headings** (<h2> and <h3>).  
   - Use <ul> and <li> for bullet points.  
+  - Dont include anything else outside of the html.
+  - Use Emojis and colors for a vibrant studying experience.
   - Ensure proper spacing and clear structure.  
   
   🎯 **Example Structure (Follow This Format):**  
