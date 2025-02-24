@@ -26,7 +26,7 @@ async function summarizeNotes(text, retries = MAX_RETRIES) {
   **Formatting Guidelines:**  
   - Emphasize key terms and concepts using <strong> to make important points stand out.
   - Structure information clearly by dividing it into sections with appropriate headings (<h2> for major topics, <h3> for subtopics).
-  - Enhance readability by using page breaks (<hr>) and newlines (<br>) where necessary to separate different sections.
+  - Enhance readability by using page breaks (<hr>) and newlines (<br>) to separate different sections text should not be sandwiched together.
   - Use lists (<ul> and <li>) to break down complex information into digestible points.
   - Do not include anything outside of HTML—ensure the output consists only of properly structured HTML content.
   - Incorporate colors to create a vibrant, engaging study experience:
@@ -37,6 +37,7 @@ async function summarizeNotes(text, retries = MAX_RETRIES) {
   - Keep the formatting consistent throughout the summary for a professional and structured look.
   - **Do not include introductory text**—the response should start directly with an HTML tag (e.g., <h2>) NOT '''html.  
   - **Do not use Markdown-style code blocks **—output **only the HTML elements**.  
+  - **Make sure HTML is started and finished correctly with the corresponding tags**
   
   
   
