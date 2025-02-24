@@ -32,7 +32,8 @@ const VideoPlayer = () => {
       animate="visible"
     >
       {/* Video Player */}
-      <video ref={videoRef} className="w-full h-full" controls>
+      <video ref={videoRef} className="w-full h-full" playsInline 
+  muted controls preload="auto"> 
         <source src="/DemoVid.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
