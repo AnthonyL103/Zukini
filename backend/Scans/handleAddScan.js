@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const { parseTextFromBuffer, parseTextFromPDF } = require('./parse');
+const { summarizeNotes } = require('./summarize');
 const { userinfos, ParsedTextEntries } = require('../Database/db');
 
 const { v4: uuidv4 } = require('uuid');
@@ -96,6 +97,22 @@ router.post('/callparse', async (req, res) => {
     } catch (error) {
         console.error('Error parsing file:', error);
         res.status(500).json({ error: 'Failed to parse file.' });
+    }
+});
+
+router.post('/callsummarize', async (req, res) => {
+    const { text } = req.body;
+
+    if (!text) {
+        return res.status(400).json({ message: 'No text found' });
+    }
+
+    try {
+        const summary = await summarizeNotes(text);
+        res.status(200).json({ summary });
+    } catch (error) {
+        console.error('Error summarizing text:', error);
+        res.status(500).json({ error: 'Failed to summarize text.' });
     }
 });
 
