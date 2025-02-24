@@ -2,11 +2,14 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import VideoPlayer from "../utils/demovid";
+
 
 const HomePage = () => {
   const canvasRef = useRef(null);
   const navigate = useNavigate();
-
+  
+  
   useEffect(() => {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
@@ -236,7 +239,7 @@ const HomePage = () => {
       </div>
 
       <motion.div
-        className="absolute top-1/4 left-1/2 transform -translate-x-1/2 max-w-xl w-full px-4"
+        className="absolute top-1/4 left-1/2 transform -translate-x-1/2 max-w-4xl w-full px-4"
         initial="hidden"
         animate="visible"
         variants={sectionVariants}
@@ -300,33 +303,7 @@ const HomePage = () => {
 
           <div className="max-w-6xl mx-auto px-4">
             {/* Video Placeholder */}
-            <motion.div
-              className="aspect-w-16 aspect-h-9 mb-16 rounded-3xl overflow-hidden shadow-2xl"
-              initial="hidden"
-              animate="visible"
-              variants={sectionVariants}
-            >
-              <div className="py-12 w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[primary]/5 to-primary/10">
-              <svg 
-                className="w-20 h-20 mb-4" 
-                viewBox="0 0 24 24"
-              >
-                <defs>
-                  <linearGradient id="playButtonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#0f0647" />
-                    <stop offset="100%" stopColor="#2c5d63" />
-                  </linearGradient>
-                </defs>
-                <path 
-                  d="M21 12l-18 12v-24l18 12z" 
-                  fill="url(#playButtonGradient)"
-                />
-              </svg>
-                <p className="text-lg font-medium text-gray-600">
-                  Tutorial video coming soon
-                </p>
-              </div>
-            </motion.div>
+            <VideoPlayer />
 
             {/* Quick Steps */}
             <motion.div
