@@ -22,6 +22,7 @@ async function summarizeNotes(text, retries = MAX_RETRIES) {
       - Use clear and organized bullet points or short paragraphs.
       - Highlight key concepts, definitions, and relationships.
       - Focus on readability and study efficiency.
+      - Use bolding when necessary, and avoid using **
       - Include whitespace and new lines for organized structure
       
       Here is an example template to follow: 

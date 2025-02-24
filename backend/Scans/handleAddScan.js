@@ -109,6 +109,7 @@ router.post('/callsummarize', async (req, res) => {
 
     try {
         const summary = await summarizeNotes(text);
+        console.log("generated summary", summary);
         res.status(200).json({ summary });
     } catch (error) {
         console.error('Error summarizing text:', error);
