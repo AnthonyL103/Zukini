@@ -381,8 +381,8 @@ const HomePage = () => {
           </div>
             <p className="text-lg text-gray-800 max-w-lg">
                 Hi, I'm Anthony Li! I'm a passionate software engineer interested in AI, 
-                Full Stack development, Cloud Computing, and algorithm design. I love solving challenging problems 
-                and building innovative solutions to solve real world problems.
+                Full Stack development, Cloud Computing, and algorithm design. I enjoy creating
+                innovative solutions to solve real world problems.
                 If you have any feedback for Zukini, feel free to reach out!
             </p>
             <a
