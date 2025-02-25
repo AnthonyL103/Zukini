@@ -381,7 +381,7 @@ const HomePage = () => {
           </div>
             <p className="text-lg text-gray-800 max-w-lg">
                 Hi, I'm Anthony Li! I'm a passionate software engineer interested in solving 
-                real world problems with Full Stack development, AI, and Cloud computing. I built Zukini to help my friends
+                real world problems with AI. I built Zukini to help my friends
                 and I make better use of our notes at school. If you have any feedback for me feel free to reach out!
             </p>
             <a
