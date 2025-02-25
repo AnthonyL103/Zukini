@@ -146,35 +146,36 @@ const ScansTab = ({ autoOpenScan = null }) => {
             </h2>
             
             <div className="space-y-4">
-              <button
+            <button
                 onClick={() => handleStudyOption(selectedScan, 'flashcards')}
                 className="hover:cursor-pointer w-full p-4 text-left bg-white rounded-xl border-2 border-[#0f0647] hover:bg-[#0f0647] hover:text-white transition-colors group"
-              >
+                >
                 <h3 className="font-semibold text-lg mb-1 group-hover:text-white">Flashcards</h3>
                 <p className="text-gray-600 text-sm group-hover:text-gray-200">
-                  Generate interactive flashcards from your notes
+                    Generate interactive flashcards from your notes
                 </p>
-              </button>
+                </button>
 
-              <button
+                <button
                 onClick={() => handleStudyOption(selectedScan, 'test')}
-                className="hover:cursor-pointer w-full p-4 text-left bg-white rounded-xl border-2 border-[#67d7cc] hover:bg-[#67d7cc] hover:text-white transition-colors group"
-              >
+                className="hover:cursor-pointer w-full p-4 text-left bg-white rounded-xl border-2 border-[#2968c8] hover:bg-[#2968c8] hover:text-white transition-colors group"
+                >
                 <h3 className="font-semibold text-lg mb-1 group-hover:text-white">Mock Test</h3>
                 <p className="text-gray-600 text-sm group-hover:text-gray-200">
-                  Create a practice test from your study material
+                    Create a practice test from your study material
                 </p>
-              </button>
-              
-               <button
+                </button>
+
+                <button
                 onClick={() => handleStudyOption(selectedScan, 'review')}
                 className="hover:cursor-pointer w-full p-4 text-left bg-white rounded-xl border-2 border-[#67d7cc] hover:bg-[#67d7cc] hover:text-white transition-colors group"
-              >
+                >
                 <h3 className="font-semibold text-lg mb-1 group-hover:text-white">Review</h3>
                 <p className="text-gray-600 text-sm group-hover:text-gray-200">
-                  Review notes and generate a summary
+                    Review notes and generate a summary
                 </p>
-              </button>
+            </button>
+
             </div>
 
             <button

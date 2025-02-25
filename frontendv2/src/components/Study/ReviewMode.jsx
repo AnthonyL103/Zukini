@@ -46,8 +46,8 @@ export const ReviewMode = () => {
       alert("No scan selected or no text available to summarize.");
       return;
     }
-
     setLoading(true);
+    setTimeout(() => summaryRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
     
     const SummaryStorageKey = `summary_${userId}_${currentScan.scankey}`;
 
@@ -57,7 +57,7 @@ export const ReviewMode = () => {
         console.log("Loading Summary from local storage for user:", userId);
         setSummary(JSON.parse(storedSummary));
         setLoading(false);
-        setTimeout(() => summaryRef.current?.scrollIntoView({ behavior: "smooth" }), 100); // Scroll to summary
+        setTimeout(() => summaryRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
         return;
     }
 
@@ -80,7 +80,8 @@ export const ReviewMode = () => {
         setSummary(data.summary);
         localStorage.setItem(SummaryStorageKey, JSON.stringify(data.summary));
         console.log("Generated summary stored:", data.summary);
-        setTimeout(() => summaryRef.current?.scrollIntoView({ behavior: "smooth" }), 100); // Auto scroll
+         // Auto scroll
+        setTimeout(() => summaryRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
       } else {
         console.warn("⚠️ Received an empty summary from the API.");
       }
@@ -134,8 +135,9 @@ export const ReviewMode = () => {
         </div>
         
       ) : loading ? (
-         <PencilLoader/>
-       
+        <div className="flex justify-center items-center h-64">
+        <PencilLoader />
+        </div>
       ) : (
         <div className="bg-red-100 p-4 rounded-lg text-red-700 text-center">
         No summary available, click summary button to generate one.
