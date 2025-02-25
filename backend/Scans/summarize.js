@@ -18,39 +18,7 @@ async function summarizeNotes(text, retries = MAX_RETRIES) {
       const truncatedText = text.length > maxTokenEstimate * 4 ? text.slice(0, maxTokenEstimate * 4) : text;
   
       // Store HTML example separately to prevent backtick issues
-      const exampleHTML = `
-        <h2 style="color:#2C3E50;">Key Takeaways</h2>
-        <ul>
-        <li><strong>Mitochondria:</strong> The powerhouse of the cell, generating ATP.</li>
-        <li><strong>Photosynthesis:</strong> Occurs in chloroplasts, converting light energy into glucose.</li>
-        </ul>
-
-        <h2 style="color:#34495E;">Scientific Concepts</h2>
-        <h3 style="color:#2980B9;">Cellular Respiration</h3>
-        <ul>
-        <li><strong>Location:</strong> Mitochondria</li>
-        <li><strong>Steps:</strong> Glycolysis → Krebs Cycle → Electron Transport Chain</li>
-        </ul>
-
-        <h3 style="color:#27AE60;">Photosynthesis</h3>
-        <ul>
-        <li><strong>Location:</strong> Chloroplasts</li>
-        <li><strong>Products:</strong> Glucose and oxygen</li>
-        </ul>
-
-        <h2 style="color:#8E44AD;">Key Equations</h2>
-        <ul>
-        <li><strong>Cellular Respiration:</strong> C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + ATP</li>
-        <li><strong>Photosynthesis:</strong> 6CO₂ + 6H₂O + Light → C₆H₁₂O₆ + 6O₂</li>
-        </ul>
-
-        <h2 style="color:#E67E22;">Connections & Relationships</h2>
-        <ul>
-        <li>Photosynthesis produces oxygen and glucose, which are used in cellular respiration.</li>
-        <li>Cellular respiration produces CO₂ and water, which are used in photosynthesis.</li>
-        </ul>
-        <hr>
-        `;
+      
       // Main prompt
       const prompt = `
   Summarize the following notes in **structured HTML format** for easy readability.  
@@ -69,9 +37,6 @@ async function summarizeNotes(text, retries = MAX_RETRIES) {
   - Keep the formatting consistent throughout the summary for a professional and structured look.
   - **Do not include introductory text**—the response should start directly with an HTML tag (e.g., <h2>) NOT '''html.  
   - **Do not use Markdown-style code blocks **—output **only the HTML elements**.  
-  
-  **Here is an example template to follow, make sure to add as much as possible:**
-  ${exampleHTML}
   
   **Now, summarize the following notes using the guidelines:**  
   ${truncatedText}
@@ -98,8 +63,7 @@ async function sendOpenAiRequest(prompt, systemRole, retries) {
           { role: 'user', content: prompt },
         ],
         temperature: 0.7,
-        max_tokens: 500,
-        response_format: "text"
+        max_tokens: 1000,
       },
       {
         headers: {
