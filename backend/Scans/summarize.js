@@ -30,10 +30,10 @@ async function summarizeNotes(text, retries = MAX_RETRIES) {
         - Ensure that all key points remain intact.
 
         **Formatting Guidelines:**  
-        - Use **bold text** to emphasize key terms.
         - Organize information with headings, subheadings, and use newlines/indentation.
-        - Use bullet points and emojis to break down complex information.
+        - Use bullet points with dashes to break down complex information.
         - Keep the summary concise, structured, and easy to read.
+        - Always use emojis in summary, and dont use # or ** tags
         
         **Now, summarize the following notes using the guidelines:**  
   ${truncatedText}
