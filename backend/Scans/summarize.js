@@ -98,7 +98,7 @@ async function sendOpenAiRequest(prompt, systemRole, retries) {
           { role: 'user', content: prompt },
         ],
         temperature: 0.7,
-        max_tokens: 2000,
+        max_tokens: 500,
         response_format: "text"
       },
       {
@@ -112,7 +112,6 @@ async function sendOpenAiRequest(prompt, systemRole, retries) {
     // Log rate limit headers
     const headers = response.headers;
     console.log(`✅ OpenAI request successful. Remaining requests: ${headers['x-ratelimit-remaining-requests'] || 'unknown'}`);
-    console.log("response",response)
     return response.data.choices[0].message.content.trim();
   } catch (error) {
     if (error.response) {
