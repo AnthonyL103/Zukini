@@ -17,7 +17,7 @@ async function summarizeNotes(text, retries = MAX_RETRIES) {
       const maxTokenEstimate = 4000; // Approximate token limit per request
       const truncatedText = text.length > maxTokenEstimate * 4 ? text.slice(0, maxTokenEstimate * 4) : text;
   
-      // Store HTML example separately to prevent backtick issues
+      
       
       // Main prompt
       const prompt = `
@@ -39,7 +39,7 @@ async function summarizeNotes(text, retries = MAX_RETRIES) {
   ${truncatedText}
       `;
   
-      return await sendOpenAiRequest(prompt, "You are an AI assistant that summarizes study notes clearly and concisely in html format.", retries);
+      return await sendOpenAiRequest(prompt, "You are an AI assistant that summarizes study notes clearly and concisely", retries);
     } catch (error) {
       console.error("Error generating summary:", error);
       throw error;
