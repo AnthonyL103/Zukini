@@ -21,24 +21,21 @@ async function summarizeNotes(text, retries = MAX_RETRIES) {
       
       // Main prompt
       const prompt = `
-  Summarize the following notes in **structured HTML format** for easy readability.  
-  
-  **Formatting Guidelines:**  
-  - Emphasize key terms and concepts using <strong> to make important points stand out.
-  - Structure information clearly by dividing it into sections with appropriate headings (<h2> for major topics, <h3> for subtopics).
-  - Enhance readability by using page breaks (<hr>) and newlines (<br>) to separate different sections text should not be sandwiched together.
-  - Use lists (<ul> and <li>) to break down complex information into digestible points.
-  - Do not include anything outside of HTML—ensure the output consists only of properly structured HTML content.
-  - Incorporate colors to create a vibrant, engaging study experience:
-  - Use bold colors for headings (e.g., <h2 style="color:#2C3E50;"> for a deep blue).
-  - Highlight key definitions and terms with a subtle background color (e.g., <span style="background-color:#FFFF99;"> for yellow highlights).
-  - Make important equations and formulas stand out using a different color or font style (e.g., <p style="color:#E74C3C; font-weight:bold;">).
-  - Ensure proper spacing and alignment so that the summary is visually clear and easy to skim.
-  - Keep the formatting consistent throughout the summary for a professional and structured look.
-  - **Do not include introductory text**—the response should start directly with an HTML tag (e.g., <h2>) NOT '''html.  
-  - **Do not use Markdown-style code blocks **—output **only the HTML elements**.  
-  
-  **Now, summarize the following notes using the guidelines:**  
+        Summarize the following notes in **clear and structured text**.
+
+        **Summary Length Constraint:**  
+        - Keep the summary **under 500 words**.
+        - Focus only on the most important concepts.
+        - Omit excessive details and minor explanations.
+        - Ensure that all key points remain intact.
+
+        **Formatting Guidelines:**  
+        - Use **bold text** to emphasize key terms.
+        - Organize information with headings, subheadings, and use newlines/indentation.
+        - Use bullet points and emojis to break down complex information.
+        - Keep the summary concise, structured, and easy to read.
+        
+        **Now, summarize the following notes using the guidelines:**  
   ${truncatedText}
       `;
   
