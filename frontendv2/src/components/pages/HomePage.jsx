@@ -362,8 +362,37 @@ const HomePage = () => {
                     </>
                   )}
                 </motion.div>
+                
               ))}
             </motion.div>
+            <motion.section
+        className="backdrop-blur-md bg-white/20 rounded-2xl shadow-xl p-10 text-center my-8 max-w-3xl mx-auto"
+      >
+        <motion.h2 className="text-3xl font-semibold text-[#0f0647] mb-6">
+          Contact
+            </motion.h2>
+            <div className="flex flex-col items-center">
+            <div className="w-32 h-32 overflow-hidden rounded-full shadow-lg mb-4">
+            <img
+              src="/AnthonyPhoto.png"
+              alt="Profile"
+              className="w-full h-full object-cover object-center"
+            />
+          </div>
+            <p className="text-lg text-gray-800 max-w-lg">
+                Hi, I'm Anthony Li! I'm a passionate software engineer interested in AI, 
+                Full Stack development, Cloud Computing, and algorithm design. I love solving challenging problems 
+                and building innovative solutions to solve real world problems.
+                If you have any feedback for Zukini, feel free to reach out!
+            </p>
+            <a
+                href="mailto:anthonyli0330@gmail.com"
+                className="mt-4 text-primary underline text-lg hover:text-primary-dark"
+            >
+                Contact Me
+            </a>
+            </div>
+        </motion.section>
           </div>
         </motion.section>
       </motion.div>
