@@ -15,9 +15,7 @@ const FlashcardsTab = () => {
 
   const { userId } = useUser();
 
-  // Fetch flashcards on component mount or when userId changes
 
-  // Function to fetch flashcards from API
   useEffect(() => {
     const fetchFlashcards = async () => {
         try {
@@ -31,9 +29,8 @@ const FlashcardsTab = () => {
     };
 
     fetchFlashcards();
-}, [userId, currentFC]); // Refetch when `currentFC` changes
+}, [userId, currentFC]); 
 
-  // Handle studying a flashcard set
   const handleStudy = (flashcards) => {
     setCurrentFC(flashcards);
     getScan(flashcards.scankey);
@@ -42,11 +39,10 @@ const FlashcardsTab = () => {
     });
   };
 
-  // Fetch scan data based on scankey
   const getScan = async (scankey) => {
     if (!scankey) {
         console.error("scankey is missing");
-        setCurrentScan(null); // Ensure current scan is reset
+        setCurrentScan(null); 
         return;
     }
 
@@ -70,18 +66,16 @@ const FlashcardsTab = () => {
         console.log("Scan retrieved successfully:", data.scan);
     } catch (error) {
         console.error("Error fetching scan:", error);
-        setCurrentScan(null); // Reset on error
+        setCurrentScan(null); 
     }
 };
 
 
-  // Handle delete button click
   const handleDelete = (set) => {
     setFlashcardToDelete(set);
     setShowDeleteModal(true);
   };
 
-  // Confirm deletion of flashcard set
   const confirmDelete = async () => {
     if (!flashcardToDelete) {
       console.error("No flashcard selected for deletion.");
@@ -105,14 +99,13 @@ const FlashcardsTab = () => {
       setShowDeleteModal(false);
       setFlashcardToDelete(null);
       setCurrentFC(null);
-      // Ensure latest flashcards are fetched
+   
       fetchFlashcards();
     } catch (error) {
       console.error('Error deleting flashcard:', error);
     }
   };
 
-  // Filter flashcard sets based on search query
   const filteredSets = flashcardSets.filter(set =>
     set.fcsessionname.toLowerCase().includes(searchQuery.toLowerCase())
   );

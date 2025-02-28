@@ -5,6 +5,7 @@ import { useUser } from '../authentication/UserContext';
 import PencilLoader from '../utils/pencilloader';
 import PastMockTestList from '../mocktests/PastMocktestList';
 import { v4 as uuidv4 } from 'uuid';
+import { Trash2 } from 'lucide-react'
 
 export const TestMode = () => {
   const { currentMT, setCurrentMT } = useMT();
@@ -22,11 +23,19 @@ export const TestMode = () => {
   const [MTentry, setMTEntry] = useState(null);
   const [isloading, setisLoading] = useState(false);
   const [showVA, setshowVA] = useState(false);
-  
+  const [showAddQuestionForm, setShowAddQuestionForm] = useState(false);
+  const [newQuestion, setNewQuestion] = useState("");
+  const [newAnswers, setNewAnswers] = useState(["", "", "", ""]);
+  const [correctAnswerIndex, setCorrectAnswerIndex] = useState(0);
+  const [saveEdit, setsaveEdit] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+
+
   
 
   useEffect(() => {
-    if (currentMT) {
+    if (currentMT && !saveEdit) {
       console.log("Mock Test Questions:", currentMT.questions);
       setQuestions(currentMT.questions || []);
     } else {
@@ -55,6 +64,143 @@ export const TestMode = () => {
     setCurrentQuestion(0);      
     setSelectedAnswers({});     
   };
+
+  const handleAddQuestion = () => {
+    if (errorMessage){
+      return;
+    }
+    if (!newQuestion.trim() || newAnswers.some(answer => answer.trim() === "")) {
+      setErrorMessage("All fields must be filled.");
+      return;
+    }
+  
+    const newQuestionObj = {
+      id: `${questions.length}-${Date.now()}`,
+      number: questions.length + 1,
+      total: questions.length + 1,
+      question: newQuestion,
+      answers: [...newAnswers],
+      rightAnswer: newAnswers[correctAnswerIndex],
+      chosenAnswer: null,
+    };
+  
+    setQuestions([...questions, newQuestionObj]);
+  
+    // Reset form after adding
+    setShowAddQuestionForm(false);
+    setNewQuestion("");
+    setNewAnswers(["", "", "", ""]);
+    setCorrectAnswerIndex(0);
+    setErrorMessage("");
+    setSaveEnabled(true);
+  };
+
+  const handleDeleteQuestion = async (index) => {
+    const updatedQuestions = questions.filter((_, i) => i !== index);
+    setQuestions(updatedQuestions);
+    setSaveEnabled(true); 
+  };
+
+  const handleAnswerChange = (index, value) => {
+    const updatedAnswers = [...newAnswers];
+    updatedAnswers[index] = value.trim(); // Trim spaces
+  
+    const filledAnswers = updatedAnswers.filter(a => a.trim() !== "");
+    const answerSet = new Set(filledAnswers.map(a => a.toLowerCase()));
+  
+    if (answerSet.size !== filledAnswers.length) {
+      setErrorMessage("Answers cannot be the same.");
+    } else {
+      setErrorMessage(""); 
+    }
+  
+    setNewAnswers(updatedAnswers);
+  };
+  
+  const handleCancel = () => {
+    setShowAddQuestionForm(false);
+    setNewQuestion("");
+    setNewAnswers(["", "", "", ""]); 
+    setCorrectAnswerIndex(0);
+    setErrorMessage(""); 
+  };
+  
+  
+
+  const handleSaveEditQuestion = async () => {
+    try {
+      setsaveEdit(true);
+      console.log(userId);
+  
+      await handleSave();
+  
+      const deleteResponse = await fetch(
+        `https://api.zukini.com/display/deleteMT?key=${currentMT.mocktestkey}&userId=${userId}`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+  
+      if (!deleteResponse.ok) {
+        throw new Error("Failed to delete old mock test");
+      }
+      console.log("Old mock test deleted successfully");
+  
+      const mocktestStorageKey = `mocktests_${userId}_${currentScan.scankey}`;
+      localStorage.setItem(mocktestStorageKey, JSON.stringify(questions));
+  
+      console.log("Local storage updated with the new mock test");
+  
+      window.location.reload();
+  
+    } catch (error) {
+      console.error("Error updating mock test:", error);
+      alert("Failed to update mock test. Please try again.");
+    }
+  };
+  
+  
+  
+  const handleSave = async () => {
+    if (!currentScan) return;
+  
+    try {
+      const key = uuidv4();
+      const payload = {
+        mocktestkey: key,
+        filepath: currentScan.filepath,
+        scanname: currentScan.scanname,
+        questions: questions,
+        mtsessionname: MTName || currentMT.mtsessionname,
+        date: currentScan.date,
+        scankey: currentScan.scankey,
+        userid: userId,
+      };
+  
+      const response = await fetch('https://api.zukini.com/mocktests/saveMockTest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+  
+      if (response.ok) {
+        setTotalMockTests((prev) => prev + 1);
+        setSaveEnabled(false);
+        setCurrentMT(payload);
+        setMTEntry(payload);
+        setsaveEdit(false);
+        console.log("Mock test saved successfully");
+      } else {
+        throw new Error("Failed to save updated mock test");
+      }
+    } catch (error) {
+      console.error("Error saving mock test:", error);
+      alert("Failed to save mock test. Please try again.");
+    }
+  };
+  
+
   
   
   const handleAnswerSelect = (answer) => {
@@ -180,41 +326,6 @@ export const TestMode = () => {
     handleSave();
   };
 
-  const handleSave = async () => {
-   
-    try {
-      const key = uuidv4();
-      const payload = {
-        mocktestkey: key,
-        filepath: currentScan.filepath,
-        scanname: currentScan.scanname,
-        questions: questions,
-        mtsessionname: MTName,
-        date: currentScan.date,
-        scankey: currentScan.scankey,
-        userid: userId,
-      };
-
-      const response = await fetch('https://api.zukini.com/mocktests/saveMockTest', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      if (response.ok) {
-        setTotalMockTests(prev => prev + 1);
-        setSaveEnabled(false);
-        setCurrentMT(payload);
-        setMTEntry(payload);
-        console.log('Mock test saved successfully');
-      } else {
-        console.error('Failed to save mock test');
-      }
-    } catch (error) {
-      console.error('Error saving mock test:', error);
-      alert('Failed to save mock test');
-    }
-  };
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-lg">
@@ -244,14 +355,14 @@ export const TestMode = () => {
             </button>
           </div>
             ) : (
-            
+              <div className="flex justify-between gap-4 "> 
                 <button
                         onClick={() => setshowVA(true)}
                         className="py-2 px-6 bg-[#0f0647] hover:bg-[#2c2099] text-white rounded-lg hover:bg-opacity-90 w-32"
                     >
-                        View All
+                        View/Edit
                 </button>
-            
+                </div>
             
             )}
       </div>
@@ -328,7 +439,7 @@ export const TestMode = () => {
           
           <div className="flex justify-between gap-4 mt-6 mb-6">
           <button
-            onClick={getMTName}
+            onClick={currentMT && savenabled ? handleSaveEditQuestion : getMTName}
             className={`flex-1 py-2 rounded-lg text-white transition-opacity ${
                 !savenabled
                 ? "bg-gray-400 cursor-not-allowed opacity-50"  // Disabled state (gray)
@@ -357,7 +468,7 @@ export const TestMode = () => {
         </div>
       ) : (
         <div className="bg-red-100 p-4 mt-6 rounded-lg text-red-700 text-center">
-        No test selected. Please select on or upload a scan.
+        No test selected. Please select or upload a scan.
         </div>
       )}
      {showpastMT && (
@@ -393,20 +504,31 @@ export const TestMode = () => {
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300 z-50">
           <div className="bg-white rounded-2xl p-6 w-full max-w-6xl mx-auto shadow-xl max-h-[90vh] overflow-y-auto">
             <h2 className="text-2xl font-bold text-[#0f0647] mb-4 text-center">
-              View All Questions
+              All Questions
             </h2>
+
             <div className="max-h-[70vh] overflow-y-auto space-y-6">
               {questions.map((question, idx) => (
-                <div key={idx} className="p-4 border rounded-lg">
-                  <h3 className="font-semibold text-lg mb-2">
+                <div key={idx} className="relative p-4 border rounded-lg">
+                  
+                  <button 
+                    onClick={() => handleDeleteQuestion(idx)}
+                    className="absolute top-2 right-2 p-2 text-gray-400 hover:text-red-500 hover:cursor-pointer transition-colors rounded-full hover:bg-red-50"
+                    aria-label="Delete question"
+                  >
+                    <Trash2 size={20} />
+                  </button>
+
+                  <h3 className="font-semibold text-lg mb-6 pr-10"> 
                     {idx + 1}. {question.question}
                   </h3>
+
                   <div className="space-y-2">
                     {question.answers.map((option, index) => (
                       <p
                         key={index}
                         className={`p-2 rounded-lg ${
-                          option === question.rightAnswer ? 'bg-green-500 text-white' : 'bg-gray-200'
+                          option === question.rightAnswer ? "bg-green-500 text-white" : "bg-gray-200"
                         }`}
                       >
                         {String.fromCharCode(65 + index)}. {option}
@@ -415,7 +537,66 @@ export const TestMode = () => {
                   </div>
                 </div>
               ))}
+
+              {!showAddQuestionForm ? (
+                <button
+                  onClick={() => setShowAddQuestionForm(true)}
+                  className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 mt-4"
+                >
+                  + Add New Question
+                </button>
+              ) : (
+                <div className="p-4 border rounded-lg mt-4">
+                  <h3 className="text-lg font-semibold mb-2">New Question</h3>
+
+                  <input
+                    type="text"
+                    className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
+                    placeholder="Enter question..."
+                    value={newQuestion}
+                    onChange={(e) => setNewQuestion(e.target.value)}
+                  />
+
+                  {newAnswers.map((answer, index) => (
+                    <div key={index} className="flex items-center space-x-2 mb-2">
+                      <input
+                        type="radio"
+                        name="correctAnswer"
+                        checked={correctAnswerIndex === index}
+                        onChange={() => setCorrectAnswerIndex(index)}
+                        className="w-4 h-4"
+                      />
+                      <input
+                        type="text"
+                        className="w-full p-2 border border-gray-300 rounded-lg"
+                        placeholder={`Answer ${index + 1}`}
+                        value={answer}
+                        onChange={(e) => handleAnswerChange(index, e.target.value)}
+                      />
+                    </div>
+                  ))}
+                  {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
+
+
+
+                  <div className="flex justify-between mt-4">
+                    <button
+                      onClick={handleAddQuestion}
+                      className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+                    >
+                      Add Question
+                    </button>
+                    <button
+                      onClick={handleCancel}
+                      className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
+
             <button
               onClick={() => setshowVA(false)}
               className="w-full mt-4 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-[#2c2099]"
@@ -425,6 +606,7 @@ export const TestMode = () => {
           </div>
         </div>
       )}
+
       
     </div>
   );

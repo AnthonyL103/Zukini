@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useScan } from '../scans/ScanContext'; // Ensure correct import
-import { useFC } from '../flashcards/FCcontext'; // Ensure correct import
+import { useFC } from '../flashcards/FCcontext'; 
 import { useUser } from '../authentication/UserContext';
 import PencilLoader from '../utils/pencilloader';
 import PastFlashCardList from '../flashcards/PastFlashcardList';
 import { v4 as uuidv4 } from 'uuid';
+import { Trash2 } from 'lucide-react'
 
 export const FlashcardMode = () => {
-  const { currentFC, setCurrentFC } = useFC(); // Ensure correct context
+  const { currentFC, setCurrentFC } = useFC(); 
   const { currentScan } = useScan();
   const { userId, setTotalFlashcards} = useUser();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -21,11 +22,16 @@ export const FlashcardMode = () => {
   const [FCentry, setFCEntry] = useState()
   const [showVA, setshowVA] = useState(false);
   const [isloading, setisLoading] = useState(false);
+  const [showAddFlashcardForm, setShowAddFlashcardForm] = useState(false);
+  const [newQuestion, setNewQuestion] = useState("");
+  const [newAnswer, setNewAnswer] = useState("");
+  const [saveEdit, setsaveEdit] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   
   useEffect(() => {
     if (currentFC) {
       console.log("currentFC.flashcards", currentFC.flashcards);
-      setDisplayedFC(currentFC.flashcards); // Directly set it if it's an array
+      setDisplayedFC(currentFC.flashcards); 
       console.log(DisplayedFC);
     } else {
       setDisplayedFC([]);
@@ -46,10 +52,136 @@ export const FlashcardMode = () => {
       }
     }
   }, [currentScan]); 
+
+
+  const handleAddFlashcard = () => {
+
+    if (errorMessage){
+      return;
+    }
+    if (!newQuestion.trim() || !newAnswer.trim()) {
+      setErrorMessage("All fields must be filled.");
+      return;
+    }
+  
+    const newFlashcard = {
+      id: `${DisplayedFC.length}-${Date.now()}`,
+      question: newQuestion,
+      answer: newAnswer,
+    };
+  
+    setDisplayedFC([...DisplayedFC, newFlashcard]);
+  
+    // Reset form after adding
+    setShowAddFlashcardForm(false);
+    setNewQuestion("");
+    setNewAnswer("");
+    setErrorMessage(""); 
+    setSaveEnabled(true);
+  };
+
+  const handleCancel = () => {
+    setShowAddFlashcardForm(false);
+    setNewQuestion("");
+    setNewAnswer(""); 
+    setErrorMessage(""); 
+  };
+  
+  
+  const handleDeleteFlashcard = async (index) => {
+    const updatedFlashcards = DisplayedFC.filter((_, i) => i !== index);
+    setDisplayedFC(updatedFlashcards);
+    setSaveEnabled(true); 
+  };
+
+  const handleAnswerChange = (question, answer) => {
+    const trimmedQuestion = question.trim().toLowerCase();
+    const trimmedAnswer = answer.trim().toLowerCase();
+    
+    if (trimmedQuestion.length > 0 && trimmedAnswer.length > 0 && trimmedQuestion === trimmedAnswer) {
+      setErrorMessage("Question and answer cannot be the same.");
+    } else {
+      setErrorMessage("");
+    }
+  
+    setSaveEnabled(true);
+  };
   
   
   
   
+  const handleSaveEditFlashcard = async () => {
+    console.log("in save edit");
+    try {
+      setsaveEdit(true);
+      console.log(userId);
+  
+      await handleSave();
+  
+      const deleteResponse = await fetch(
+        `https://api.zukini.com/display/deleteFC?key=${currentFC.flashcardkey}&userId=${userId}`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+  
+      if (!deleteResponse.ok) {
+        throw new Error("Failed to delete old flash card");
+      }
+      console.log("Old flash card deleted successfully");
+  
+      const flashcardStorageKey = `flashcards_${userId}_${currentScan.scankey}`;
+      localStorage.setItem(flashcardStorageKey, JSON.stringify(DisplayedFC));
+  
+      console.log("Local storage updated with the new flashcard");
+  
+      window.location.reload();
+  
+    } catch (error) {
+      console.error("Error updating mock test:", error);
+      alert("Failed to update mock test. Please try again.");
+    }
+  };
+  
+  const handleSave = async () => {
+    if (!currentScan) return;
+    try {
+      const key = uuidv4();
+      const payload = {
+        flashcardkey: key,
+        filepath: currentScan.filepath,
+        scanname: currentScan.scanname,
+        flashcards: DisplayedFC,
+        fcsessionname: FCName || currentFC.fcsessionname,
+        date: currentScan.date,
+        scankey: currentScan.scankey,
+        userid: userId,
+      };
+
+      const onsaveresponse = await fetch('https://api.zukini.com/flashcards/saveFlashCards', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (onsaveresponse.ok) {
+        setTotalFlashcards((prev) => prev + 1);
+        setSaveEnabled(false);
+        setCurrentFC(payload);
+        setFCEntry(payload);
+        setsaveEdit(false);
+        console.log('Flashcards saved successfully');
+      } else {
+        console.error('Failed to save flashcards');
+      }
+    } catch (error) {
+      console.error('Error saving flashcards:', error);
+      alert('Failed to save flashcards');
+    }
+  };
 
   const generateFlashcards = async () => {
     if (!currentScan) {
@@ -93,15 +225,13 @@ export const FlashcardMode = () => {
   
       const result = await response.json();
   
-      // Ensure result.text is valid
       if (!result.text || typeof result.text !== "string") {
         throw new Error("Invalid response format from API.");
       }
   
-      // Parse flashcards
       const parsedFlashcards = result.text
-        .split(/\n?Question:/) // Ensure consistency
-        .filter(line => line.trim() && line.includes("Answer:")) // Ensure it's a valid QA pair
+        .split(/\n?Question:/) 
+        .filter(line => line.trim() && line.includes("Answer:")) 
         .map((line, index) => {
           const [question, answer] = line.split('Answer:');
           return {
@@ -140,42 +270,7 @@ export const FlashcardMode = () => {
   };
   
   
-  const handleSave = async () => {
-    try {
-      const key = uuidv4();
-      const payload = {
-        flashcardkey: key,
-        filepath: currentScan.filepath,
-        scanname: currentScan.scanname,
-        flashcards: DisplayedFC,
-        fcsessionname: FCName,
-        date: currentScan.date,
-        scankey: currentScan.scankey,
-        userid: userId,
-      };
-
-      const onsaveresponse = await fetch('https://api.zukini.com/flashcards/saveFlashCards', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (onsaveresponse.ok) {
-        setTotalFlashcards((prev) => prev + 1);
-        setSaveEnabled(false);
-        setCurrentFC(payload);
-        setFCEntry(payload); 
-        console.log('Flashcards saved successfully');
-      } else {
-        console.error('Failed to save flashcards');
-      }
-    } catch (error) {
-      console.error('Error saving flashcards:', error);
-      alert('Failed to save flashcards');
-    }
-  };
+  
 
   const handleNext = () => {
     setIsFlipped(false);
@@ -198,7 +293,7 @@ export const FlashcardMode = () => {
               onClick={() => setshowVA(true)}
               className="py-2 px-6 bg-[#0f0647] hover:bg-[#2c2099] text-white rounded-lg hover:bg-opacity-90 w-32"
             >
-              View All
+              View/Edit
       </button>
       
       </div>
@@ -245,11 +340,11 @@ export const FlashcardMode = () => {
           </div>
           <div className="flex justify-between gap-4 mb-6">
           <button
-            onClick={getFCName}
+            onClick={currentFC && savenabled ? handleSaveEditFlashcard : getFCName}
             className={`flex-1 py-2 rounded-lg text-white transition-opacity ${
                 !savenabled
-                ? "bg-gray-400 cursor-not-allowed opacity-50"  // Disabled state (gray)
-                : "bg-[#0f0647] hover:bg-opacity-90 hover:bg-[#2c2099]"           // Normal state (blue)
+                ? "bg-gray-400 cursor-not-allowed opacity-50"  
+                : "bg-[#0f0647] hover:bg-opacity-90 hover:bg-[#2c2099]"          
             }`}
             disabled={!savenabled} 
             >
@@ -274,7 +369,7 @@ export const FlashcardMode = () => {
         </div>
       ) : (
         <div className="bg-red-100 p-4 mt-6 rounded-lg text-red-700 text-center">
-        No flashcard selected. Please select on or upload a scan.
+        No flashcard selected. Please select or upload a scan.
         </div>
         
       )}
@@ -318,14 +413,80 @@ export const FlashcardMode = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {DisplayedFC.map((fc, index) => (
                             <div 
-                                key={index} 
-                                className="bg-gray-100 p-4 rounded-lg shadow hover:shadow-md transition cursor-pointer"
+                            key={index} 
+                            className="relative bg-gray-100 p-4 rounded-lg shadow hover:shadow-md transition cursor-pointer"
+                          >
+                            <button 
+                              onClick={() => handleDeleteFlashcard(index)}
+                              className="absolute top-2 right-2 p-2 text-gray-400 hover:text-red-500 hover:cursor-pointer transition-colors rounded-full hover:bg-red-50"
+                              aria-label="Delete flashcard"
                             >
-                                <h3 className="font-semibold text-lg">{fc.question}</h3>
-                                <p className="text-gray-600 mt-2">{fc.answer}</p>
-                            </div>
+                              <Trash2 size={20} />
+                            </button>
+                          
+                            <h3 className="font-semibold text-lg pr-10">{fc.question}</h3>
+                            <p className="text-gray-600 mt-2">{fc.answer}</p>
+                          </div>
+                          
                         ))}
-                    </div>
+
+                        {!showAddFlashcardForm ? (
+                                       <button
+                                       onClick={() => setShowAddFlashcardForm(true)}
+                                       className="w-full h-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                                     >
+                                       + Add a New Flashcard
+                                     </button>
+                                   ) : (
+                                     <div className="p-4 border rounded-lg">
+                                       <h3 className="text-lg font-semibold mb-2">New Flashcard</h3>
+
+                                        <input
+                                          type="text"
+                                          className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
+                                          placeholder="Enter question..."
+                                          value={newQuestion}
+                                          onChange={(e) => {
+                                            const updatedQuestion = e.target.value;
+                                            setNewQuestion(updatedQuestion);
+                                            handleAnswerChange(updatedQuestion, newAnswer); // Pass updated values
+                                          }}
+                                        />
+
+                                        <input
+                                          type="text"
+                                          className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
+                                          placeholder="Enter answer..."
+                                          value={newAnswer}
+                                          onChange={(e) => {
+                                            const updatedAnswer = e.target.value;
+                                            setNewAnswer(updatedAnswer);
+                                            handleAnswerChange(newQuestion, updatedAnswer); // Pass updated values
+                                          }}
+                                        />
+
+                                        {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
+
+
+
+
+                                       <div className="flex justify-between mt-4">
+                                         <button
+                                           onClick={handleAddFlashcard}
+                                           className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+                                         >
+                                           Add Flashcard
+                                         </button>
+                                         <button
+                                           onClick={handleCancel}
+                                           className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
+                                         >
+                                           Cancel
+                                         </button>
+                                       </div>
+                                     </div>
+                                   )}
+                               </div>
 
                     <div className="flex justify-center mt-6">
                         <button 

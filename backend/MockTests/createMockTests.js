@@ -54,6 +54,40 @@ router.post('/callparseMockTests', async (req, res) => {
   }
 });
 
+// In your backend (e.g., Express.js)
+router.post('/updateMockTest', async (req, res) => {
+  try {
+    const { mocktestkey, filepath, scanname, questions, mtsessionname, date, scankey, userid } = req.body; // Extract variables
+
+
+    if (!mocktestkey || !userid || !questions) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    // Delete the old mock test
+    await db.collection('mocktests').deleteOne({ mocktestkey, scankey, userid });
+
+    // Insert the updated mock test
+    const newMockTest = {
+      mocktestkey: mocktestkey, 
+      userid,
+      questions,
+      scanname,
+      date,
+      filepath,
+      mtsessionname
+    };
+
+    await db.collection('mocktests').insertOne(newMockTest);
+
+    res.status(200).json({ message: 'Mock test updated successfully' });
+  } catch (error) {
+    console.error('Error updating mock test:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
 router.post('/saveMockTest', async (req, res) => {
     const { mocktestkey, filepath, scanname, questions, mtsessionname, date, scankey, userid } = req.body; // Extract variables
   

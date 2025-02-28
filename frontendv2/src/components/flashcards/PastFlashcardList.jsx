@@ -81,7 +81,7 @@ const PastFlashCardList = ({NewFCEntry}) => {
       <div className="mb-6 mt-6">
       <input
             type="text"
-            placeholder={flashcards.length === 0 ? "No Flashcards available" : "Search mock tests..."}
+            placeholder={flashcards.length === 0 ? "No Flashcards associated with this scan." : "Search mock tests..."}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f0647] focus:border-transparent"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}

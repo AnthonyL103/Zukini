@@ -101,7 +101,7 @@ export const ReviewMode = () => {
       {/* Original Scan View */}
       {!currentScan ? (
         <div className="bg-red-100 p-4 rounded-lg mb-6 mt-6 text-red-700 text-center">
-          No scan available. Please select or upload a scan.
+          No scan available or scan was deleted. Please select or upload a scan.
         </div>
       ) : (
         <div className="bg-gray-50 p-4 rounded-lg mb-6 max-h-[400px] overflow-y-auto">

@@ -31,7 +31,6 @@ const Dashboard = () => {
       className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 py-10 px-4 mt-[7dvh]"
     >
       <div className="max-w-7xl mx-auto ">
-        {/* Welcome Section */}
         <div className="mb-10 text-center">
           <h1 className="text-5xl font-extrabold text-[#0f0647]">
             Welcome back, {name || "User"}!
@@ -41,7 +40,6 @@ const Dashboard = () => {
           </p>
         </div>
 
-        {/* Quick Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
           <div className="rounded-xl p-1 bg-gradient-to-r from-[#0f0647] to-[#67d7cc] shadow-lg">
             <div className="bg-white rounded-xl p-6">
@@ -63,7 +61,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Quick Actions */}
         <div className="mb-10">
           <h2 className="text-3xl font-bold text-[#0f0647] mb-6">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -109,7 +106,7 @@ const Dashboard = () => {
                     Study Session
                   </h3>
                   <p className="text-gray-600">
-                    Start a new study session.
+                    Pick up where you left off.
                   </p>
                 </div>
               </div>
@@ -117,7 +114,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Recent Activity */}
         <div>
           <h2 className="text-3xl font-bold text-[#0f0647] mb-6">Recent Activity</h2>
           <div className="rounded-xl p-1 bg-gradient-to-r from-[#0f0647] to-[#67d7cc] shadow-lg">
