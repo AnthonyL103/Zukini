@@ -42,8 +42,11 @@ jobs:
       - name: Terraform Plan
         run: terraform plan
 
-      - name: Force EC2 Instance Refresh
-        run: terraform apply -auto-approve -replace=aws_autoscaling_group.zukini_asg
-
       - name: Terraform Apply
         run: terraform apply -auto-approve
+
+      - name: Trigger EC2 Instance Refresh
+        run: |
+          aws autoscaling start-instance-refresh --auto-scaling-group-name zukini-asg
+          echo "EC2 instances are being refreshed with the latest configuration."
+
