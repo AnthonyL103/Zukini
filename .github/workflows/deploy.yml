@@ -28,13 +28,16 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-        
+
       - name: Import Existing Resources
         run: |
           terraform import aws_lb.zukini_alb arn:aws:elasticloadbalancing:us-west-2:060795900722:loadbalancer/app/zukini-alb/ea77344562d7692d
           terraform import aws_lb_target_group.zukini_target_group arn:aws:elasticloadbalancing:us-west-2:060795900722:targetgroup/zukini-tg/a680e7679f7cf523
           terraform import aws_db_instance.zukini_rds database-2
           terraform import aws_amplify_app.zukini_amplify d35bfbej5ol5tf
+          terraform import aws_autoscaling_group.zukini_asg zukini-asg
+          terraform import aws_lb_listener.zukini_https_listener arn:aws:elasticloadbalancing:us-west-2:060795900722:listener/app/zukini-alb/ea77344562d7692d/49cce9d796385b53
+
 
       - name: Terraform Plan
         run: terraform plan
