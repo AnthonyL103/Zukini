@@ -109,8 +109,9 @@ export const FlashcardMode = () => {
   
   const handleSaveEditFlashcard = async () => {
     console.log("in save edit");
+    setsaveEdit(true); // Show loading screen
+  
     try {
-      setsaveEdit(true);
       console.log(userId);
   
       await handleSave();
@@ -124,23 +125,25 @@ export const FlashcardMode = () => {
       );
   
       if (!deleteResponse.ok) {
-        throw new Error("Failed to delete old flash card");
+        throw new Error("Failed to delete old flashcard");
       }
-      console.log("Old flash card deleted successfully");
+  
+      console.log("Old flashcard deleted successfully");
   
       const flashcardStorageKey = `flashcards_${userId}_${currentScan.scankey}`;
       localStorage.setItem(flashcardStorageKey, JSON.stringify(DisplayedFC));
-  
       console.log("Local storage updated with the new flashcard");
   
-      window.location.reload();
-      setsaveEdit(false);
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
   
     } catch (error) {
-      console.error("Error updating mock test:", error);
-      alert("Failed to update mock test. Please try again.");
+      console.error("Error updating flashcards:", error);
+      alert("Failed to update flashcards. Please try again.");
     }
   };
+  
   
   const handleSave = async () => {
     if (!currentScan) return;
@@ -361,6 +364,10 @@ export const FlashcardMode = () => {
           </div>
         </>
       ) : isloading ? (
+        <div className="flex justify-center items-center h-64">
+          <PencilLoader />
+        </div>
+      ) : saveEdit ? ( 
         <div className="flex justify-center items-center h-64">
           <PencilLoader />
         </div>

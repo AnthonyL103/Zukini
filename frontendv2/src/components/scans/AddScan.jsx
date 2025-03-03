@@ -103,7 +103,6 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
           });
         }
         setTotalScans((prev) => prev + 1);
-        setParsedText("");
         setScanName("");
         setFile(null);
         scrollToTop();

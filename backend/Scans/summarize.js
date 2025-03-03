@@ -33,7 +33,8 @@ async function summarizeNotes(text, retries = MAX_RETRIES) {
         - Organize information with headings, subheadings, and use newlines/indentation.
         - Use bullet points with dashes to break down complex information.
         - Keep the summary concise, structured, and easy to read.
-        - Always use emojis in summary, and dont use # or * symbols at all.
+        - Use as many emojis as possible.
+        - DO NOT USE ANY SYMBOL OTHER THAN DASHES OR EMOJIS
         
         **Now, summarize the following notes using the guidelines:**  
   ${truncatedText}

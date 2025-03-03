@@ -16,7 +16,7 @@ async function createMockTests(text, retries = 5) {
     const truncatedText = text.length > maxTokenEstimate * 4 ? text.slice(0, maxTokenEstimate * 4) : text;
 
     const prompt = `
-      Generate as many multiple test questions as you can that have multiple choices each from NotesText with only one right answer. 
+      Generate as many multiple test questions as you can that have 3-4 choices each from NotesText with only one right answer. 
       Ensure that the correct answer is always the first one listed.
 
       Format:

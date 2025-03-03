@@ -128,9 +128,9 @@ export const TestMode = () => {
   
 
   const handleSaveEditQuestion = async () => {
+    console.log("in save edit");
+    setsaveEdit(true); 
     try {
-      setsaveEdit(true);
-      console.log(userId);
   
       await handleSave();
   
@@ -152,8 +152,9 @@ export const TestMode = () => {
   
       console.log("Local storage updated with the new mock test");
   
-      window.location.reload();
-      setsaveEdit(false);
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
   
     } catch (error) {
       console.error("Error updating mock test:", error);
@@ -463,6 +464,10 @@ export const TestMode = () => {
           </div>
         </>
       ) : isloading ? (
+        <div className="flex justify-center items-center h-64">
+          <PencilLoader />
+        </div>
+      ) : saveEdit ? ( 
         <div className="flex justify-center items-center h-64">
           <PencilLoader />
         </div>

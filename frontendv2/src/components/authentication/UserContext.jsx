@@ -69,19 +69,31 @@ export const UserProvider = ({ children }) => {
 
   
     useEffect(() => {
-
+        const handleBeforeReload = () => {
+          sessionStorage.setItem("isReloading", "true");
+        };
+      
+        const handleAfterReload = () => {
+          sessionStorage.removeItem("isReloading");
+        };
+      
         const handleUnload = () => {
+          if (!sessionStorage.getItem("isReloading")) {
             deleteGuestData(sessionStorage.getItem("guestUserId"));
+          }
         };
-        
-
-
-        window.addEventListener("beforeunload", handleUnload);
-
+      
+        window.addEventListener("beforeunload", handleBeforeReload); // Detect refresh
+        window.addEventListener("unload", handleAfterReload); // Remove flag after reload
+        window.addEventListener("beforeunload", handleUnload); // Handle guest data deletion on exit
+      
         return () => {
-            window.removeEventListener("beforeunload", handleUnload);
+          window.removeEventListener("beforeunload", handleBeforeReload);
+          window.removeEventListener("unload", handleAfterReload);
+          window.removeEventListener("beforeunload", handleUnload);
         };
-    }, []);
+      }, []);
+      
 
 
     useEffect(() => {
