@@ -1,3 +1,7 @@
+provider "aws" {
+  region = "us-west-2"
+}
+
 
 resource "aws_launch_template" "zukini_template" {
   name_prefix   = "zukini-template"
