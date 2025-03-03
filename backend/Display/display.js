@@ -103,7 +103,6 @@ router.get('/displayMTfromScanID', async (req, res) => {
     }
 });
   
-// Delete a scan (POST /deleteScan)
 router.delete('/deleteScan', async (req, res) => {
   const { key, userId } = req.query;
   console.log("backend", key);
