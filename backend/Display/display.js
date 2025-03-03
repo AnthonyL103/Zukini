@@ -105,35 +105,49 @@ router.get('/displayMTfromScanID', async (req, res) => {
   
 // Delete a scan (POST /deleteScan)
 router.delete('/deleteScan', async (req, res) => {
-    const { key, userId} = req.query;
-    console.log("backend", key);
-  
-    if (!key) {
-      return res.status(400).json({ error: 'key not sent' });
-    }
-  
-    try {
-      // Delete the scan with the matching filepath
-      const result = await ParsedTextEntries.destroy({ 
-        where: {
-        scankey: key,
-        userid: userId
-        } 
-    });
-  
-      if (result === 0) {
-        // No rows were deleted
-        return res.status(404).json({ error: 'Scan not found' });
+  const { key, userId } = req.query;
+  console.log("backend", key);
+
+  if (!key) {
+      return res.status(400).json({ error: 'Scan key not provided' });
+  }
+
+  try {
+      // Delete related flashcards associated with the scan
+      const flashcardsDeleted = await FlashCardEntries.destroy({
+          where: { scankey: key, userid: userId }
+      });
+
+      // Delete related mocktests associated with the scan
+      const mocktestsDeleted = await MockTestEntries.destroy({
+          where: { scankey: key, userid: userId }
+      });
+
+      // Now delete the scan itself
+      const scanDeleted = await ParsedTextEntries.destroy({
+          where: { scankey: key, userid: userId }
+      });
+
+      if (scanDeleted === 0) {
+          // No scan was deleted
+          return res.status(404).json({ error: 'Scan not found' });
       }
-  
+
       console.log(`Deleted scan with key: ${key}`);
-      res.status(200).json({ message: 'Scan deleted successfully' });
-    } catch (error) {
-      console.error('Error deleting scan from database:', error);
-      res.status(500).json({ error: 'Failed to delete scan.' });
-    }
-  });
-  
+      console.log(`Deleted ${flashcardsDeleted} flashcards associated with scan`);
+      console.log(`Deleted ${mocktestsDeleted} mocktests associated with scan`);
+
+      res.status(200).json({
+          message: 'Scan and associated flashcards/mocktests deleted successfully',
+          deletedFlashcards: flashcardsDeleted,
+          deletedMocktests: mocktestsDeleted
+      });
+  } catch (error) {
+      console.error('Error deleting scan and related data:', error);
+      res.status(500).json({ error: 'Failed to delete scan and associated data' });
+  }
+});
+
    
 
 router.delete('/deleteFC', async (req, res) => {

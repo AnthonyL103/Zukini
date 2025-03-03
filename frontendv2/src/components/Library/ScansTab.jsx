@@ -13,7 +13,7 @@ const ScansTab = ({ autoOpenScan = null }) => {
   const [showPreview, setShowPreview] = useState(false);
   const [showStudyModal, setShowStudyModal] = useState(false);
   const [selectedScan, setSelectedScan] = useState(null);
-  const { userId } = useUser();
+  const { userId} = useUser();
   const { setCurrentScan } = useScan();
   const { setCurrentFC } = useFC();
   const { setCurrentMT } = useMT();
@@ -81,9 +81,13 @@ const ScansTab = ({ autoOpenScan = null }) => {
         `https://api.zukini.com/display/deleteScan?userId=${userId}&key=${scanToDelete.scankey}`,
         { method: 'DELETE' }
       );
-      
+  
       if (!response.ok) throw new Error('Failed to delete scan');
       
+      // Log the response data
+      const responseData = await response.json();
+      console.log('Delete response:', responseData);
+  
       setScans(prevScans => 
         prevScans.filter(scan => scan.scankey !== scanToDelete.scankey)
       );
@@ -93,6 +97,7 @@ const ScansTab = ({ autoOpenScan = null }) => {
       console.error('Error deleting scan:', error);
     }
   };
+  
 
   return (
     <div>
@@ -195,7 +200,7 @@ const ScansTab = ({ autoOpenScan = null }) => {
               Delete Scan
             </h2>
             <p className="text-gray-600 mb-6">
-              Are you sure you want to delete "{scanToDelete.scanname}"? This action cannot be undone.
+              Are you sure you want to delete "{scanToDelete.scanname}"? All flashcards and mocktests associated will be deleted. This action cannot be undone.
             </p>
             <div className="flex justify-end space-x-4">
               <button

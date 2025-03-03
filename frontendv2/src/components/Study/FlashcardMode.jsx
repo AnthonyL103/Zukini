@@ -29,7 +29,7 @@ export const FlashcardMode = () => {
   const [errorMessage, setErrorMessage] = useState("");
   
   useEffect(() => {
-    if (currentFC) {
+    if (currentFC && !saveEdit) {
       console.log("currentFC.flashcards", currentFC.flashcards);
       setDisplayedFC(currentFC.flashcards); 
       console.log(DisplayedFC);
@@ -107,9 +107,6 @@ export const FlashcardMode = () => {
     setSaveEnabled(true);
   };
   
-  
-  
-  
   const handleSaveEditFlashcard = async () => {
     console.log("in save edit");
     try {
@@ -137,6 +134,7 @@ export const FlashcardMode = () => {
       console.log("Local storage updated with the new flashcard");
   
       window.location.reload();
+      setsaveEdit(false);
   
     } catch (error) {
       console.error("Error updating mock test:", error);
@@ -155,7 +153,7 @@ export const FlashcardMode = () => {
         flashcards: DisplayedFC,
         fcsessionname: FCName || currentFC.fcsessionname,
         date: currentScan.date,
-        scankey: currentScan.scankey,
+        scankey: currentScan.scankey || "None",
         userid: userId,
       };
 
@@ -172,7 +170,6 @@ export const FlashcardMode = () => {
         setSaveEnabled(false);
         setCurrentFC(payload);
         setFCEntry(payload);
-        setsaveEdit(false);
         console.log('Flashcards saved successfully');
       } else {
         console.error('Failed to save flashcards');

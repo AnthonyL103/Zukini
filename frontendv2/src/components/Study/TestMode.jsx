@@ -153,6 +153,7 @@ export const TestMode = () => {
       console.log("Local storage updated with the new mock test");
   
       window.location.reload();
+      setsaveEdit(false);
   
     } catch (error) {
       console.error("Error updating mock test:", error);
@@ -189,7 +190,6 @@ export const TestMode = () => {
         setSaveEnabled(false);
         setCurrentMT(payload);
         setMTEntry(payload);
-        setsaveEdit(false);
         console.log("Mock test saved successfully");
       } else {
         throw new Error("Failed to save updated mock test");
