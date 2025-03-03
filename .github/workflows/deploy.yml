@@ -42,5 +42,8 @@ jobs:
       - name: Terraform Plan
         run: terraform plan
 
+      - name: Force EC2 Instance Refresh
+        run: terraform apply -auto-approve -replace=aws_autoscaling_group.zukini_asg
+
       - name: Terraform Apply
         run: terraform apply -auto-approve
