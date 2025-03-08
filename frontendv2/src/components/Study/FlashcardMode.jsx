@@ -112,7 +112,6 @@ export const FlashcardMode = () => {
     setsaveEdit(true); // Show loading screen
   
     try {
-      console.log(userId);
   
       await handleSave();
   

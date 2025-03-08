@@ -6,7 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { motion, AnimatePresence } from "framer-motion";
 
-/* ++++++++++ BACKGROUND ++++++++++ */
+import { Eye, EyeOff} from "lucide-react";
+
 import * as THREE from 'three';
 
 const LoginPage = () => {
@@ -20,15 +21,13 @@ const LoginPage = () => {
     const [countdown, setCountdown] = useState(300);
     const [timerActive, setTimerActive] = useState(false);
     const [showForgotPassword, setShowForgotPassword] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
-    /* ++++++++++ BACKGROUND ++++++++++ */
     const canvasRef = useRef(null);
 
-    /* ++++++++++ BACKGROUND ++++++++++ */
     useEffect(() => {
         const scene = new THREE.Scene();
         
-        // Create camera with initial viewport dimensions
         const camera = new THREE.OrthographicCamera(
           window.innerWidth / -2,
           window.innerWidth / 2, 
@@ -44,16 +43,13 @@ const LoginPage = () => {
           antialias: true 
         });
         
-        // Set initial size
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         
-        // Camera position for top-down view
         camera.position.set(0, 0, 10);
         camera.lookAt(0, 0, 0);
         camera.rotation.z = Math.PI;
     
-        // Create grid that's larger than screen
         const size = Math.max(window.innerWidth, window.innerHeight) * 4;
         const divisions = Math.floor(size / 50);
         const gridHelper = new THREE.GridHelper(size, divisions, 0x67d7cc, 0x67d7cc);
@@ -62,30 +58,25 @@ const LoginPage = () => {
         gridHelper.rotation.x = Math.PI / 2;
         scene.add(gridHelper);
     
-        // Animation loop
         const animate = () => {
           requestAnimationFrame(animate);
           renderer.render(scene, camera);
         };
         animate();
     
-        // Resize handler
         const handleResize = () => {
           const width = window.innerWidth;
           const height = window.innerHeight;
     
-          // Camera
           camera.left = width / -2;
           camera.right = width / 2;
           camera.top = height / 2;
           camera.bottom = height / -2;
           camera.updateProjectionMatrix();
     
-          // Renderer
           renderer.setSize(width, height);
           renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     
-          // Update grid scale based on new viewport size
           const newSize = Math.max(width, height) * 4;
           const scale = newSize / size;
           gridHelper.scale.set(scale, scale, scale);
@@ -93,7 +84,7 @@ const LoginPage = () => {
     
         window.addEventListener('resize', handleResize);
     
-        // Cleanup
+        
         return () => {
           window.removeEventListener('resize', handleResize);
           scene.remove(gridHelper);
@@ -111,6 +102,7 @@ const LoginPage = () => {
             return () => clearInterval(interval);
         }
     }, [countdown, timerActive]);
+
 
     const handleLoggedIn = async (e) => {
         e.preventDefault();
@@ -317,16 +309,25 @@ const LoginPage = () => {
                                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none"
                                     />
 
+                                    <div className="relative">
                                     <input
-                                        type="password"
+                                        type={showPassword ? "text" : "password"}
                                         placeholder="Enter password"
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none pr-10"
                                     />
+                                     <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                    >
+                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    </button>
+                                    </div>
                                 </div>
-
+                                
                                 {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
 
                                 <div className="flex justify-between text-sm text-indigo-500">

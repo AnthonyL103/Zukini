@@ -1,8 +1,8 @@
 import { useState, useRef, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { v4 as uuidv4 } from "uuid";
-
-
+import * as mammoth from 'mammoth';
+import { jsPDF } from 'jspdf';
 import { useUser } from "../authentication/UserContext";
 
 const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
@@ -10,6 +10,7 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
   const fileInputRef = useRef(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [convertingFile, setConvertingFile] = useState(false);
   
   const [scanName, setScanName] = useState("");
   const { userId, setTotalScans} = useUser();
@@ -21,11 +22,118 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
     }
   };
 
+  // Function to convert DOCX to PDF using jsPDF, we us mammoth first as jspdf doesn't do well with direct doxc files
+  const convertDocxToPdf = async (docxFile) => {
+    try {
+      setConvertingFile(true);
+      
+      // Read the DOCX file as ArrayBuffer
+      const arrayBuffer = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(docxFile);
+      });
+      
+      // Convert DOCX to HTML using mammoth
+      const result = await mammoth.convertToHtml({ arrayBuffer });
+      const htmlContent = result.value;
+      
+      // Create a temporary div to render the HTML content
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = htmlContent;
+      document.body.appendChild(tempDiv);
+      
+      // Setup PDF document with jsPDF as jspdf handles html conversion to pdf better 
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+      
+      const margin = 15; 
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      let yPosition = margin;
+      const lineHeight = 7;
+      
+      const textNodes = tempDiv.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span, div');
+      for (let i = 0; i < textNodes.length; i++) {
+        const node = textNodes[i];
+        const text = node.textContent.trim();
+        
+        if (text) {
+          if (yPosition > pageHeight - margin) {
+            pdf.addPage();
+            yPosition = margin;
+          }
+          
+          if (node.tagName.toLowerCase().startsWith('h')) {
+            pdf.setFont('helvetica', 'bold');
+            const headingSize = 16 - parseInt(node.tagName.charAt(1));
+            pdf.setFontSize(headingSize);
+          } else {
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(12);
+          }
+          
+          const splitText = pdf.splitTextToSize(text, pageWidth - 2 * margin);
+          for (let j = 0; j < splitText.length; j++) {
+            pdf.text(splitText[j], margin, yPosition);
+            yPosition += lineHeight;
+            
+            if (yPosition > pageHeight - margin && j < splitText.length - 1) {
+              pdf.addPage();
+              yPosition = margin;
+            }
+          }
+          
+          yPosition += 3;
+        }
+      }
+      
+      document.body.removeChild(tempDiv);
+      
+      const pdfBlob = pdf.output('blob');
+      
+      const pdfFile = new File(
+        [pdfBlob], 
+        `${docxFile.name.replace('.docx', '.pdf')}`, 
+        { type: 'application/pdf' }
+      );
+      
+      setConvertingFile(false);
+      return pdfFile;
+    } catch (error) {
+      console.error('DOCX to PDF conversion error:', error);
+      setConvertingFile(false);
+      setErrorMessage("Failed to convert DOCX file to PDF");
+      return null;
+    }
+  };
+
   const onDrop = useCallback(async (acceptedFiles) => {
-    const file = acceptedFiles[0];
-    if (!file) return;
-    setFile(file);
+    const droppedFile = acceptedFiles[0];
+    if (!droppedFile) return;
+    
     setErrorMessage("");
+    
+    if (droppedFile.name.toLowerCase().endsWith('.docx')) {
+      try {
+        setIsLoading(true);
+        const pdfFile = await convertDocxToPdf(droppedFile);
+        if (pdfFile) {
+          setFile(pdfFile);
+        }
+      } catch (error) {
+        console.error("Error converting DOCX to PDF:", error);
+        setErrorMessage("Failed to convert DOCX file");
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      setFile(droppedFile);
+    }
   }, []);
 
   const handleUpload = async () => {
@@ -37,9 +145,11 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
       setErrorMessage("Please select a file");
       return;
     }
+    
     setIsLoading(true);
     const formData = new FormData();
     formData.append("file", file);
+    
     try {
       const parseResponse = await fetch("https://api.zukini.com/scans/callparse", {
         method: "POST", 
@@ -60,6 +170,7 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
     accept: {
       "image/*": [".jpeg", ".jpg", ".png"],
       "application/pdf": [".pdf"],
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
     },
     multiple: false,
   });
@@ -112,8 +223,6 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
       } else {
         console.error("Failed to save data");
       }
-      
-     
     } catch (error) {
       console.error("Error during saving:", error);
     }
@@ -138,7 +247,7 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
           {...getRootProps()}
           className={`relative border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all 
             ${isDragActive ? "border-indigo-500 bg-indigo-50" : "border-gray-300"} ${
-            isLoading ? "pointer-events-none" : "hover:border-indigo-400"
+            isLoading || convertingFile ? "pointer-events-none" : "hover:border-indigo-400"
           }`}
         >
           <input {...getInputProps()} />
@@ -165,7 +274,7 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
                   Drag & drop a file here, or click to select
                 </p>
                 <p className="text-sm text-gray-500">
-                  Supports PDF and images
+                  Supports PDF, DOCX, and images
                 </p>
               </>
             )}
@@ -174,15 +283,15 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
 
         <button
           onClick={handleUpload}
-          disabled={!file || !scanName.trim() || isLoading}
+          disabled={!file || !scanName.trim() || isLoading || convertingFile}
           className={`w-full p-3 rounded-lg font-semibold transition-all hover:cursor-pointer 
             ${
-              !file || !scanName.trim() || isLoading
+              !file || !scanName.trim() || isLoading || convertingFile
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                 : "bg-gradient-to-r from-[#0f0647] to-[#67d7cc] text-white hover:opacity-90"
             }`}
         >
-          {isLoading ? "Processing..." : "Upload Scan"}
+          {isLoading ? "Processing..." : convertingFile ? "Converting DOCX to PDF..." : "Upload Scan"}
         </button>
 
         {errorMessage && (

@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "jspdf": "^3.0.0",
+    "mammoth": "^1.9.0"
+  }
+}

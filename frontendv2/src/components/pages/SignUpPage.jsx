@@ -1,32 +1,26 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion} from "framer-motion";
 
 
-/* ++++++++++ BACKGROUND ++++++++++ */
 import * as THREE from 'three';
 
-/* ++++++++++ PASSWORD VALIDATIONS ++++++++++ */
 import { Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
 
 
 const SignUpPage = () => {
     const navigate = useNavigate();
 
-    /* ++++++++++ BACKGROUND ++++++++++ */
     const canvasRef = useRef(null);
 
-    /* ++++++++++ FORM STATE ++++++++++ */
     const [useremail, setUserEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [username, setUserName] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    /* ++++++++++ PASSWORD VALIDATIONS ++++++++++ */
     const passwordValidations = {
         hasLength: password.length >= 8,
         hasCapital: /[A-Z]/.test(password),
@@ -34,11 +28,9 @@ const SignUpPage = () => {
         hasSpecial: /[!@#$%^&*]/.test(password),
     };
 
-/* ++++++++++ BACKGROUND ++++++++++ */
     useEffect(() => {
         const scene = new THREE.Scene();
         
-        // Create camera with initial viewport dimensions
         const camera = new THREE.OrthographicCamera(
             window.innerWidth / -2,
             window.innerWidth / 2,
@@ -54,16 +46,13 @@ const SignUpPage = () => {
             antialias: true 
         });
         
-        // Set initial size
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Optimize for high DPI displays
         
-        // Camera position for top-down view
         camera.position.set(0, 0, 10);
         camera.lookAt(0, 0, 0);
         camera.rotation.z = Math.PI;
 
-        // Create grid that's larger than screen
         const size = Math.max(window.innerWidth, window.innerHeight) * 4;
         const divisions = Math.floor(size / 50); // Maintain consistent grid size
         const gridHelper = new THREE.GridHelper(size, divisions, 0x67d7cc, 0x67d7cc);
@@ -72,30 +61,25 @@ const SignUpPage = () => {
         gridHelper.rotation.x = Math.PI / 2;
         scene.add(gridHelper);
 
-        // Animation loop
         const animate = () => {
             requestAnimationFrame(animate);
             renderer.render(scene, camera);
         };
         animate();
 
-        // Resize handler
         const handleResize = () => {
             const width = window.innerWidth;
             const height = window.innerHeight;
 
-            // Camera
             camera.left = width / -2;
             camera.right = width / 2;
             camera.top = height / 2;
             camera.bottom = height / -2;
             camera.updateProjectionMatrix();
 
-            // Renderer
             renderer.setSize(width, height);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-            // Update grid scale based on new viewport size
             const newSize = Math.max(width, height) * 4;
             const scale = newSize / size;
             gridHelper.scale.set(scale, scale, scale);
@@ -104,7 +88,6 @@ const SignUpPage = () => {
         window.addEventListener('resize', handleResize);
 
 
-        // Cleanup
         return () => {
             window.removeEventListener('resize', handleResize);
             scene.remove(gridHelper);
@@ -113,7 +96,6 @@ const SignUpPage = () => {
         };
     }, []);
 
-    // Handle SignUp
     const handleSignUp = async (e) => {
         e.preventDefault();
 
@@ -122,7 +104,6 @@ const SignUpPage = () => {
             return;
         }
 
-        // Ensure strong password criteria
         const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
         if (!passwordRegex.test(password)) {
             setErrorMessage("Password must be at least 8 characters long and include at least one number and one special character.");
@@ -141,7 +122,7 @@ const SignUpPage = () => {
 
             if (data.success) {
                 alert("Account created successfully! Please check your email and click the verification link.");
-                navigate("/login"); // ✅ Redirect to login page
+                navigate("/login"); 
             } else {
                 setErrorMessage(data.message);
             }
