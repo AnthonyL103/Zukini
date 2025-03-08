@@ -1,18 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-
 import { useUser } from '../authentication/UserContext';
-
 import { Link, useNavigate } from "react-router-dom";
-
 import { motion, AnimatePresence } from "framer-motion";
-
-import { Eye, EyeOff} from "lucide-react";
-
+import { Eye, EyeOff } from "lucide-react";
 import * as THREE from 'three';
 
 const LoginPage = () => {
     const navigate = useNavigate();
-    const { setUserId, setEmail, setName, userId, name, email, setisforgot} = useUser();
+    const { setUserId, setEmail, setName, userId, name, email, setisforgot } = useUser();
     const [useremail, setUserEmail] = useState("");
     const [password, setPassword] = useState("");
     const [verificationCode, setVerificationCode] = useState("");
@@ -24,8 +19,10 @@ const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
 
     const canvasRef = useRef(null);
+    const containerRef = useRef(null);
 
     useEffect(() => {
+        // Create scene, camera, and renderer
         const scene = new THREE.Scene();
         
         const camera = new THREE.OrthographicCamera(
@@ -37,14 +34,17 @@ const LoginPage = () => {
           1000
         );
         
+        // Make sure canvas is available before creating renderer
+        if (!canvasRef.current) return;
+        
         const renderer = new THREE.WebGLRenderer({ 
           canvas: canvasRef.current,
           alpha: true,
           antialias: true 
         });
         
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        // Set initial size
+        updateCanvasSize(renderer, camera);
         
         camera.position.set(0, 0, 10);
         camera.lookAt(0, 0, 0);
@@ -60,39 +60,64 @@ const LoginPage = () => {
     
         const animate = () => {
           requestAnimationFrame(animate);
-          renderer.render(scene, camera);
+          if (renderer && scene && camera) {
+            renderer.render(scene, camera);
+          }
         };
         animate();
     
-        const handleResize = () => {
+        // Function to handle resize with proper viewport calculations
+        function updateCanvasSize(renderer, camera) {
+          if (!canvasRef.current || !containerRef.current) return;
+          
+          // Use clientWidth and clientHeight for more reliable dimensions
           const width = window.innerWidth;
           const height = window.innerHeight;
-    
+          
+          // Ensure the canvas fills the viewport
+          canvasRef.current.style.width = '100vw';
+          canvasRef.current.style.height = '100vh';
+          canvasRef.current.style.position = 'fixed';
+          canvasRef.current.style.top = '0';
+          canvasRef.current.style.left = '0';
+          
+          // Update camera frustum
           camera.left = width / -2;
           camera.right = width / 2;
           camera.top = height / 2;
           camera.bottom = height / -2;
           camera.updateProjectionMatrix();
-    
-          renderer.setSize(width, height);
+          
+          // Resize renderer
+          renderer.setSize(width, height, false); // false to avoid setting canvas style
           renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    
-          const newSize = Math.max(width, height) * 4;
+        }
+        
+        const handleResize = () => {
+          updateCanvasSize(renderer, camera);
+          
+          const newSize = Math.max(window.innerWidth, window.innerHeight) * 4;
           const scale = newSize / size;
           gridHelper.scale.set(scale, scale, scale);
         };
     
+        // Add resize event listener
         window.addEventListener('resize', handleResize);
-    
         
+        // Also handle orientation changes on mobile
+        window.addEventListener('orientationchange', () => {
+          // Small delay to ensure dimensions are updated after orientation change
+          setTimeout(handleResize, 100);
+        });
+    
         return () => {
           window.removeEventListener('resize', handleResize);
-          scene.remove(gridHelper);
-          renderer.dispose();
-          gridHelper.material.dispose();
+          window.removeEventListener('orientationchange', handleResize);
+          if (scene && gridHelper) scene.remove(gridHelper);
+          if (renderer) renderer.dispose();
+          if (gridHelper && gridHelper.material) gridHelper.material.dispose();
         };
       }, []);
-
 
     useEffect(() => {
         if (timerActive && countdown > 0) {
@@ -102,7 +127,6 @@ const LoginPage = () => {
             return () => clearInterval(interval);
         }
     }, [countdown, timerActive]);
-
 
     const handleLoggedIn = async (e) => {
         e.preventDefault();
@@ -118,7 +142,6 @@ const LoginPage = () => {
                     password: password,
                 }),
             });
-    
     
             const data = await response.json();
             console.log("API Response:", data);
@@ -144,9 +167,6 @@ const LoginPage = () => {
         }
     };
     
-    
-    
-    
     const handleLoginForgot = async (email) => {
         setErrorMessage("");
     
@@ -154,7 +174,7 @@ const LoginPage = () => {
             const response = await fetch("https://api.zukini.com/account/loginforgotpass", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email }),  // Use email for login
+                body: JSON.stringify({ email }),
             });
     
             const data = await response.json();
@@ -186,7 +206,6 @@ const LoginPage = () => {
         }
     };
     
-
     const handleSendCode = async (e) => {
         e.preventDefault();
         setErrorMessage("");
@@ -256,18 +275,19 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen relative">
+        <div ref={containerRef} className="min-h-screen w-full relative">
             <canvas
-            ref={canvasRef}
-            className="absolute inset-0 w-full h-full"
-            style={{ 
-                background: 'linear-gradient(to bottom, #0f0647, #67d7cc)',
-                zIndex: 0 
-            }}
+                ref={canvasRef}
+                className="fixed inset-0 w-full h-full"
+                style={{ 
+                    background: 'linear-gradient(to bottom, #0f0647, #67d7cc)',
+                    zIndex: 0,
+                    display: 'block'
+                }}
             />
             
             <motion.div 
-                className="relative z-10 min-h-screen flex items-center justify-center px-4"
+                className="relative z-10 min-h-screen flex items-start justify-center px-4 pt-20"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

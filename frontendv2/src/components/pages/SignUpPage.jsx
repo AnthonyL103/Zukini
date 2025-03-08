@@ -1,17 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
-import { motion} from "framer-motion";
-
-
+import { motion } from "framer-motion";
 import * as THREE from 'three';
-
 import { Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
-
 
 const SignUpPage = () => {
     const navigate = useNavigate();
-
     const canvasRef = useRef(null);
 
     const [useremail, setUserEmail] = useState("");
@@ -29,8 +23,12 @@ const SignUpPage = () => {
     };
 
     useEffect(() => {
+        // Make sure the canvas exists before initializing Three.js
+        if (!canvasRef.current) return;
+
         const scene = new THREE.Scene();
         
+        // Create camera with full viewport dimensions
         const camera = new THREE.OrthographicCamera(
             window.innerWidth / -2,
             window.innerWidth / 2,
@@ -46,15 +44,16 @@ const SignUpPage = () => {
             antialias: true 
         });
         
+        // Ensure renderer takes full viewport
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Optimize for high DPI displays
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         
         camera.position.set(0, 0, 10);
         camera.lookAt(0, 0, 0);
         camera.rotation.z = Math.PI;
 
         const size = Math.max(window.innerWidth, window.innerHeight) * 4;
-        const divisions = Math.floor(size / 50); // Maintain consistent grid size
+        const divisions = Math.floor(size / 50);
         const gridHelper = new THREE.GridHelper(size, divisions, 0x67d7cc, 0x67d7cc);
         gridHelper.material.opacity = 0.2;
         gridHelper.material.transparent = true;
@@ -68,25 +67,41 @@ const SignUpPage = () => {
         animate();
 
         const handleResize = () => {
+            // Get correct viewport dimensions, considering mobile
             const width = window.innerWidth;
             const height = window.innerHeight;
 
+            // Update canvas dimensions
+            if (canvasRef.current) {
+                canvasRef.current.style.width = `${width}px`;
+                canvasRef.current.style.height = `${height}px`;
+            }
+
+            // Update camera to match new viewport
             camera.left = width / -2;
             camera.right = width / 2;
             camera.top = height / 2;
             camera.bottom = height / -2;
             camera.updateProjectionMatrix();
 
+            // Update renderer size
             renderer.setSize(width, height);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
+            // Adjust grid scale for new viewport
             const newSize = Math.max(width, height) * 4;
             const scale = newSize / size;
             gridHelper.scale.set(scale, scale, scale);
         };
 
+        // Call resize handler once to ensure proper initial setup
+        handleResize();
+
+        // Listen for window resize events
         window.addEventListener('resize', handleResize);
 
+        // Force a resize after a short delay (helps with some mobile browsers)
+        setTimeout(handleResize, 100);
 
         return () => {
             window.removeEventListener('resize', handleResize);
@@ -133,18 +148,22 @@ const SignUpPage = () => {
     };
 
     return (
-        <div className="min-h-screen relative">
+        <div className="min-h-screen w-full relative overflow-hidden">
             <canvas
                 ref={canvasRef}
-                className="absolute inset-0 w-full h-full"
+                className="fixed inset-0 w-full h-full"
                 style={{ 
                     background: 'linear-gradient(to bottom, #0f0647, #67d7cc)',
-                    zIndex: 0 
+                    zIndex: 0,
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0
                 }}
             />
             
             <motion.div 
-                className="relative z-10 min-h-screen flex items-center justify-center px-4"
+                className="relative z-10 min-h-screen flex items-start justify-center px-4 pt-5"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -153,9 +172,7 @@ const SignUpPage = () => {
                     ease: "easeInOut"
                 }}
             >
-
                 <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-md">
-
                     <div className="text-center pb-4">
                         <Link to="/" className={`text-5xl font-bold`}>
                             Zukini
