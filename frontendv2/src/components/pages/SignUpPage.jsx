@@ -163,7 +163,8 @@ const SignUpPage = () => {
             />
             
             <motion.div 
-                className="relative z-10 min-h-screen flex items-start justify-center px-4 pt-5"
+                className="relative z-10 min-h-screen flex justify-center px-4 items-start sm:items-start md:items-center lg:items-center"
+                style={ {paddingTop: '2dvh' }}    
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

@@ -287,15 +287,16 @@ const LoginPage = () => {
             />
             
             <motion.div 
-                className="relative z-10 min-h-screen flex items-start justify-center px-4 pt-20"
+                className="relative z-10 min-h-screen flex justify-center px-4 items-start sm:items-start md:items-center lg:items-center"
+                style={ {paddingTop: '2dvh' }}           
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ 
                     duration: 0.25, 
-                    ease: "easeInOut",
+                    ease: "easeInOut"
                 }}
-            >
+>
                 <div className="bg-white shadow-md rounded-xl p-8 w-full max-w-md">
                     <AnimatePresence mode="wait">
                         {!showForgotPassword ? (
