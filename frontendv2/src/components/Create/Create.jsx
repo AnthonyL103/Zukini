@@ -6,7 +6,6 @@ import { useScan } from '../scans/ScanContext';
 import { useFC } from '../flashcards/FCcontext';
 import { useMT } from '../mocktests/MTcontext';
 
-/* ++++++++++ DROPFIELD ++++++++++ */
 
 import AddScan from "../scans/AddScan";
 
