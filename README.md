@@ -20,8 +20,8 @@
 - **AI Integration:** Google Vision API for text extraction  
 - **Hosting:**  
   - **Frontend:** AWS AMPLIFY (HTTPS)  
-  - **Backend:** AWS EC2 with Nginx Reverse Proxy  
-- **Deployment:** PM2 process manager, Certbot SSL, AMPLIFY
+  - **Backend:** AWS EC2, AWS ALB, AWS ASG
+- **Deployment:** Terraform, Github Actions
 
 ---
 
