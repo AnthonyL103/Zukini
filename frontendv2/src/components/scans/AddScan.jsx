@@ -202,6 +202,7 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
         }
       );
 
+
       if (response.ok) {
         if (onAddScan) {
           onAddScan({

@@ -145,7 +145,7 @@ resource "aws_lb_listener" "zukini_https_listener" {
 
 resource "aws_autoscaling_group" "zukini_asg" {
   name                 = "zukini-asg"
-  desired_capacity     = 2
+  desired_capacity     = 1
   max_size            = 3
   min_size            = 1
   vpc_zone_identifier = ["subnet-0808f06feea54df94", "subnet-07f7f3d986f211a70", "subnet-0ff7879cd731fe688", "subnet-0c064f12fd07fae84"]  
