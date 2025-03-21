@@ -148,15 +148,31 @@ useEffect(() => {
           </div>
 
           {/* Desktop Auth Buttons */}
-          <div className={`hidden md:flex md:items-center md:space-x-4 ${isHomePage ? 'bg-transparent' : 'bg-none'}`}>
-            {!isGuestUser ? (
+          <div className={`hidden md:flex md:items-center  ${isHomePage ? 'bg-transparent' : 'bg-none'}`}>
+          {!isGuestUser ? (
               <>
+                <div className={`flex items-center text-sm font-medium text-white`}>
+                  <span className="mr-2">Coins:</span>
+                  <span className="mr-1">250</span> 
+                  <Link 
+                  to="/account" 
+                  className={`p-2 rounded-full hover:bg-white/10 transition-colors ${isHomePage ? 'text-white hover:text-indigo-200' : 'text-white hover:text-indigo-200'}`}
+                >
+                  <div className="loader border-r-2 rounded-full border-yellow-500 bg-yellow-300 aspect-square w-6 h-6 flex justify-center items-center text-yellow-700">
+                    $
+                  </div>
+                  </Link>
+                  
+                  
+                </div>
+                
                 <Link 
                   to="/account" 
                   className={`p-2 rounded-full hover:bg-white/10 transition-colors ${isHomePage ? 'text-white hover:text-indigo-200' : 'text-white hover:text-indigo-200'}`}
                 >
                   <Settings size={20} />
                 </Link>
+                
                 <button 
                   onClick={handleLogout}
                   className={`px-3 py-2 text-sm font-medium hover:cursor-pointer ${isHomePage ? 'text-white hover:text-indigo-200' : 'text-white hover:text-indigo-200'}`}
@@ -200,6 +216,21 @@ useEffect(() => {
           
           {!isGuestUser ? (
             <>
+            
+              <Link 
+                  to="/account" 
+                  className={`flex items-center px-3 py-6 text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50 rounded-md w-full}`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <span className="mr-2">Coins:</span>
+                  <span className="mr-1">250</span>
+                  <div className="loader border-r-2 rounded-full border-yellow-500 bg-yellow-300 aspect-square w-6 h-6 flex justify-center items-center text-yellow-700">
+                    $
+                  </div>
+              </Link>
+                  
+                  
+               
               <Link
                 to="/account"
                 className="block text-center px-3 py-6 text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50 rounded-md w-full"
