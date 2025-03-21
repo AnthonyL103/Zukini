@@ -230,7 +230,7 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
   };
 
   return (
-    <div ref={(el) => (slidesRef.current[1] = el)} className="p-6">
+    <div>
       <h2 className="text-2xl font-bold text-[#0f0647] mb-4">
         Create New Scan
       </h2>
@@ -246,21 +246,21 @@ const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
 
         <div
           {...getRootProps()}
-          className={`relative border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all 
+          className={`relative border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all flex flex-col items-center justify-center
             ${isDragActive ? "border-indigo-500 bg-indigo-50" : "border-gray-300"} ${
             isLoading || convertingFile ? "pointer-events-none" : "hover:border-indigo-400"
           }`}
         >
           <input {...getInputProps()} />
-          <div className="space-y-2">
+          <div className="space-y-2 flex flex-col items-center w-full">
             {file ? (
-              <p className="text-gray-800 font-medium">
-                Selected file: {file.name}
+              <p className="text-gray-800 font-medium break-words max-w-full text-center">
+                Selected File: {file.name}
               </p>
             ) : (
               <>
                 <svg
-                  className="mx-auto h-12 w-12 text-gray-400"
+                  className="h-12 w-12 text-gray-400"
                   stroke="currentColor"
                   fill="none"
                   viewBox="0 0 48 48"
