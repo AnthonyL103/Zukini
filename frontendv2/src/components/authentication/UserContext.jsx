@@ -69,30 +69,22 @@ export const UserProvider = ({ children }) => {
 
   
     useEffect(() => {
-        const handleBeforeReload = () => {
-          sessionStorage.setItem("isReloading", "true");
-        };
-      
-        const handleAfterReload = () => {
-          sessionStorage.removeItem("isReloading");
-        };
-      
-        const handleUnload = () => {
-          if (!sessionStorage.getItem("isReloading")) {
-            deleteGuestData(sessionStorage.getItem("guestUserId"));
+      const handleUnload = () => {
+          const guestId = sessionStorage.getItem("guestUserId");
+          if (guestId && guestId.startsWith("guest-")) {
+              navigator.sendBeacon(
+                  `https://api.zukini.com/display/deleteGuestAll?userId=${guestId}`,
+                  JSON.stringify({}) 
+              );
           }
-        };
+      };
       
-        window.addEventListener("beforeunload", handleBeforeReload); // Detect refresh
-        window.addEventListener("unload", handleAfterReload); // Remove flag after reload
-        window.addEventListener("beforeunload", handleUnload); // Handle guest data deletion on exit
+      window.addEventListener("beforeunload", handleUnload);
       
-        return () => {
-          window.removeEventListener("beforeunload", handleBeforeReload);
-          window.removeEventListener("unload", handleAfterReload);
+      return () => {
           window.removeEventListener("beforeunload", handleUnload);
-        };
-      }, []);
+      };
+  }, []);
       
 
 
