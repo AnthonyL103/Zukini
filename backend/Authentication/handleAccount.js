@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { userinfos } = require('../Database/db');
+app.use('/account/stripe/webhook', express.raw({ type: 'application/json' }));
 const app = express();
 app.use(express.json());
 const port = 5006;
@@ -14,7 +15,6 @@ const { v4: uuidv4 } = require('uuid'); // Import uuid
 let verificationCodes = {}; 
 sgMail.setApiKey(process.env.MAILERKEY);
 
-app.use('/account/stripe/webhook', express.raw({ type: 'application/json' }));
 
 
 async function sendVerificationEmail(email, verificationLink) {

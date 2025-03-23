@@ -169,6 +169,12 @@ useEffect(() => {
             ) : (
               <>
               <Link 
+                  to="/account" 
+                  className={`p-2 rounded-full hover:bg-white/10 transition-colors ${isHomePage ? 'text-white hover:text-indigo-200' : 'text-white hover:text-indigo-200'}`}
+                >
+                  <Settings size={20} />
+                </Link>
+              <Link 
                 to="/login" 
                 className={`px-3 py-2 text-sm font-medium ${isHomePage ? 'text-white hover:text-indigo-200' : 'text-white hover:text-indigo-200'}`}>
                 Login
@@ -224,6 +230,12 @@ useEffect(() => {
               
               <div className="w-full max-w-sm">
                 <div className='flex w-full justify-between items-center pb-12 gap-4'>
+                  <Link 
+                    to="/account" 
+                    className={`p-2 rounded-full hover:bg-white/10 transition-colors ${isHomePage ? 'text-white hover:text-indigo-200' : 'text-white hover:text-indigo-200'}`}
+                  >
+                    <Settings size={20} />
+                  </Link>
                   <Link 
                     to="/login" 
                     className="block text-center flex-1 px-3 py-2 text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50 rounded-md"
