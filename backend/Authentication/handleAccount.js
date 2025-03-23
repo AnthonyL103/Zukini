@@ -4,6 +4,7 @@ const { userinfos } = require('../Database/db');
 const app = express();
 app.use(express.json());
 const port = 5006;
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const bcrypt = require('bcrypt');
 const router = express.Router(); 
 const sgMail = require('@sendgrid/mail');
@@ -12,6 +13,9 @@ app.use(cors());
 const { v4: uuidv4 } = require('uuid'); // Import uuid
 let verificationCodes = {}; 
 sgMail.setApiKey(process.env.MAILERKEY);
+
+app.use('/account/stripe/webhook', express.raw({ type: 'application/json' }));
+
 
 async function sendVerificationEmail(email, verificationLink) {
     try {
@@ -323,6 +327,204 @@ router.post('/loginforgotpass', async (req, res) => {
         console.error("Error during login via email:", error);
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
+});
+
+const rejectGuestUsers = async (req, res, next) => {
+    const userId = req.body.userId || req.query.userId;
+    
+    if (!userId) {
+        return res.status(401).json({ success: false, message: "User ID is required" });
+    }
+    
+    // Check if userId starts with "guest, so we can reject them from accessing premium features"
+    if (userId.toString().startsWith('guest')) {
+        return res.status(469).json({ 
+            success: false, 
+            message: "Guest users cannot access premium features. Please create an account."
+        });
+    }
+    
+    next();
+};
+
+router.post('/stripe/create-checkout-session', rejectGuestUsers, async (req, res) => {
+    try {
+        const { userId } = req.body;
+        
+        // Get the userID from database
+        const user = await userinfos.findOne({ where: { id: userId } });
+        
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+        
+        
+        // If user doesn't have a Stripe customer yet, create one
+        let customerId = user.stripe_customer_id;
+        
+        if (!customerId) {
+            const customer = await stripe.customers.create({
+                email: user.email,
+                name: user.name,
+                metadata: {
+                    userId: user.id
+                }
+            });
+            
+            customerId = customer.id;
+            
+            // Save the customer ID to the user record
+            await userinfos.update(
+                { stripe_customer_id: customerId },
+                { where: { id: userId } }
+            );
+        }
+        
+        // Create the checkout session
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [
+                {
+                    price: process.env.STRIPE_PRICE_ID, // Your price ID from Stripe
+                    quantity: 1,
+                },
+            ],
+            mode: 'subscription',
+            customer: customerId,
+            // Add custom metadata to identify the user
+            subscription_data: {
+                metadata: {
+                    userId: user.id
+                }
+            },
+            // Redirect URLs
+            success_url: `${process.env.APP_URL}/settings?success=true`,
+            cancel_url: `${process.env.APP_URL}/settings?canceled=true`,
+        });
+        
+        res.json({ success: true, url: session.url });
+    } catch (error) {
+        console.error('Error creating checkout session:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Create a customer portal session for managing subscription
+router.post('/stripe/create-portal-session', rejectGuestUsers, async (req, res) => {
+    try {
+        const { userId } = req.body;
+        
+        // Get the user from database
+        const user = await userinfos.findOne({ where: { id: userId } });
+        
+        if (!user || !user.stripe_customer_id) {
+            return res.status(404).json({ success: false, message: "User or Stripe customer not found" });
+        }
+        
+        // Create the portal session
+        const session = await stripe.billingPortal.sessions.create({
+            customer: user.stripe_customer_id,
+            return_url: `${process.env.APP_URL}/settings`,
+        });
+        
+        res.json({ success: true, url: session.url });
+    } catch (error) {
+        console.error('Error creating portal session:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Check subscription status
+router.get('/stripe/subscription-status', rejectGuestUsers, async (req, res) => {
+    try {
+        const { userId } = req.query;
+        
+        // Get the user from database
+        const user = await userinfos.findOne({ where: { id: userId } });
+        
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+        
+        res.json({ 
+            success: true,
+            status: user.subscription_status || 'free',
+            isSubscribed: user.subscription_status === 'premium'
+        });
+    } catch (error) {
+        console.error('Error checking subscription status:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Webhook to handle Stripe events
+router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    let event;
+    
+    try {
+        event = stripe.webhooks.constructEvent(
+            req.body, 
+            sig, 
+            process.env.STRIPE_WEBHOOK_SECRET
+        );
+    } catch (err) {
+        console.error(`Webhook Error: ${err.message}`);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+    
+    // Handle the event
+    console.log(`Webhook received: ${event.type}`);
+    
+    switch (event.type) {
+        case 'customer.subscription.created':
+        case 'customer.subscription.updated': {
+            const subscription = event.data.object;
+            
+            // Get the customer ID from the subscription
+            const customerId = subscription.customer;
+            
+            // Find the user with this customer ID
+            const user = await userinfos.findOne({
+                where: { stripe_customer_id: customerId }
+            });
+            
+            if (user) {
+                // Update subscription status based on subscription status
+                if (subscription.status === 'active' || subscription.status === 'trialing') {
+                    await userinfos.update(
+                        { subscription_status: 'premium' },
+                        { where: { id: user.id } }
+                    );
+                    console.log(`User ${user.id} set to premium subscription status`);
+                }
+            }
+            break;
+        }
+        
+        case 'customer.subscription.deleted': {
+            const subscription = event.data.object;
+            const customerId = subscription.customer;
+            
+            const user = await userinfos.findOne({
+                where: { stripe_customer_id: customerId }
+            });
+            
+            if (user) {
+                await userinfos.update(
+                    { subscription_status: 'free' },
+                    { where: { id: user.id } }
+                );
+                console.log(`User ${user.id} downgraded to free subscription status`);
+            }
+            break;
+        }
+        
+        // Add more event handlers as needed
+    }
+    
+    // Return a 200 response to acknowledge receipt of the event
+    res.send({ received: true });
 });
 
 

@@ -1,6 +1,7 @@
 import { useUser } from "../authentication/UserContext";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import UpgradeButton from "../utils/upgradebutton";
 
 import { Eye, EyeOff} from "lucide-react";
 
@@ -116,6 +117,9 @@ const AccountPage = () => {
                 <span className="text-[#0f0647] font-semibold">Total Mock Tests:</span>
                 <span className="text-gray-700">{totalMockTests}</span>
               </div>
+              
+                <UpgradeButton />
+              
             </div>
 
             {!isGuestUser && (

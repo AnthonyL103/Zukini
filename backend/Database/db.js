@@ -24,7 +24,7 @@ const sequelize = new Sequelize('postgres', process.env.DB_USER, process.env.DB_
   });
 
 
-const userinfos = sequelize.define('userinfos', {
+  const userinfos = sequelize.define('userinfos', {
     id: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -45,7 +45,7 @@ const userinfos = sequelize.define('userinfos', {
     },
     name: {
         type: DataTypes.STRING,
-        allowNull:false,
+        allowNull: false,
     },
     verified: { 
         type: DataTypes.BOOLEAN, 
@@ -55,6 +55,16 @@ const userinfos = sequelize.define('userinfos', {
     verification_token: {
         type: DataTypes.STRING,
         allowNull: true, 
+    },
+    
+    stripe_customer_id: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    subscription_status: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'free', 
     }
    },
     {  
