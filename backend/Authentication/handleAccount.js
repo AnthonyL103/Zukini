@@ -1,8 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const { userinfos } = require('../Database/db');
-app.use('/account/stripe/webhook', express.raw({ type: 'application/json' }));
 const app = express();
+app.use('/account/stripe/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
 const port = 5006;
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
