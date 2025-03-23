@@ -398,8 +398,8 @@ router.post('/stripe/create-checkout-session', rejectGuestUsers, async (req, res
                 }
             },
             // Redirect URLs
-            success_url: `${process.env.APP_URL}/settings?success=true`,
-            cancel_url: `${process.env.APP_URL}/settings?canceled=true`,
+            success_url: `${process.env.APP_URL}/account?success=true`,
+            cancel_url: `${process.env.APP_URL}/account?canceled=true`,
         });
         
         res.json({ success: true, url: session.url });
