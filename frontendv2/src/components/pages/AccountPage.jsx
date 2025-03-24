@@ -6,7 +6,7 @@ import UpgradeButton from "../utils/upgradebutton";
 import { Eye, EyeOff} from "lucide-react";
 
 const AccountPage = () => {
-  const { userId, name, email, totalScans, totalFlashcards, totalMockTests, isforgot, setisforgot } = useUser();
+  const { userId, name, email, totalScans, totalFlashcards, totalMockTests, isforgot, setisforgot} = useUser();
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");

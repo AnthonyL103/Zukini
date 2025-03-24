@@ -1,11 +1,66 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUser } from '../authentication/UserContext';
+import { useLocation } from 'react-router-dom';
 
 const UpgradeButton = () => {
-  const { userId } = useUser();
+  const { userId, fetchUserStats, isPremium } = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const location = useLocation();
   
+  //location search helps check the params in  the url on return from when we navigate to stripe. Our backend returns 
+  //www.zukini.com/account/success=true or success=false depending on if the stripe side went through. We can access this 
+  //in upgrade button as it is rendered with account page.
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const success = queryParams.get('success');
+    
+    if (success === 'true') {
+      fetchUserStats();
+      
+      alert("Your subscription has been successfully activated!");
+      
+      //remove the state 
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+    }
+  }, [location.search, fetchUserStats]);
+
+  const handleManageSubscription = async () => {
+    if (!userId) {
+      setError('User ID is required');
+      return;
+    }
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch('https://api.zukini.com/account/stripe/create-portal-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Failed to create portal session');
+      }
+      
+      // Redirect to Stripe Customer Portal
+      window.location.href = data.url;
+    } catch (error) {
+      console.error('Error creating portal session:', error);
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+
   // Handle upgrade button click
   const handleUpgradeClick = async () => {
     if (!userId) {
@@ -55,7 +110,44 @@ const UpgradeButton = () => {
   };
   
   return (
+    <>
+    {isPremium ? (
+        <div>
+        
+        <button 
+          className={`group w-fit h-fit border-none bg-gray-200 p-2.5 rounded-lg shadow-md transition-all duration-200 active:scale-100 hover:shadow-lg ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+          onClick={handleManageSubscription}
+          disabled={isLoading}
+        >
+          <span className="w-fit h-full flex items-center justify-center bg-gray-100 rounded px-4 py-2 shadow-md gap-4 transition-all duration-200 active:scale-97">
+            <span className="flex items-center justify-center gap-1.5">
+              <p className="text-lg font-semibold text-gray-500">Manage </p>
+              <p className="text-lg font-semibold text-gray-500">Subscription</p>
+            </span>
+            <svg 
+              className="w-5 text-gray-600 transition-all duration-300 group-hover:text-[#0f0647]" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              xmlns="http://www.w3.org/2000/svg"
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </span>
+        </button>
+        
+        {isLoading && (
+          <p className="text-sm text-gray-500 mt-2">Processing...</p>
+        )}
+        
+        {error && (
+          <p className="text-sm text-red-500 mt-2">{error}</p>
+        )}
+      </div>
+    ) : ( 
     <div>
+        
       <button 
         className={`group w-fit h-fit border-none bg-gray-200 p-2.5 rounded-lg shadow-md transition-all duration-200 active:scale-100 hover:shadow-lg ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
         onClick={handleUpgradeClick}
@@ -87,6 +179,8 @@ const UpgradeButton = () => {
         <p className="text-sm text-red-500 mt-2">{error}</p>
       )}
     </div>
+    )}
+    </>
   );
 };
 

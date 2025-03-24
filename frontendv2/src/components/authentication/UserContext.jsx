@@ -1,11 +1,10 @@
-import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useScan } from '../scans/ScanContext';
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-
     const { setCurrentScan } = useScan();
 
     const [userId, setUserId] = useState(() => {
@@ -24,36 +23,9 @@ export const UserProvider = ({ children }) => {
     const [totalScans, setTotalScans] = useState(0);
     const [totalFlashcards, setTotalFlashcards] = useState(0);
     const [totalMockTests, setTotalMockTests] = useState(0);
+    const [subscriptionStatus, setSubscriptionStatus] = useState('free');
+    const [isPremium, setIsPremium] = useState(false);
     const [isforgot, setisforgot] = useState(false);
-
-
-    const fetchUserStats = useCallback(async () => {
-        if (!userId) return;
-        
-        try {
-            const [fcRes, mtRes, scanRes] = await Promise.allSettled([
-                fetch(`https://api.zukini.com/display/displayflashcards?userId=${userId}`),
-                fetch(`https://api.zukini.com/display/displaymocktests?userId=${userId}`),
-                fetch(`https://api.zukini.com/display/displayscans?userId=${userId}`)
-            ]);
-
-            const parseResponse = async (res) => 
-                res.status === "fulfilled" && res.value.ok ? await res.value.json() : [];
-
-            const [FC, MT, Scans] = await Promise.all([
-                parseResponse(fcRes),
-                parseResponse(mtRes), 
-                parseResponse(scanRes)
-            ]);
-
-            setTotalFlashcards(FC?.length || 0);
-            setTotalMockTests(MT?.length || 0); 
-            setTotalScans(Scans?.length || 0);
-        } catch (error) {
-            console.error('Error fetching user stats:', error);
-        }
-    }, [userId]);
-    
     
     const deleteGuestData = (guestId) => {
         if (!guestId || !guestId.startsWith("guest-")) return;
@@ -67,29 +39,25 @@ export const UserProvider = ({ children }) => {
         })
     };
 
-  
     useEffect(() => {
-      const handleUnload = () => {
-          const guestId = sessionStorage.getItem("guestUserId");
-          if (guestId && guestId.startsWith("guest-")) {
-              navigator.sendBeacon(
-                  `https://api.zukini.com/display/deleteGuestAll?userId=${guestId}`,
-                  JSON.stringify({}) 
-              );
-          }
-      };
-      
-      window.addEventListener("beforeunload", handleUnload);
-      
-      return () => {
-          window.removeEventListener("beforeunload", handleUnload);
-      };
-  }, []);
-      
-
-
+        const handleUnload = () => {
+            const guestId = sessionStorage.getItem("guestUserId");
+            if (guestId && guestId.startsWith("guest-")) {
+                navigator.sendBeacon(
+                    `https://api.zukini.com/display/deleteGuestAll?userId=${guestId}`,
+                    JSON.stringify({}) 
+                );
+            }
+        };
+        
+        window.addEventListener("beforeunload", handleUnload);
+        
+        return () => {
+            window.removeEventListener("beforeunload", handleUnload);
+        };
+    }, []);
+    
     useEffect(() => {
-
         if (!userId || userId.startsWith("guest-")) return;
 
         const storedUserId = localStorage.getItem("userId");
@@ -110,38 +78,55 @@ export const UserProvider = ({ children }) => {
         }
     }, [userId, email, name]);
 
+    // Unified fetchUserStats function to get all user data including subscription status
+    const fetchUserStats = async () => {
+        if (!userId) return;
+        
+        try {
+            const [fcRes, mtRes, scanRes, subRes] = await Promise.allSettled([
+                fetch(`https://api.zukini.com/display/displayflashcards?userId=${userId}`),
+                fetch(`https://api.zukini.com/display/displaymocktests?userId=${userId}`),
+                fetch(`https://api.zukini.com/display/displayscans?userId=${userId}`),
+                fetch(`https://api.zukini.com/account/stripe/subscription-status?userId=${userId}`)
+            ]);
 
-    useEffect(() => {
-        const fetchUserStats = async () => {
-          if (!userId) return;
-          
-          try {
-            const [fcRes, mtRes, scanRes] = await Promise.allSettled([
-              fetch(`https://api.zukini.com/display/displayflashcards?userId=${userId}`),
-              fetch(`https://api.zukini.com/display/displaymocktests?userId=${userId}`),
-              fetch(`https://api.zukini.com/display/displayscans?userId=${userId}`)
-            ]);
-    
             const parseResponse = async (res) => 
-              res.status === "fulfilled" && res.value.ok ? await res.value.json() : [];
-    
-            const [FC, MT, Scans] = await Promise.all([
-              parseResponse(fcRes),
-              parseResponse(mtRes), 
-              parseResponse(scanRes)
+                res.status === "fulfilled" && res.value.ok ? await res.value.json() : [];
+
+            const [FC, MT, Scans, SubStatus] = await Promise.all([
+                parseResponse(fcRes),
+                parseResponse(mtRes), 
+                parseResponse(scanRes),
+                parseResponse(subRes)
             ]);
-    
+
             setTotalFlashcards(FC?.length || 0);
             setTotalMockTests(MT?.length || 0); 
             setTotalScans(Scans?.length || 0);
-          } catch (error) {
+            
+            // Handle subscription status
+            if (SubStatus?.success) {
+                setSubscriptionStatus(SubStatus.status || 'free');
+                setIsPremium(SubStatus.status === 'premium');
+            } else {
+                setSubscriptionStatus('free');
+                setIsPremium(false);
+            }
+            
+            console.log(`User stats fetched - Scans: ${Scans?.length || 0}, FC: ${FC?.length || 0}, MT: ${MT?.length || 0}, Subscription: ${SubStatus?.status || 'free'}`);
+        } catch (error) {
             console.error('Error fetching user stats:', error);
-          }
-        };
-    
-        fetchUserStats();
-      }, [userId]);
+            setSubscriptionStatus('free');
+            setIsPremium(false);
+        }
+    };
 
+    // Fetch user stats when userId changes
+    useEffect(() => {
+        fetchUserStats();
+    }, [userId]);
+
+    // Create context value with all necessary state
     const contextValue = useMemo(() => ({
         userId, setUserId,
         email, setEmail,
@@ -150,8 +135,10 @@ export const UserProvider = ({ children }) => {
         totalMockTests, setTotalMockTests,
         name, setName,
         isforgot, setisforgot,
+        subscriptionStatus, setSubscriptionStatus,
+        isPremium, setIsPremium,
         fetchUserStats
-    }), [userId, email, totalScans, totalFlashcards, totalMockTests, name, isforgot]);
+    }), [userId, email, totalScans, totalFlashcards, totalMockTests, name, isforgot, subscriptionStatus, isPremium]);
 
     return (
         <UserContext.Provider value={contextValue}>
