@@ -481,27 +481,58 @@ router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (r
     console.log(`Webhook received: ${event.type}`);
     
     switch (event.type) {
-        case 'customer.subscription.created':
-        case 'customer.subscription.updated': {
+        case 'customer.subscription.created': {
+            // Handle new subscription creation
             const subscription = event.data.object;
-            
-            // Get the customer ID from the subscription
             const customerId = subscription.customer;
             
-            // Find the user with this customer ID
+            const user = await userinfos.findOne({
+                where: { stripe_customer_id: customerId }
+            });
+            
+            if (user && (subscription.status === 'active' || subscription.status === 'trialing')) {
+                await userinfos.update(
+                    { subscription_status: 'premium' },
+                    { where: { id: user.id } }
+                );
+                await sendEmail(user.email, "Subscription Activated", `Dear <strong>${user.name}</strong> Thank you for subscribing to Zukini Premium!`);
+                console.log(`User ${user.id} set to premium subscription status`);
+            }
+            break;
+        }
+        
+        case 'customer.subscription.updated': {
+            // Handle subscription updates
+            const subscription = event.data.object;
+            const customerId = subscription.customer;
+            
             const user = await userinfos.findOne({
                 where: { stripe_customer_id: customerId }
             });
             
             if (user) {
-                // Update subscription status based on subscription status
-                if (subscription.status === 'active' || subscription.status === 'trialing') {
+                // Only update and send email if status is changing TO active/trialing
+                // and current status in database is not already premium
+                if ((subscription.status === 'active' || subscription.status === 'trialing') && 
+                    user.subscription_status !== 'premium') {
+                    
                     await userinfos.update(
                         { subscription_status: 'premium' },
                         { where: { id: user.id } }
                     );
                     await sendEmail(user.email, "Subscription Activated", `Dear <strong>${user.name}</strong> Thank you for subscribing to Zukini Premium!`);
                     console.log(`User ${user.id} set to premium subscription status`);
+                } 
+                // If status is changing to canceled, past_due, unpaid, etc.
+                else if (subscription.status !== 'active' && subscription.status !== 'trialing' && 
+                         user.subscription_status === 'premium') {
+                    
+                    await userinfos.update(
+                        { subscription_status: 'free' },
+                        { where: { id: user.id } }
+                    );
+                    await sendEmail(user.email, "Subscription Ended", `Dear <strong>${user.name}</strong> Your subscription has ended.`);
+                    console.log(`User ${user.id} downgraded to free subscription status due to status change: ${subscription.status}`);
                 }
             }
             break;
@@ -525,8 +556,6 @@ router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (r
             }
             break;
         }
-        
-        // Add more event handlers as needed
     }
     
     // Return a 200 response to acknowledge receipt of the event
