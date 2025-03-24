@@ -424,7 +424,7 @@ router.post('/stripe/create-portal-session', rejectGuestUsers, async (req, res) 
         // Create the portal session
         const session = await stripe.billingPortal.sessions.create({
             customer: user.stripe_customer_id,
-            return_url: `${process.env.APP_URL}/settings`,
+            return_url: `${process.env.APP_URL}/account`,
         });
         
         res.json({ success: true, url: session.url });
