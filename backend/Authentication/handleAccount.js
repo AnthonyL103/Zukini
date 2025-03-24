@@ -194,7 +194,7 @@ router.get("/verify/:token", async (req, res) => {
     }
 });
 
-async function sendCodeEmail(to, subject, text) {
+async function sendEmail(to, subject, text) {
     console.log(`Sending email to ${to} with subject: ${subject}`);
     try {
         const msg = {
@@ -229,7 +229,7 @@ router.post('/sendCode', async (req, res) => {
     console.log(`Generated Code for ${email}: ${code}`); // Debugging
 
     try {
-        await sendCodeEmail(email, "Your Verification Code", `Your verification code is: <strong>${code}</strong>. This code will expire in 5 minutes.`);
+        await sendEmail(email, "Your Verification Code", `Your verification code is: <strong>${code}</strong>. This code will expire in 5 minutes.`);
         res.json({ success: true, message: "Code sent successfully" });
         
         setTimeout(() => {
@@ -347,6 +347,8 @@ const rejectGuestUsers = async (req, res, next) => {
     next();
 };
 
+
+
 router.post('/stripe/create-checkout-session', rejectGuestUsers, async (req, res) => {
     try {
         const { userId } = req.body;
@@ -401,6 +403,8 @@ router.post('/stripe/create-checkout-session', rejectGuestUsers, async (req, res
             success_url: `${process.env.APP_URL}/account?success=true`,
             cancel_url: `${process.env.APP_URL}/account?canceled=true`,
         });
+
+
         
         res.json({ success: true, url: session.url });
     } catch (error) {
@@ -496,6 +500,7 @@ router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (r
                         { subscription_status: 'premium' },
                         { where: { id: user.id } }
                     );
+                    await sendEmail(user.email, "Subscription Activated", `Dear <strong>${user.name}</strong> Thank you for subscribing to Zukini Premium!`);
                     console.log(`User ${user.id} set to premium subscription status`);
                 }
             }
@@ -515,6 +520,7 @@ router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (r
                     { subscription_status: 'free' },
                     { where: { id: user.id } }
                 );
+                await sendEmail(user.email, "Subscription Canceled", `Dear <strong>${user.name}</strong> Your subscription has been canceled successfully.`);
                 console.log(`User ${user.id} downgraded to free subscription status`);
             }
             break;
