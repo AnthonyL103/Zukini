@@ -502,38 +502,40 @@ router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (r
         }
         
         case 'customer.subscription.updated': {
-            // Handle subscription updates
             const subscription = event.data.object;
             const customerId = subscription.customer;
+            const status = subscription.status;
             
-            const user = await userinfos.findOne({
-                where: { stripe_customer_id: customerId }
-            });
+            console.log(`Subscription updated: Customer ID ${customerId}, Status: ${status}`);
             
-            if (user) {
-                // Only update and send email if status is changing TO active/trialing
-                // and current status in database is not already premium
-                if ((subscription.status === 'active' || subscription.status === 'trialing') && 
-                    user.subscription_status !== 'premium') {
-                    
-                    await userinfos.update(
-                        { subscription_status: 'premium' },
-                        { where: { id: user.id } }
-                    );
-                    await sendEmail(user.email, "Subscription Activated", `Dear <strong>${user.name}</strong> Thank you for subscribing to Zukini Premium!`);
-                    console.log(`User ${user.id} set to premium subscription status`);
-                } 
-                // If status is changing to canceled, past_due, unpaid, etc.
-                else if (subscription.status !== 'active' && subscription.status !== 'trialing' && 
-                         user.subscription_status === 'premium') {
-                    
-                    await userinfos.update(
-                        { subscription_status: 'free' },
-                        { where: { id: user.id } }
-                    );
-                    await sendEmail(user.email, "Subscription Ended", `Dear <strong>${user.name}</strong> Your subscription has ended.`);
-                    console.log(`User ${user.id} downgraded to free subscription status due to status change: ${subscription.status}`);
+            try {
+                const user = await userinfos.findOne({
+                    where: { stripe_customer_id: customerId }
+                });
+                
+                console.log(`User lookup result: ${user ? `Found user ${user.id}, current subscription status: ${user.subscription_status}` : 'No user found'}`);
+                
+                if (user) {
+                    if (status === 'active' || status === 'trialing') {
+                        console.log(`Updating user ${user.id} to premium status`);
+                        await userinfos.update(
+                            { subscription_status: 'premium' },
+                            { where: { id: user.id } }
+                        );
+                        
+                        console.log(`Sending activation email to ${user.email}`);
+                        await sendEmail(user.email, "Subscription Activated", `Dear <strong>${user.name}</strong>, Thank you for subscribing to Zukini Premium!`);
+                        console.log(`Email sent successfully to ${user.email}`);
+                    } else if (status === 'canceled') {
+                        console.log(`User ${user.id} subscription has been canceled, sending email`);
+                        await sendEmail(user.email, "Subscription Cancelation Confirmed", `Dear <strong>${user.name}</strong>, your subscription cancelation has been processed. You will continue to have premium access until the end of your current billing period.`);
+                        console.log(`Cancelation email sent successfully to ${user.email}`);
+                    } else {
+                        console.log(`Subscription status ${status} not handled for user ${user.id}`);
+                    }
                 }
+            } catch (error) {
+                console.error(`Error processing subscription update: ${error.message}`);
             }
             break;
         }
