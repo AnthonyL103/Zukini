@@ -528,8 +528,12 @@ router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (r
                     // Handling cancellations (still active but marked for cancellation)
                     else if ((status === 'active' || status === 'trialing') && canceledAtPeriodEnd === true && user.subscription_status === 'premium') {
                         console.log(`User ${user.id} subscription has been marked for cancellation at period end`);
-                        await sendEmail(user.email, "Subscription Cancellation Confirmed", `Dear <strong>${user.name}</strong>, your subscription cancellation has been processed. You will continue to have premium access until the end of your current billing period.`);
-                    } 
+                        await sendEmail(user.email, "Subscription Cancellation Confirmed", `Dear <strong>${user.name}</strong>, your Zukini premium subscription cancellation has been processed. You will continue to have premium access until the end of your current billing period.`);
+                    }
+                    else if ((status == 'active' || status == 'trialing') && canceledAtPeriodEnd === false && user.subscription_status === 'premium') {
+                        console.log(`User ${user.id} subscription is still active`);
+                        await sendEmail(user.email, "Subscription reactivated", `Dear <strong>${user.name}</strong>, your Zukini premium subscription has been successfully reactivated.`);
+                    }
                     else {
                         console.log(`No status change detected or no email needed. Current: ${user.subscription_status}, Stripe status: ${status}, Canceled at period end: ${canceledAtPeriodEnd}`);
                     }
