@@ -505,33 +505,33 @@ router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (r
             const subscription = event.data.object;
             const customerId = subscription.customer;
             const status = subscription.status;
+            const canceledAtPeriodEnd = subscription.cancel_at_period_end;
             
-            console.log(`Subscription updated: Customer ID ${customerId}, Status: ${status}`);
+            console.log(`Subscription updated: Customer ID ${customerId}, Status: ${status}, Canceled at period end: ${canceledAtPeriodEnd}`);
             
             try {
                 const user = await userinfos.findOne({
                     where: { stripe_customer_id: customerId }
                 });
                 
-                console.log(`User lookup result: ${user ? `Found user ${user.id}, current subscription status: ${user.subscription_status}` : 'No user found'}`);
-                
                 if (user) {
-                    if (status === 'active' || status === 'trialing') {
-                        console.log(`Updating user ${user.id} to premium status`);
+                    // Handling new subscriptions
+                    if ((status === 'active' || status === 'trialing') && !canceledAtPeriodEnd && user.subscription_status !== 'premium') {
+                        console.log(`Upgrading user ${user.id} from free to premium status`);
                         await userinfos.update(
                             { subscription_status: 'premium' },
                             { where: { id: user.id } }
                         );
                         
-                        console.log(`Sending activation email to ${user.email}`);
                         await sendEmail(user.email, "Subscription Activated", `Dear <strong>${user.name}</strong>, Thank you for subscribing to Zukini Premium!`);
-                        console.log(`Email sent successfully to ${user.email}`);
-                    } else if (status === 'canceled') {
-                        console.log(`User ${user.id} subscription has been canceled, sending email`);
-                        await sendEmail(user.email, "Subscription Cancelation Confirmed", `Dear <strong>${user.name}</strong>, your subscription cancelation has been processed. You will continue to have premium access until the end of your current billing period.`);
-                        console.log(`Cancelation email sent successfully to ${user.email}`);
-                    } else {
-                        console.log(`Subscription status ${status} not handled for user ${user.id}`);
+                    } 
+                    // Handling cancellations (still active but marked for cancellation)
+                    else if ((status === 'active' || status === 'trialing') && canceledAtPeriodEnd === true && user.subscription_status === 'premium') {
+                        console.log(`User ${user.id} subscription has been marked for cancellation at period end`);
+                        await sendEmail(user.email, "Subscription Cancellation Confirmed", `Dear <strong>${user.name}</strong>, your subscription cancellation has been processed. You will continue to have premium access until the end of your current billing period.`);
+                    } 
+                    else {
+                        console.log(`No status change detected or no email needed. Current: ${user.subscription_status}, Stripe status: ${status}, Canceled at period end: ${canceledAtPeriodEnd}`);
                     }
                 }
             } catch (error) {
