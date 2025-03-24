@@ -65,6 +65,10 @@ const sequelize = new Sequelize('postgres', process.env.DB_USER, process.env.DB_
         type: DataTypes.STRING,
         allowNull: false,
         defaultValue: 'free', 
+    },
+    subscription_last_event_id: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
    },
     {  

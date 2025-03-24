@@ -506,7 +506,7 @@ router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (r
             const customerId = subscription.customer;
             const status = subscription.status;
             const canceledAtPeriodEnd = subscription.cancel_at_period_end;
-            
+            const eventId = event.id;
             console.log(`Subscription updated: Customer ID ${customerId}, Status: ${status}, Canceled at period end: ${canceledAtPeriodEnd}`);
             
             try {
@@ -515,7 +515,10 @@ router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (r
                 });
                 
                 if (user) {
-                    // Handling new subscriptions
+                    if (user.subscription_last_event_id === eventId) {
+                        console.log(`Event ${eventId} has already been processed for user ${user.id}, skipping.`);
+                        break;
+                    }
                     if ((status === 'active' || status === 'trialing') && !canceledAtPeriodEnd && user.subscription_status !== 'premium') {
                         console.log(`Upgrading user ${user.id} from free to premium status`);
                         await userinfos.update(
@@ -537,6 +540,11 @@ router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (r
                     else {
                         console.log(`No status change detected or no email needed. Current: ${user.subscription_status}, Stripe status: ${status}, Canceled at period end: ${canceledAtPeriodEnd}`);
                     }
+
+                    await userinfos.update(
+                        { subscription_last_event_id: eventId },
+                        { where: { id: user.id } }
+                    );
                 }
             } catch (error) {
                 console.error(`Error processing subscription update: ${error.message}`);
