@@ -69,7 +69,7 @@ const UpgradeButton = () => {
     }
     
     if (userId.toString().startsWith('guest')) {
-      // For guest users, redirect to signup page directly
+      //for guest users, redirect to signup page directly
       window.location.href = '/signup?source=premium_upgrade';
       return;
     }
