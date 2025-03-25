@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { userinfos } = require('../Database/db');
-const { logger } = require('./logging'); 
+const { logger } = require('../logging'); 
 const app = express();
 app.use('/account/stripe/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());

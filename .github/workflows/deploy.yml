@@ -48,10 +48,6 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
 
-      - name: Refresh ASG Instances
-        run: |
-          aws autoscaling start-instance-refresh \
-            --auto-scaling-group-name zukini-asg \
-            --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 300}'
+      
 
       
