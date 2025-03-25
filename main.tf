@@ -11,6 +11,39 @@ provider "aws" {
   region = "us-west-2"  # Your region
 }
 
+# CloudWatch Log Group for API logs
+resource "aws_cloudwatch_log_group" "zukini_api_logs" {
+  name              = "/zukini/api/calls"
+  retention_in_days = 14  # Adjust retention as needed
+}
+
+# IAM role for EC2 to access CloudWatch
+resource "aws_iam_role" "ec2_cloudwatch_role" {
+  name = "zukini-ec2-cloudwatch-role"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Action = "sts:AssumeRole",
+      Effect = "Allow",
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+    }]
+  })
+}
+
+# Attach CloudWatch policy to role
+resource "aws_iam_role_policy_attachment" "cloudwatch_policy_attachment" {
+  role       = aws_iam_role.ec2_cloudwatch_role.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+}
+
+# Create instance profile
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "zukini-ec2-cloudwatch-profile"
+  role = aws_iam_role.ec2_cloudwatch_role.name
+}
 
 resource "aws_launch_template" "zukini_template" {
   name_prefix   = "zukini-template"
@@ -18,6 +51,11 @@ resource "aws_launch_template" "zukini_template" {
   instance_type = "t2.small"
   key_name      = "zukini-key"
   vpc_security_group_ids = ["sg-068e3daeda5e15279", "sg-053c014d58ec801c5"] 
+
+  # Add the IAM instance profile for CloudWatch
+  iam_instance_profile {
+    name = aws_iam_instance_profile.ec2_profile.name
+  }
 
   user_data = base64encode(<<EOF
 #!/bin/bash
@@ -31,8 +69,54 @@ echo "Updating system packages..."
 sudo apt update -y
 sudo apt install -y nginx git curl nodejs npm python3-pip build-essential net-tools python3 make g++
 
-# Clone backend repo if not already present
-# Clone backend repo if not already present
+# Install CloudWatch agent
+echo "Installing CloudWatch agent..."
+sudo apt install -y amazon-cloudwatch-agent
+
+# Configure CloudWatch agent
+echo "Configuring CloudWatch agent..."
+sudo mkdir -p /opt/aws/amazon-cloudwatch-agent/etc/
+sudo cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<'EOT'
+{
+  "agent": {
+    "metrics_collection_interval": 60,
+    "run_as_user": "root"
+  },
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          {
+            "file_path": "/var/log/zukini-api/*.log",
+            "log_group_name": "/zukini/api/calls",
+            "log_stream_name": "{instance_id}-api-logs",
+            "timestamp_format": "%Y-%m-%d %H:%M:%S"
+          },
+          {
+            "file_path": "/home/ubuntu/Zukini/backend/logs/*.log",
+            "log_group_name": "/zukini/api/calls",
+            "log_stream_name": "{instance_id}-backend-logs",
+            "timestamp_format": "%Y-%m-%d %H:%M:%S"
+          }
+        ]
+      }
+    }
+  }
+}
+EOT
+
+# Start CloudWatch agent
+echo "Starting CloudWatch agent..."
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+sudo systemctl enable amazon-cloudwatch-agent
+sudo systemctl start amazon-cloudwatch-agent
+
+# Create log directories
+sudo mkdir -p /var/log/zukini-api
+sudo chmod 755 /var/log/zukini-api
+sudo mkdir -p /home/ubuntu/Zukini/backend/logs
+sudo chmod 755 /home/ubuntu/Zukini/backend/logs
+
 # Clone backend repo if not already present
 cd /home/ubuntu
 if [ ! -d "Zukini/backend" ]; then
@@ -46,6 +130,10 @@ else
   sudo -u ubuntu git config --global --add safe.directory /home/ubuntu/Zukini/backend
   sudo -u ubuntu git reset --hard origin/main  
   sudo -u ubuntu git pull origin main
+  
+  cd ..
+
+  find . -mindepth 1 -maxdepth 1 -not -name "backend" -exec rm -rf {} \;
 fi
 
 
@@ -54,7 +142,86 @@ fi
 echo "Installing Node.js dependencies..."
 cd /home/ubuntu/Zukini/backend
 npm install
-npm install --save @google-cloud/vision bcrypt pm2 nodemon express-list-endpoints
+npm install --save @google-cloud/vision bcrypt pm2 nodemon express-list-endpoints winston winston-daily-rotate-file stripe
+
+# Add logging configuration to the backend
+echo "Adding logging configuration..."
+cat > /home/ubuntu/Zukini/backend/logging.js <<'EOT'
+const winston = require('winston');
+const { createLogger, format, transports } = winston;
+const { combine, timestamp, printf, colorize, json } = format;
+
+// Create the logger
+const logger = createLogger({
+  level: 'info',
+  format: combine(
+    timestamp(),
+    json()
+  ),
+  defaultMeta: { service: 'zukini-api' },
+  transports: [
+    new transports.File({ 
+      filename: '/var/log/zukini-api/api-calls.log',
+      maxsize: 5242880, // 5MB
+      maxFiles: 5
+    }),
+    new transports.File({ 
+      filename: '/home/ubuntu/Zukini/backend/logs/api-calls.log',
+      maxsize: 5242880, // 5MB
+      maxFiles: 5 
+    })
+  ]
+});
+
+// Add console transport in development
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new transports.Console({
+    format: combine(
+      colorize(),
+      timestamp(),
+      printf(({ level, message, timestamp }) => {
+        return `${timestamp} ${level}: ${message}`;
+      })
+    )
+  }));
+}
+
+// Middleware to log API requests
+const requestLogger = (req, res, next) => {
+  const startTime = Date.now();
+  
+  // Original URL before any modifications
+  const originalUrl = req.originalUrl || req.url;
+  
+  // Create a response interceptor
+  const originalSend = res.send;
+  res.send = function(body) {
+    const responseTime = Date.now() - startTime;
+    
+    // Log the API call
+    logger.info({
+      type: 'api_call',
+      method: req.method,
+      path: originalUrl,
+      query: req.query,
+      params: req.params,
+      // Limit body logging to avoid excessive data
+      body: req.body ? JSON.stringify(req.body).substring(0, 1000) : null,
+      statusCode: res.statusCode,
+      responseTime: responseTime,
+      userAgent: req.get('user-agent'),
+      ip: req.ip || req.connection.remoteAddress
+    });
+    
+    // Continue with the original send
+    originalSend.apply(res, arguments);
+  };
+  
+  next();
+};
+
+module.exports = { logger, requestLogger };
+EOT
 
 # Ensure no stale processes are running
 echo "Killing old processes..."

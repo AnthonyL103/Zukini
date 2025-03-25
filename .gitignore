@@ -25,3 +25,5 @@ yarn-error.log*
 credentials.json
 
 apikey.env
+
+quickcommands.txt

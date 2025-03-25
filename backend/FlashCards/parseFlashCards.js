@@ -51,7 +51,7 @@ async function parseFlashCards(text, retries = 5) {
 
     // Log rate limit headers
     const headers = response.headers;
-    console.log(`✅ Flashcards generated. Remaining requests: ${headers['x-ratelimit-remaining-requests']}`);
+    console.log(`Flashcards generated. Remaining requests: ${headers['x-ratelimit-remaining-requests']}`);
     
     return response.data.choices[0].message.content.trim();
 
@@ -60,14 +60,14 @@ async function parseFlashCards(text, retries = 5) {
       const { status, headers } = error.response;
       
       if (status === 429 && retries > 0) {
-        const retryAfterMs = headers['retry-after-ms'] || 3000; // Default 3s retry if no header
+        const retryAfterMs = headers['retry-after-ms'] || 3000; 
         console.warn(`⚠️ Rate limit exceeded. Retrying in ${retryAfterMs / 1000} seconds...`);
         await new Promise(resolve => setTimeout(resolve, retryAfterMs));
         return parseFlashCards(text, retries - 1);
       }
     }
     
-    console.error('❌ Error during flashcard generation:', error);
+    console.error('Error during flashcard generation:', error);
     throw error;
   }
 }
