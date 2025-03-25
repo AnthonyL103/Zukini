@@ -54,7 +54,7 @@ resource "aws_launch_template" "zukini_template" {
 
   # Add the IAM instance profile for CloudWatch
   iam_instance_profile {
-    name = aws_iam_instance_profile.ec2_profile.name
+    arn = aws_iam_instance_profile.ec2_profile.arn
   }
 
   user_data = base64encode(<<EOF
