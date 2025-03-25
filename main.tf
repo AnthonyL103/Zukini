@@ -180,7 +180,7 @@ if (process.env.NODE_ENV !== 'production') {
       colorize(),
       timestamp(),
       printf(({ level, message, timestamp }) => {
-        return `${timestamp} ${level}: ${message}`;
+        return `$${timestamp} $${level}: $${message}`;
       })
     )
   }));
