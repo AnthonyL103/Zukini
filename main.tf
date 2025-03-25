@@ -71,7 +71,11 @@ sudo apt install -y nginx git curl nodejs npm python3-pip build-essential net-to
 
 # Install CloudWatch agent
 echo "Installing CloudWatch agent..."
-sudo apt install -y amazon-cloudwatch-agent
+mkdir -p /tmp/cloudwatch
+cd /tmp/cloudwatch
+wget https://amazoncloudwatch-agent.s3.amazonaws.com/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb
+sudo dpkg -i amazon-cloudwatch-agent.deb
+sudo apt-get install -f -y
 
 # Configure CloudWatch agent
 echo "Configuring CloudWatch agent..."
