@@ -37,6 +37,9 @@ jobs:
           terraform import aws_amplify_app.zukini_amplify d35bfbej5ol5tf
           terraform import aws_autoscaling_group.zukini_asg zukini-asg
           terraform import aws_lb_listener.zukini_https_listener arn:aws:elasticloadbalancing:us-west-2:060795900722:listener/app/zukini-alb/ea77344562d7692d/49cce9d796385b53
+          terraform import aws_cloudwatch_log_group.zukini_api_logs /zukini/api/calls
+          terraform import aws_iam_role.ec2_cloudwatch_role zukini-ec2-cloudwatch-role
+          terraform import aws_iam_instance_profile.ec2_profile zukini-ec2-cloudwatch-profile
 
 
       - name: Terraform Plan
