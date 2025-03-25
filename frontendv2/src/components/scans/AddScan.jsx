@@ -5,7 +5,7 @@ import * as mammoth from 'mammoth';
 import { jsPDF } from 'jspdf';
 import { useUser } from "../authentication/UserContext";
 
-const AddScan = ({ onAddScan, scrollToTop, slidesRef }) => {
+const AddScan = ({ onAddScan, scrollToTop}) => {
   const [file, setFile] = useState(null);
   const fileInputRef = useRef(null);
   const [errorMessage, setErrorMessage] = useState("");

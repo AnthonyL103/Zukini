@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useScan } from '../scans/ScanContext'; // Ensure correct import
+import { useScan } from '../scans/ScanContext'; 
 import { useFC } from '../flashcards/FCcontext'; 
 import { useUser } from '../authentication/UserContext';
 import PencilLoader from '../utils/pencilloader';
@@ -11,7 +11,7 @@ import { Trash2 } from 'lucide-react'
 export const FlashcardMode = () => {
   const { currentFC, setCurrentFC } = useFC(); 
   const { currentScan } = useScan();
-  const { userId, setTotalFlashcards} = useUser();
+  const { userId, setTotalFlashcards, isPremium} = useUser();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [showFCNameModal, setShowFCNameModal] = useState(false);
@@ -27,9 +27,10 @@ export const FlashcardMode = () => {
   const [newAnswer, setNewAnswer] = useState("");
   const [saveEdit, setsaveEdit] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [regenerate, setRegenerate] = useState(false);
   
   useEffect(() => {
-    if (currentFC && !saveEdit) {
+    if (currentFC && !saveEdit && !regenerate) {
       console.log("currentFC.flashcards", currentFC.flashcards);
       setDisplayedFC(currentFC.flashcards); 
       console.log(DisplayedFC);
@@ -72,7 +73,7 @@ export const FlashcardMode = () => {
   
     setDisplayedFC([...DisplayedFC, newFlashcard]);
   
-    // Reset form after adding
+    //reset form after adding
     setShowAddFlashcardForm(false);
     setNewQuestion("");
     setNewAnswer("");
@@ -187,19 +188,21 @@ export const FlashcardMode = () => {
       console.error("No scan selected.");
       return;
     }
-    setisLoading(true);
-    setshowpastFC(false);
+    
     
     const flashcardStorageKey = `flashcards_${userId}_${currentScan.scankey}`;
 
     // Check if flashcards exist for this user and scan
     const storedFlashcards = localStorage.getItem(flashcardStorageKey);
-    if (storedFlashcards) {
+    if (!isPremium && storedFlashcards) {
         console.log("Loading flashcards from local storage for user:", userId);
         setDisplayedFC(JSON.parse(storedFlashcards));
         setSaveEnabled(false);
         return;
     }
+
+    setisLoading(true);
+    setshowpastFC(false);
   
     const payload = {
       scanname: currentScan.scanname || "Unknown Scan",  // Ensure scanname is not undefined
@@ -242,13 +245,15 @@ export const FlashcardMode = () => {
         
       setSaveEnabled(true);
       setDisplayedFC(parsedFlashcards);
-      setisLoading(false);
       setshowpastFC(true);
       localStorage.setItem(flashcardStorageKey, JSON.stringify(parsedFlashcards));
       console.log("Generated Flashcards:", parsedFlashcards);
     } catch (error) {
       console.error("Error generating flashcards:", error);
       alert("Failed to generate flashcards. Please try again.");
+    } finally {
+      setisLoading(false);
+      setRegenerate(false);
     }
   };
   
@@ -287,18 +292,56 @@ export const FlashcardMode = () => {
       <h2 className="text-2xl font-bold text-[#0f0647] mb-4">
         Flashcard Name: {currentFC?.fcsessionname || "None"}
       </h2>
+
+      <div className= "flex flex-row gap-4 py-4"> 
+
+      {isPremium && (
+        <button
+
+          onClick={() => {
+            generateFlashcards();
+            setRegenerate(true);}}
+          
+          className={`flex flex-row py-2 px-4 gap-2'} ${
+            regenerate
+            ? "bg-gray-400 cursor-not-allowed opacity-50 rounded-lg" 
+            : "bg-[#0f0647] hover:bg-[#2c2099] text-white rounded-lg hover:bg-opacity-90 gap-1"
+          } `}
+
+        >
+          <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.8"
+                    className="w-6 h-6 stroke-yellow-600"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"
+                    ></path>
+                  </svg>
+          Regenerate
+        </button>
+      )}
       
       <button
               onClick={() => setshowVA(true)}
-              className="py-2 px-6 bg-[#0f0647] hover:bg-[#2c2099] text-white rounded-lg hover:bg-opacity-90 w-32"
+              className="py-2 px-4 bg-[#0f0647] hover:bg-[#2c2099] text-white rounded-lg hover:bg-opacity-90 min-w-32"
             >
               View/Edit
       </button>
-      
       </div>
       
-      
-      {DisplayedFC?.length > 0 ?(
+      </div>
+
+
+      {isloading ?  (
+        <div className="flex justify-center items-center h-64">
+        <PencilLoader />
+      </div>
+      ) : DisplayedFC?.length > 0 ?(
         <>
           <div
             onClick={() => setIsFlipped(!isFlipped)}
@@ -362,10 +405,6 @@ export const FlashcardMode = () => {
             </div>
           </div>
         </>
-      ) : isloading ? (
-        <div className="flex justify-center items-center h-64">
-          <PencilLoader />
-        </div>
       ) : saveEdit ? ( 
         <div className="flex justify-center items-center h-64">
           <PencilLoader />
@@ -452,7 +491,7 @@ export const FlashcardMode = () => {
                                           onChange={(e) => {
                                             const updatedQuestion = e.target.value;
                                             setNewQuestion(updatedQuestion);
-                                            handleAnswerChange(updatedQuestion, newAnswer); // Pass updated values
+                                            handleAnswerChange(updatedQuestion, newAnswer); 
                                           }}
                                         />
 
@@ -464,7 +503,7 @@ export const FlashcardMode = () => {
                                           onChange={(e) => {
                                             const updatedAnswer = e.target.value;
                                             setNewAnswer(updatedAnswer);
-                                            handleAnswerChange(newQuestion, updatedAnswer); // Pass updated values
+                                            handleAnswerChange(newQuestion, updatedAnswer); 
                                           }}
                                         />
 

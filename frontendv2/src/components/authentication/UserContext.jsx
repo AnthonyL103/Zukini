@@ -65,24 +65,25 @@ export const UserProvider = ({ children }) => {
         const storedName = localStorage.getItem("name");
 
         if (storedUserId !== userId || storedEmail !== email || storedName !== name) {
-            console.log("💾 Updating localStorage with new user info");
+            console.log("Updating localStorage with new user info");
             localStorage.setItem("userId", userId);
             localStorage.setItem("email", email);
             localStorage.setItem("name", name);
         }
 
         if (sessionStorage.getItem("guestUserId")) {
-            console.log("🗑️ Deleting guest data since user logged in");
+            console.log("Deleting guest data since user logged in");
             deleteGuestData(sessionStorage.getItem("guestUserId"));
             sessionStorage.removeItem("guestUserId");
         }
     }, [userId, email, name]);
 
-    // Unified fetchUserStats function to get all user data including subscription status
     const fetchUserStats = async () => {
         if (!userId) return;
         
         try {
+            //promise all setttled lets us use the data even if a fetch fials and we can do it parallely meaning 500 ms vs 
+            ///doing fetch all all seqentially which is x3 times slower here
             const [fcRes, mtRes, scanRes, subRes] = await Promise.allSettled([
                 fetch(`https://api.zukini.com/display/displayflashcards?userId=${userId}`),
                 fetch(`https://api.zukini.com/display/displaymocktests?userId=${userId}`),
@@ -93,6 +94,7 @@ export const UserProvider = ({ children }) => {
             const parseResponse = async (res) => 
                 res.status === "fulfilled" && res.value.ok ? await res.value.json() : [];
 
+            //this is where we handle the data from the fetches
             const [FC, MT, Scans, SubStatus] = await Promise.all([
                 parseResponse(fcRes),
                 parseResponse(mtRes), 
@@ -104,7 +106,6 @@ export const UserProvider = ({ children }) => {
             setTotalMockTests(MT?.length || 0); 
             setTotalScans(Scans?.length || 0);
             
-            // Handle subscription status
             if (SubStatus?.success) {
                 setSubscriptionStatus(SubStatus.status || 'free');
                 setIsPremium(SubStatus.status === 'premium');
@@ -121,12 +122,10 @@ export const UserProvider = ({ children }) => {
         }
     };
 
-    // Fetch user stats when userId changes
     useEffect(() => {
         fetchUserStats();
     }, [userId]);
 
-    // Create context value with all necessary state
     const contextValue = useMemo(() => ({
         userId, setUserId,
         email, setEmail,

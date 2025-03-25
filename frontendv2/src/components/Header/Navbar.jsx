@@ -6,12 +6,11 @@ import { Settings } from 'lucide-react';
 
 const Navbar = () => {
       
-  const { userId, setUserId, setEmail, setTotalScans, setTotalFlashcards, setTotalMockTests, setName, setisforgot, isPremium} = useUser();
+  const { userId, setUserId, setEmail, setTotalScans, setTotalFlashcards, setTotalMockTests, setName, setisforgot, isPremium, setIsPremium, setSubscriptionStatus} = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   const handleLogout = () => {
 
-    // Clear all stored user data
     localStorage.removeItem("currentScan");
     localStorage.removeItem("userId");
     localStorage.removeItem("email");
@@ -31,7 +30,6 @@ const Navbar = () => {
     const newGuestId = `guest-${uuidv4()}`;
     sessionStorage.setItem("guestUserId", newGuestId);
 
-    // Reset state values
     setUserId(newGuestId);
     setEmail(null);
     setName(null);
@@ -39,11 +37,12 @@ const Navbar = () => {
     setTotalFlashcards(0);
     setTotalMockTests(0);
     setisforgot(false);
+    setIsPremium(false);
+    setSubscriptionStatus('free');
 
-    // Reload the page *after* all state updates to ensure a clean reset
     setTimeout(() => {
         window.location.reload();
-    }, 100); // Delay to allow state updates to apply before reload
+    }, 100); //delay to allow state updates to apply before reload for user context
 };
 
 
@@ -52,7 +51,7 @@ const [isGuestUser, setIsGuestUser] = useState(false);
 useEffect(() => {
     console.log("Navbar Rendered", { userId });
   setIsGuestUser(userId && typeof userId === "string" && userId.startsWith("guest-"));
-}, [userId]); // Only update when `userId` changes
+}, [userId]); //we only update when `userId` changes
 
 
   const location = useLocation();
@@ -146,7 +145,7 @@ useEffect(() => {
             </Link>
           </div>
 
-          {/* Desktop Auth Buttons */}
+          {/*For desktop*/}
           <div className={`hidden md:flex md:items-center  ${isHomePage ? 'bg-transparent' : 'bg-none'}`}>
           {!isGuestUser ? (
               <>
@@ -216,7 +215,7 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* Mobile Navigation Menu */}
+        {/*For mobile*/}
         <div 
           className={`
             absolute left-0 right-0 bg-white shadow-lg md:hidden 

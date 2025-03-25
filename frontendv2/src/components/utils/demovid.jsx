@@ -11,7 +11,7 @@ const VideoPlayer = () => {
             videoRef.current.play();
           }
         },
-        { threshold: 0.5 } // Video plays when at least 50% is visible
+        { threshold: 0.5 } 
       );
   
       if (videoRef.current) {
@@ -31,14 +31,13 @@ const VideoPlayer = () => {
       initial="hidden"
       animate="visible"
     >
-      {/* Video Player */}
+      
       <video ref={videoRef} className="w-full h-full" playsInline 
   muted controls preload="auto"> 
         <source src="/DemoVid.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
-      {/* Centered Play/Pause Button */}
       
     </motion.div>
   );
