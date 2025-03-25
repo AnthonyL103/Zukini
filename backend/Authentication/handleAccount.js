@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { userinfos } = require('../Database/db');
+const { logger } = require('./logging'); 
 const app = express();
 app.use('/account/stripe/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
@@ -11,7 +12,7 @@ const router = express.Router();
 const sgMail = require('@sendgrid/mail');
 require('dotenv').config();
 app.use(cors());
-const { v4: uuidv4 } = require('uuid'); // Import uuid
+const { v4: uuidv4 } = require('uuid'); 
 let verificationCodes = {}; 
 sgMail.setApiKey(process.env.MAILERKEY);
 
@@ -19,10 +20,9 @@ sgMail.setApiKey(process.env.MAILERKEY);
 
 async function sendVerificationEmail(email, verificationLink) {
     try {
-        console.log(process.env.MAILERKEY, process.env.EMAIL_FROM);
         const msg = {
             to: email,
-            from: process.env.EMAIL_FROM, // Must be a verified sender in SendGrid
+            from: process.env.EMAIL_FROM, 
             subject: "Verify Your Email - Zukini",
             text: `Click the link to verify your email: ${verificationLink}`,
             html: `<p>Click the link below to verify your email:</p>
@@ -30,7 +30,6 @@ async function sendVerificationEmail(email, verificationLink) {
         };
 
         await sgMail.send(msg);
-        console.log(`Verification email sent to ${email}`);
     } catch (error) {
         console.error("Error sending verification email:", error.response ? error.response.body : error);
     }
@@ -42,11 +41,21 @@ async function appendnewusertoDB(newEntry) {
         const existingUser = await userinfos.findOne({ where: { email: newEntry.email } });
         if (existingUser) {
             if (!existingUser.verified) {
-                console.log('User exists but is not verified. Sending verification email again.');
                 const verificationLink = `https://api.zukini.com/account/verify/${existingUser.verification_token}`;
+                logger.info({
+                    type: 'unverified_user_retry',
+                    userId: existingUser.id,
+                    email: newEntry.email,
+                    verificationLink: verificationLink
+                });
                 await sendVerificationEmail(newEntry.email, verificationLink);
                 return { success: false, message: "User already exists but is not verified. A new verification email has been sent." };
             }
+            logger.warn({
+                type: 'registration_duplicate',
+                email: newEntry.email,
+                existingUserId: existingUser.id
+            });
             return { success: false, message: "User with this email already exists." };
         }
         
@@ -65,17 +74,36 @@ async function appendnewusertoDB(newEntry) {
             verification_token: verificationToken,
         });
 
-        console.log(`New user created with ID: ${userId}`);
+
         
         const verificationLink = `https://api.zukini.com/account/verify/${verificationToken}`;
 
-        console.log(`Verification Link: ${verificationLink}`);
+        logger.info({
+            type: 'user_created',
+            userId: userId,
+            email: newEntry.email,
+            verified: false,
+            verificationSent: true,
+            timestamp: new Date().toISOString()
+        });
+
         
         await sendVerificationEmail(newEntry.email, verificationLink);
+
+        logger.info({
+            type: 'verification_email_sent',
+            userId: userId,
+            email: newEntry.email
+        });
         return { success: true, message: "User registered successfully Please check your email for verification", userId, email: newEntry.email};
 
     } catch (error) {
-        console.error('Error appending to the database:', error);
+        logger.error({
+            type: 'user_registration_error',
+            email: newEntry.email,
+            error: error.message,
+            stack: error.stack
+        });
         return { success: false, message: "Database error" };
     }
 }
@@ -83,6 +111,12 @@ async function appendnewusertoDB(newEntry) {
 
 router.post('/signup', async (req, res) => {
     const { Email, Password, Name } = req.body;
+
+    logger.info({
+        type: 'signup_attempt',
+        email: Email?.toLowerCase(),
+        hasName: !!Name
+    });
 
     if (!Email || !Password || !Name) {
         return res.status(400).json({ success: false, message: "Missing required fields" });
@@ -97,19 +131,36 @@ router.post('/signup', async (req, res) => {
     const result = await appendnewusertoDB(newEntry);
     
     if (result.success) {
+        logger.info({
+            type: 'signup_success',
+            userId: result.userId,
+            email: result.email
+        });
         return res.status(201).json(result);
     } else {
+        logger.warn({
+            type: 'signup_failure',
+            reason: result.message,
+            email: Email?.toLowerCase()
+        });
         return res.status(400).json(result);
     }
 });
 
 router.post('/changepassword', async (req, res) => {
     const { userId, oldPassword, newPassword, isforgot } = req.body;
+
+    
     
     if (isforgot) {
         if (!userId || !newPassword) {
             return res.status(400).json({ success: false, message: "Missing required fields" });
         }
+
+        logger.info({
+            type: 'changepasswordforgot_attempt',
+            userId: userId?.toLowerCase(),
+        });
         
         try {
             const user = await userinfos.findOne({ where: { id: userId } });
@@ -126,10 +177,17 @@ router.post('/changepassword', async (req, res) => {
                 { password: hashedNewPassword },
                 { where: { id: userId } }
             );
-    
+            logger.info({
+                type: 'changepasswordforgot_success',
+                userId: userId,
+            });
             return res.status(200).json({ success: true, message: "Password updated successfully" });
         } catch (error) {
-            console.error("Error changing password:", error);
+            logger.warn({
+                type: 'changepasswordforgot_failure',
+                reason: "Internal server error",
+                userId: userId,
+            });
             return res.status(500).json({ success: false, message: "Internal server error" });
         }
     } 
@@ -137,6 +195,11 @@ router.post('/changepassword', async (req, res) => {
         if (!userId || !oldPassword || !newPassword) {
             return res.status(400).json({ success: false, message: "Missing required fields" });
         }
+
+        logger.info({
+            type: 'changepassword_attempt',
+            userId: userId?.toLowerCase(),
+        });
     
         try {
             const user = await userinfos.findOne({ where: { id: userId } });
@@ -157,10 +220,18 @@ router.post('/changepassword', async (req, res) => {
                 { password: hashedNewPassword },
                 { where: { id: userId } }
             );
+            logger.info({
+                type: 'changepassword_success',
+                userId: userId,
+            });
     
             return res.status(200).json({ success: true, message: "Password updated successfully" });
         } catch (error) {
-            console.error("Error changing password:", error);
+            logger.warn({
+                type: 'changepasswordforgot_failure',
+                reason: "Internal server error",
+                userId: userId,
+            });
             return res.status(500).json({ success: false, message: "Internal server error" });
         }
     }
@@ -171,8 +242,9 @@ router.post('/changepassword', async (req, res) => {
 router.get("/verify/:token", async (req, res) => {
     const { token } = req.params;
 
+    const user = await userinfos.findOne({ where: { verification_token: token } });
+
     try {
-        const user = await userinfos.findOne({ where: { verification_token: token } });
 
         if (!user) {
             const alreadyVerifiedUser = await userinfos.findOne({ where: { verified: true } });
@@ -187,15 +259,28 @@ router.get("/verify/:token", async (req, res) => {
             { where: { id: user.id } }
         );
 
+        logger.info( {
+            type:"token_verified",
+            userId: user.id,
+            email: user.email
+        });
+
+
         return res.send("<h2>Email verified successfully! You can now log in.</h2>");
     } catch (error) {
-        console.error("Error verifying email:", error);
+        logger.warn( {
+            type:"token_verification_error",
+            userId: user.id,
+            email: user.email
+        });
         return res.status(500).send("Database error.");
     }
 });
 
 async function sendEmail(to, subject, text) {
-    console.log(`Sending email to ${to} with subject: ${subject}`);
+
+    
+
     try {
         const msg = {
             to: to,
@@ -206,9 +291,20 @@ async function sendEmail(to, subject, text) {
         };
 
         await sgMail.send(msg);
-        console.log(`Email successfully sent to ${to}`);
+        logger.info({
+            type: 'email_sent',
+            to: to,
+            subject: subject,
+            text: text
+        });
+        
     } catch (error) {
-        console.error("Error sending email:", error.response ? error.response.body : error);
+        logger.warn({
+            type: 'email_sent_failure',
+            to: to,
+            subject: subject,
+            text: text
+        });
     }
 }
 
@@ -221,72 +317,128 @@ router.post('/sendCode', async (req, res) => {
         return res.status(404).json({ success: false, message: "User doesn't exist" });
     }
 
-    const code = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
-    const expiresAt = Date.now() + 5 * 60 * 1000; // Code expires in 5 minutes
+    const code = Math.floor(100000 + Math.random() * 900000).toString(); 
+    const expiresAt = Date.now() + 5 * 60 * 1000; 
     
     verificationCodes[email] = { code, expiresAt };
 
-    console.log(`Generated Code for ${email}: ${code}`); // Debugging
 
     try {
         await sendEmail(email, "Your Verification Code", `Your verification code is: <strong>${code}</strong>. This code will expire in 5 minutes.`);
+
+        logger.info({
+            type: 'code_sent',
+            email: email,
+            code: code
+        });
         res.json({ success: true, message: "Code sent successfully" });
+
+
         
         setTimeout(() => {
             if (verificationCodes[email] && verificationCodes[email].expiresAt <= Date.now()) {
                 delete verificationCodes[email];
-                console.log(`Code for ${email} has expired and been deleted.`);
             }
         }, 5 * 60 * 1000); 
+
+
     } catch (error) {
-        console.error("Error sending code:", error);
+        logger.warn({
+            type: 'code_sent_failure',
+            email: email,
+            code: code
+        });
         res.status(500).json({ success: false, message: "Failed to send verification code" });
     }
 });
 
-// Verify Code API
 router.post('/verifyCode', (req, res) => {
     const { email, code } = req.body;
     const stored = verificationCodes[email];
 
     if (!stored || stored.code !== code || Date.now() > stored.expiresAt) {
+        logger.info({
+            type: 'code_verify_failed',
+            email: email,
+            code: code,
+        });
         return res.status(400).json({ success: false, message: "Invalid or expired code" });
     }
 
-    delete verificationCodes[email]; // Remove after successful verification
+    delete verificationCodes[email]; 
+    logger.info({
+        type: 'code_verify_success',
+        email: email,
+        code: code,
+    });
     res.json({ success: true, message: "Code verified successfully" });
 });
 
 
-//random test
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
+    logger.info({
+        type: 'login_attempt',
+        email: email?.toLowerCase()
+    });
+
     if (!email || !password) {
+        logger.warn({
+            type: 'login_failure',
+            reason: 'missing_credentials',
+            email: email?.toLowerCase()
+        });
         return res.status(400).json({ success: false, message: "Missing email or password" });
     }
 
     try {
-        console.log("checking for ", email.toLowerCase());
         const user = await userinfos.findOne({ where: { email: email.toLowerCase() } });
 
         if (!user) {
+            logger.warn({
+                type: 'login_failure',
+                reason: 'user_not_found',
+                email: email?.toLowerCase()
+            });
             return res.status(400).json({ success: false, message: "User not found" });
         }
 
         if (!user.verified) {
-            console.log('User not verified');
+            logger.warn({
+                type: 'login_failure',
+                reason: 'not_verified',
+                email: email?.toLowerCase(),
+                userId: user.id
+            });
             return res.status(400).json({ success: false, message: "Please verify your email before logging in." });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
+            logger.warn({
+                type: 'login_failure',
+                reason: 'incorrect_password',
+                email: email?.toLowerCase(),
+                userId: user.id
+            });
             return res.status(400).json({ success: false, message: "Incorrect password" });
         }
 
+        logger.info({
+            type: 'login_success',
+            userId: user.id,
+            email: user.email
+        });
+
         return res.status(200).json({ success: true, message: "Login successful", userId: user.id, email: user.email, name: user.name });
     } catch (error) {
-        console.error('Error checking login:', error);
+        logger.error({
+            type: 'login_error',
+            error: error.message,
+            stack: error.stack,
+            email: email?.toLowerCase()
+        });
         return res.status(500).json({ success: false, message: "Database error" });
     }
 });
@@ -297,7 +449,10 @@ router.post('/login', async (req, res) => {
 router.post('/loginforgotpass', async (req, res) => {
     const { email } = req.body;
     
-    console.log(email);
+    logger.info({
+        type: 'loginforgotpass_attempt',
+        email: email?.toLowerCase()
+    })
 
     if (!email) {
         return res.status(400).json({ success: false, message: "Email is required" });
@@ -305,16 +460,29 @@ router.post('/loginforgotpass', async (req, res) => {
 
     try {
         const user = await userinfos.findOne({ where: { email: email } });
-        console.log("made it here");
 
         if (!user) {
+            logger.warn({
+                type: 'loginforgotpass_user_not_found',
+                email: email?.toLowerCase()
+            })
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
         if (!user.verified) {
+            logger.warn({
+                type: 'loginforgotpass_user_not_verified',
+                email: email?.toLowerCase()
+            })
             return res.status(403).json({ success: false, message: "Please verify your email before logging in." });
         }
-        console.log("made it here2");
+
+        logger.info({
+            type: 'loginforgotpass_success',
+            email: email?.toLowerCase()
+        })
+
+
         return res.status(200).json({ 
             success: true, 
             message: "Login successful", 
@@ -324,7 +492,10 @@ router.post('/loginforgotpass', async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error during login via email:", error);
+        logger.warn({
+            type: 'loginforgotpass_internal_server_error',
+            email: email?.toLowerCase()
+        })
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 });
@@ -336,7 +507,7 @@ const rejectGuestUsers = async (req, res, next) => {
         return res.status(401).json({ success: false, message: "User ID is required" });
     }
     
-    // Check if userId starts with "guest, so we can reject them from accessing premium features"
+    //check if userId starts with "guest, so we can reject them from accessing premium features"
     if (userId.toString().startsWith('guest')) {
         return res.status(469).json({ 
             success: false, 
@@ -352,11 +523,20 @@ const rejectGuestUsers = async (req, res, next) => {
 router.post('/stripe/create-checkout-session', rejectGuestUsers, async (req, res) => {
     try {
         const { userId } = req.body;
+
+        logger.info({
+            type: 'checkout_session_attempt',
+            userId: userId
+        });
         
-        // Get the userID from database
         const user = await userinfos.findOne({ where: { id: userId } });
         
         if (!user) {
+            logger.warn({
+                type: 'checkout_session_failure',
+                reason: 'user_not_found',
+                userId: userId
+            });
             return res.status(404).json({ success: false, message: "User not found" });
         }
         
@@ -404,11 +584,22 @@ router.post('/stripe/create-checkout-session', rejectGuestUsers, async (req, res
             cancel_url: `${process.env.APP_URL}/account?canceled=true`,
         });
 
-
+        logger.info({
+            type: 'checkout_session_success',
+            userId: user.id,
+            email: user.email,
+            customerId: customerId,
+            sessionId: session.id
+        });
         
         res.json({ success: true, url: session.url });
     } catch (error) {
-        console.error('Error creating checkout session:', error);
+        logger.error({
+            type: 'checkout_session_error',
+            error: error.message,
+            stack: error.stack,
+            userId: req.body.userId
+        });
         res.status(500).json({ success: false, message: error.message });
     }
 });
@@ -417,23 +608,43 @@ router.post('/stripe/create-checkout-session', rejectGuestUsers, async (req, res
 router.post('/stripe/create-portal-session', rejectGuestUsers, async (req, res) => {
     try {
         const { userId } = req.body;
+
+        logger.info({
+            type: 'portal_session_attempt',
+            userId: userId
+        });
         
-        // Get the user from database
         const user = await userinfos.findOne({ where: { id: userId } });
         
         if (!user || !user.stripe_customer_id) {
+            logger.warn({
+                type: 'portal_session_failure',
+                reason: 'user_or_customer_not_found',
+                userId: userId
+            });
             return res.status(404).json({ success: false, message: "User or Stripe customer not found" });
         }
         
-        // Create the portal session
         const session = await stripe.billingPortal.sessions.create({
             customer: user.stripe_customer_id,
             return_url: `${process.env.APP_URL}/account`,
         });
+
+        logger.info({
+            type: 'portal_session_created',
+            userId: userId,
+            customerId: user.stripe_customer_id,
+            sessionId: session.id
+        });
         
         res.json({ success: true, url: session.url });
     } catch (error) {
-        console.error('Error creating portal session:', error);
+        logger.error({
+            type: 'portal_session_error',
+            error: error.message,
+            stack: error.stack,
+            userId: req.body.userId
+        });
         res.status(500).json({ success: false, message: error.message });
     }
 });
@@ -442,13 +653,29 @@ router.post('/stripe/create-portal-session', rejectGuestUsers, async (req, res) 
 router.get('/stripe/subscription-status', rejectGuestUsers, async (req, res) => {
     try {
         const { userId } = req.query;
+
+        logger.info({
+            type: 'subscription_status_check',
+            userId: userId
+        });
         
-        // Get the user from database
         const user = await userinfos.findOne({ where: { id: userId } });
         
         if (!user) {
+            logger.warn({
+                type: 'subscription_status_failure',
+                reason: 'user_not_found',
+                userId: userId
+            });
             return res.status(404).json({ success: false, message: "User not found" });
         }
+
+        logger.info({
+            type: 'subscription_status_success',
+            userId: userId,
+            status: user.subscription_status || 'free',
+            isSubscribed: user.subscription_status === 'premium'
+        });
         
         res.json({ 
             success: true,
@@ -456,12 +683,17 @@ router.get('/stripe/subscription-status', rejectGuestUsers, async (req, res) => 
             isSubscribed: user.subscription_status === 'premium'
         });
     } catch (error) {
-        console.error('Error checking subscription status:', error);
+        logger.error({
+            type: 'subscription_status_error',
+            error: error.message,
+            stack: error.stack,
+            userId: req.query.userId
+        });
         res.status(500).json({ success: false, message: error.message });
     }
 });
 
-// Webhook to handle Stripe events
+//webhook to handle Stripe events
 router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (req, res) => {
     const sig = req.headers['stripe-signature'];
     let event;
@@ -472,20 +704,34 @@ router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (r
             sig, 
             process.env.STRIPE_WEBHOOK_SECRET
         );
+        logger.info({
+            type: 'stripe_webhook_received',
+            eventType: event.type,
+            eventId: event.id
+        });
     } catch (err) {
-        console.error(`Webhook Error: ${err.message}`);
+
+        logger.error({
+            type: 'stripe_webhook_signature_error',
+            error: err.message,
+            headers: req.headers['stripe-signature'] ? 'present' : 'missing'
+        });
         return res.status(400).send(`Webhook Error: ${err.message}`);
     }
     
-    // Handle the event
-    console.log(`Webhook received: ${event.type}`);
-    
+
     switch (event.type) {
         case 'customer.subscription.created': {
-            // Handle new subscription creation
             const subscription = event.data.object;
             const customerId = subscription.customer;
             
+            logger.info({
+                type: 'subscription_created',
+                subscriptionId: subscription.id,
+                customerId: customerId,
+                status: subscription.status
+            });
+
             const user = await userinfos.findOne({
                 where: { stripe_customer_id: customerId }
             });
@@ -496,7 +742,20 @@ router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (r
                     { where: { id: user.id } }
                 );
                 await sendEmail(user.email, "Subscription Activated", `Dear <strong>${user.name}</strong> Thank you for subscribing to Zukini Premium!`);
-                console.log(`User ${user.id} set to premium subscription status`);
+                logger.info({
+                    type: 'user_upgraded_to_premium',
+                    userId: user.id,
+                    customerId: customerId,
+                    subscriptionId: subscription.id
+                });
+            }
+            
+            else if (!user) {
+                logger.warn({
+                    type: 'subscription_user_not_found',
+                    customerId: customerId,
+                    subscriptionId: subscription.id
+                });
             }
             break;
         }
@@ -507,7 +766,15 @@ router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (r
             const status = subscription.status;
             const canceledAtPeriodEnd = subscription.cancel_at_period_end;
             const eventId = event.id;
-            console.log(`Subscription updated: Customer ID ${customerId}, Status: ${status}, Canceled at period end: ${canceledAtPeriodEnd}`);
+
+            logger.info({
+                type: 'subscription_updated',
+                subscriptionId: subscription.id,
+                customerId: customerId,
+                status: status,
+                canceledAtPeriodEnd: canceledAtPeriodEnd,
+                eventId: eventId
+            });
             
             try {
                 const user = await userinfos.findOne({
@@ -516,11 +783,21 @@ router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (r
                 
                 if (user) {
                     if (user.subscription_last_event_id === eventId) {
-                        console.log(`Event ${eventId} has already been processed for user ${user.id}, skipping.`);
+                        logger.info({
+                            type: 'duplicate_event_skipped',
+                            eventId: eventId,
+                            userId: user.id
+                        });
                         break;
                     }
                     if ((status === 'active' || status === 'trialing') && !canceledAtPeriodEnd && user.subscription_status !== 'premium') {
-                        console.log(`Upgrading user ${user.id} from free to premium status`);
+                        logger.info({
+                            type: 'user_upgraded_to_premium',
+                            userId: user.id,
+                            customerId: customerId,
+                            subscriptionId: subscription.id,
+                            previousStatus: user.subscription_status
+                        });
                         await userinfos.update(
                             { subscription_status: 'premium' },
                             { where: { id: user.id } }
@@ -529,28 +806,55 @@ router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (r
                         await sendEmail(user.email, "Subscription Activated", `Dear <strong>${user.name}</strong>, Thank you for subscribing to Zukini Premium!`);
                         return res.send({ received: true });
                     } 
-                    // Handling cancellations (still active but marked for cancellation)
                     else if ((status === 'active' || status === 'trialing') && canceledAtPeriodEnd === true && user.subscription_status === 'premium') {
-                        console.log(`User ${user.id} subscription has been marked for cancellation at period end`);
+                        logger.info({
+                            type: 'subscription_marked_for_cancellation',
+                            userId: user.id,
+                            customerId: customerId,
+                            subscriptionId: subscription.id
+                        });
                         await sendEmail(user.email, "Subscription Cancellation Confirmed", `Dear <strong>${user.name}</strong>, your Zukini premium subscription cancellation has been processed. You will continue to have premium access until the end of your current billing period.`);
                         return res.send({ received: true });
                     }
                     else if ((status == 'active' || status == 'trialing') && canceledAtPeriodEnd === false && user.subscription_status === 'premium') {
-                        console.log(`User ${user.id} subscription is still active`);
+                        logger.info({
+                            type: 'subscription_reactivated',
+                            userId: user.id,
+                            customerId: customerId,
+                            subscriptionId: subscription.id
+                        });
                         await sendEmail(user.email, "Subscription reactivated", `Dear <strong>${user.name}</strong>, your Zukini premium subscription has been successfully reactivated.`);
                         return res.send({ received: true });
                     }
                     else {
-                        console.log(`No status change detected or no email needed. Current: ${user.subscription_status}, Stripe status: ${status}, Canceled at period end: ${canceledAtPeriodEnd}`);
+                        logger.info({
+                            type: 'subscription_no_status_change',
+                            userId: user.id,
+                            currentStatus: user.subscription_status,
+                            stripeStatus: status,
+                            canceledAtPeriodEnd: canceledAtPeriodEnd
+                        });
                     }
 
                     await userinfos.update(
                         { subscription_last_event_id: eventId },
                         { where: { id: user.id } }
                     );
+                } else {
+                    logger.warn({
+                        type: 'subscription_user_not_found',
+                        customerId: customerId,
+                        subscriptionId: subscription.id
+                    });
                 }
             } catch (error) {
-                console.error(`Error processing subscription update: ${error.message}`);
+                logger.error({
+                    type: 'subscription_update_processing_error',
+                    error: error.message,
+                    stack: error.stack,
+                    customerId: customerId,
+                    subscriptionId: subscription.id
+                });
             }
             break;
         }
@@ -558,6 +862,12 @@ router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (r
         case 'customer.subscription.deleted': {
             const subscription = event.data.object;
             const customerId = subscription.customer;
+
+            logger.info({
+                type: 'subscription_deleted',
+                subscriptionId: subscription.id,
+                customerId: customerId
+            });
             
             const user = await userinfos.findOne({
                 where: { stripe_customer_id: customerId }
@@ -569,13 +879,30 @@ router.post('/stripe/webhook', express.raw({type: 'application/json'}), async (r
                     { where: { id: user.id } }
                 );
                 await sendEmail(user.email, "Subscription Canceled", `Dear <strong>${user.name}</strong> Your subscription has been canceled successfully.`);
-                console.log(`User ${user.id} downgraded to free subscription status`);
+                logger.info({
+                    type: 'user_downgraded_to_free',
+                    userId: user.id,
+                    customerId: customerId,
+                    subscriptionId: subscription.id
+                });
+            } else {
+                logger.warn({
+                    type: 'subscription_deleted_user_not_found',
+                    customerId: customerId,
+                    subscriptionId: subscription.id
+                });
             }
             break;
         }
+
+        default:
+            logger.info({
+                type: 'unhandled_stripe_event',
+                eventType: event.type,
+                eventId: event.id
+            });
     }
     
-    // Return a 200 response to acknowledge receipt of the event
     res.send({ received: true });
 });
 
@@ -585,5 +912,12 @@ app.use('/account', router);
 
 
 app.listen(port, '0.0.0.0', () => {
+    logger.info({
+        type: 'server_start',
+        service: 'account_service',
+        port: port,
+        environment: process.env.NODE_ENV || 'development',
+        timestamp: new Date().toISOString()
+    });
     console.log(`Server running on port ${port}`);
 });
