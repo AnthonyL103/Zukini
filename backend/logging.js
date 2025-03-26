@@ -52,6 +52,7 @@ const requestLogger = (req, res, next) => {
     // Log the API call
     logger.info({
       type: 'api_call',
+
       method: req.method,
       path: originalUrl,
       query: req.query,

@@ -148,12 +148,6 @@ cd /home/ubuntu/Zukini/backend
 npm install
 npm install --save @google-cloud/vision bcrypt pm2 nodemon express-list-endpoints winston winston-daily-rotate-file stripe
 
-# Add logging configuration to the backend
-echo "Adding logging configuration..."
-cat > /home/ubuntu/Zukini/backend/logging.js <<'EOT'
-
-EOT
-
 # Ensure no stale processes are running
 echo "Killing old processes..."
 for port in 5001 5002 5003 5005 5006; do
