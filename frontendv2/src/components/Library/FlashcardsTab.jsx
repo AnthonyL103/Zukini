@@ -31,13 +31,11 @@ const FlashcardsTab = () => {
     fetchFlashcards();
 }, [userId, currentFC]); 
 
-  const handleStudy = (flashcards) => {
-    setCurrentFC(flashcards);
-    getScan(flashcards.scankey);
-    navigate('/study', { 
-      state: { initialMode: 'flashcards' } 
-    });
-  };
+const handleStudy = (flashcards) => {
+  setCurrentFC(flashcards);
+  getScan(flashcards.scankey);
+  navigate('/study?mode=flashcards');
+};
 
   const getScan = async (scankey) => {
     if (!scankey) {

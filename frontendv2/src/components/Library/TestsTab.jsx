@@ -37,9 +37,7 @@ const TestsTab = () => {
     setCurrentMT(test);
     getScan(test.scankey);
     console.log("test", test);
-    navigate('/study', { 
-      state: { initialMode: 'test' } 
-    });
+    navigate('/study?mode=test');
   };
   
   const getScan = async (scankey) => {

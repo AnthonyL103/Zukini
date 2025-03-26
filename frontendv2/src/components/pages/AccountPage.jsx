@@ -1,12 +1,13 @@
 import { useUser } from "../authentication/UserContext";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { v4 as uuidv4 } from 'uuid';
 import UpgradeButton from "../utils/upgradebutton";
 import { Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
 
 
 const AccountPage = () => {
-  const { userId, name, email, totalScans, totalFlashcards, totalMockTests, isforgot, setisforgot} = useUser();
+  const { userId, setUserId, name, email, setEmail, totalScans, setTotalScans, totalFlashcards, setTotalFlashcards, totalMockTests, setTotalMockTests, setName, isforgot, setisforgot, setIsPremium, setSubscriptionStatus} = useUser();
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -37,6 +38,43 @@ const AccountPage = () => {
     setErrorMessage("");
   };
 
+  const handleLogout = () => {
+
+    localStorage.removeItem("currentScan");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("email");
+    localStorage.removeItem("name");
+    if (userId) {
+        const keysToRemove = Object.keys(localStorage).filter(
+            (key) =>
+                key.startsWith(`flashcards_${userId}_`) ||
+                key.startsWith(`mocktests_${userId}_`) ||
+                key.startsWith(`summary_${userId}_`)
+        );
+
+        keysToRemove.forEach((key) => localStorage.removeItem(key));
+    }
+    sessionStorage.clear();
+
+    const newGuestId = `guest-${uuidv4()}`;
+    sessionStorage.setItem("guestUserId", newGuestId);
+
+    setUserId(newGuestId);
+    setEmail(null);
+    setName(null);
+    setTotalScans(0);
+    setTotalFlashcards(0);
+    setTotalMockTests(0);
+    setisforgot(false);
+    setIsPremium(false);
+    setSubscriptionStatus('free');
+
+    setTimeout(() => {
+        window.location.reload();
+    }, 100); //delay to allow state updates to apply before reload for user context
+};
+
+
   const passwordValidations = {
     hasLength: newPassword.length >= 8,
     hasCapital: /[A-Z]/.test(newPassword),
@@ -62,6 +100,7 @@ const AccountPage = () => {
         setshowDeleteModal(false);
         setdeletePassword("");
         setErrorMessage("");
+        handleLogout();
       } else {
         setErrorMessage(data.error);
       }

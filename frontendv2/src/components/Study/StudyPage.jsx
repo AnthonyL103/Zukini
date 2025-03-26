@@ -11,19 +11,19 @@ import ReviewMode from "./ReviewMode";
 const StudyPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  
-  // Get mode from URL, default to review
-  const params = new URLSearchParams(location.search);
-  const initialMode = params.get("mode") || location.state?.initialMode || "review";
+
+  const initialMode = new URLSearchParams(location.search).get("mode") || "review";
+
   const [activeMode, setActiveMode] = useState(initialMode);
 
   useEffect(() => {
-    setActiveMode(initialMode);
-  }, [initialMode]); // Update state when mode changes
+    // Ensure the mode persists even on refresh
+    navigate(`/study?mode=${activeMode}`, { replace: true });
+  }, [activeMode, navigate]);
 
   const handleModeChange = (mode) => {
     setActiveMode(mode);
-    navigate(`/study?mode=${mode}`, { replace: true }); // Update URL
+    navigate(`/study?mode=${mode}`, { replace: true });
   };
 
   return (
