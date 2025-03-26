@@ -146,7 +146,7 @@ fi
 echo "Installing Node.js dependencies..."
 cd /home/ubuntu/Zukini/backend
 npm install
-npm install --save @google-cloud/vision bcrypt pm2 nodemon express-list-endpoints winston winston-daily-rotate-file stripe
+npm install --save @google-cloud/vision bcrypt pm2 nodemon express-list-endpoints winston winston-daily-rotate-file stripe axios @sendgrid/mail
 
 # Ensure no stale processes are running
 echo "Killing old processes..."

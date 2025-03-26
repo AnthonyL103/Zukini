@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
+import { MTProvider } from "../mocktests/MTcontext";
 import { ScanProvider } from "../scans/ScanContext";
 import { FCProvider } from "../flashcards/FCcontext";
 import FlashcardMode from "./FlashcardMode";
@@ -48,13 +49,21 @@ const StudyPage = () => {
         </div>
 
         {/* Render Components Based on Mode */}
-        {activeMode === "review" && <ReviewMode />}
+        {activeMode === "review" && (
+          <ScanProvider>
+          <ReviewMode />
+          </ScanProvider>
+        )}
         {activeMode === "flashcards" && (
           <FCProvider>
             <FlashcardMode />
           </FCProvider>
         )}
-        {activeMode === "test" && <TestMode />}
+        {activeMode === "test" && (
+          <MTProvider>
+          <TestMode />
+          </MTProvider>
+        )}
       </div>
     </div>
   );
