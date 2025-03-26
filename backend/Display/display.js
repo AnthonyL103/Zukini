@@ -417,6 +417,63 @@ router.delete('/deleteFC', async (req, res) => {
     }
 });
 
+router.delete('/deleteAccount', async (req, res) => {
+  const { userId, password } = req.query;
+
+  logger.info({
+    type: 'delete_account_attempt',
+    userId: userId
+  });
+
+  try {
+    const user = await userinfos.findOne({ where: { id: userId } });
+
+    if (!user) {
+      logger.warn({
+        type: 'delete_account_failure',
+        reason: 'user_not_found',
+        userId: userId
+      });
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      logger.warn({
+        type: 'delete_account_failure',
+        reason: 'incorrect_password',
+        userId: userId
+      });
+      return res.status(400).json({ error: 'Incorrect password' });
+    }
+
+    const userDeleted = await userinfos.destroy({ where: {id: userId}});
+    const scansDeleted = await ParsedTextEntries.destroy({ where: { userid: userId } });
+    const flashcardsDeleted = await FlashCardEntries.destroy({ where: { userid: userId } });
+    const mocktestsDeleted = await MockTestEntries.destroy({ where: { userid: userId } });
+
+    logger.info({
+      type: 'delete_account_success',
+      userId: userId,
+      userDeleted,
+      scansDeleted,
+      flashcardsDeleted,
+      mocktestsDeleted
+    });
+    res.status(200).json({ message: 'All user data deleted successfully' });
+
+  } catch (error) {
+    logger.error({
+      type: 'delete_useraccount_error',
+      userId: userId,
+      error: error.message,
+      stack: error.stack
+    });
+    res.status(500).json({ error: 'Failed to delete user data.' });
+  }
+});
+
 app.use('/display', router);
 
 

@@ -13,6 +13,8 @@ const AccountPage = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [deleteModal, setshowDeleteModal] = useState(false);
+  const [deletePassword, setdeletePassword] = useState("");
   
   useEffect(() => {
     if (isforgot) {
@@ -33,6 +35,32 @@ const AccountPage = () => {
     setNewPassword("");
     setConfirmNewPassword("");
     setErrorMessage("");
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      const response = await fetch("https://api.zukini.com/account/deleteAccount", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          password: deletePassword 
+        })
+      });
+  
+      const data = await response.json();
+  
+      if (data.success) {
+        alert("Account deleted successfully");
+        setshowDeleteModal(false);
+        setdeletePassword("");
+      } else {
+        setErrorMessage(data.message);
+      }
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      setErrorMessage("An error occurred while deleting your account.");
+    }
   };
 
   const handleConfirmChangePassword = async (e) => {
@@ -119,16 +147,25 @@ const AccountPage = () => {
               </div>
               
                 <UpgradeButton />
+
               
             </div>
 
             {!isGuestUser && (
+              <div className="flex flex-row gap-5"> 
+              <button
+              onClick={() => setshowDeleteModal(true)}
+              className="hover:cursor-pointer  hover:bg-red-700 mt-8 w-full px-6 py-3 bg-red-600 text-white rounded-lg font-semibold transition-all hover:bg-opacity-90"
+            >
+              Delete Account
+            </button>
               <button
                 onClick={() => setShowChangePasswordModal(true)}
-                className="hover:cursor-pointer mt-8 w-full px-6 py-3 bg-[#0f0647] text-white rounded-lg font-semibold transition-all hover:bg-opacity-90"
+                className="hover:cursor-pointer hover:bg-[#2c2099] mt-8 w-full px-6 py-3 bg-[#0f0647] text-white rounded-lg font-semibold transition-all hover:bg-opacity-90"
               >
                 Change Password
               </button>
+              </div>
             )}
           </div>
         </div>
@@ -203,6 +240,42 @@ const AccountPage = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+    {deleteModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-8 w-full max-w-md m-4">
+          <h2 className="text-2xl font-semibold text-center text-[#0f0647]">
+                Delete Account
+              </h2>
+              <input
+                  type="password"
+                  placeholder="type password to confirm"
+                  required
+                  value={deletePassword}
+                  onChange={(e) => setdeletePassword(e.target.value)}
+                  className="w-full mt-6 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#67d7cc] focus:outline-none"
+                />
+              <div className="flex gap-4 mt-6">
+                <button
+                  type="button"
+                  onClick={() => setshowDeleteModal(false)}
+                  className="flex-1 px-6 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  className="flex-1 px-6 py-2 hover:cursor-pointer  hover:bg-red-700 bg-red-600 text-white rounded-lg font-semibold hover:bg-opacity-90 transition-all"
+                >
+                  Confirm
+                </button>
+              </div>
+
+            {errorMessage && (
+                <p className="text-red-500 text-sm text-center">{errorMessage}</p>
+              )}
           </div>
         </div>
       )}
