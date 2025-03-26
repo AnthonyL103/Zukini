@@ -146,7 +146,7 @@ fi
 echo "Installing Node.js dependencies..."
 cd /home/ubuntu/Zukini/backend
 npm install
-npm install --save @google-cloud/vision bcrypt pm2 nodemon express-list-endpoints winston winston-daily-rotate-file stripe axios @sendgrid/mail
+npm install --save @google-cloud/vision bcrypt nodemon express-list-endpoints winston winston-daily-rotate-file stripe axios @sendgrid/mail
 
 # Ensure no stale processes are running
 echo "Killing old processes..."
@@ -159,8 +159,20 @@ sudo pkill -f pm2 || true
 # Start PM2 processes
 echo "Starting PM2 processes..."
 cd /home/ubuntu/Zukini/backend
-npx pm2 start ecosystem.config.js
-npx pm2 save
+
+# Update PM2 to ensure consistent version
+npm install pm2@latest -g
+
+# Force PM2 to update
+pm2 update
+
+# Clear any existing PM2 processes
+pm2 delete all || true
+
+# Start processes
+pm2 start ecosystem.config.js
+pm2 save
+pm2 startup systemd
 
 sudo chown -R ubuntu:ubuntu /home/ubuntu/.pm2
 sudo chmod -R 775 /home/ubuntu/.pm2
