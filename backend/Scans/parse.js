@@ -13,11 +13,9 @@ async function parseTextFromBuffer(buffer) {
     });
     
     try {
-        // Perform text detection on the image file
         const [result] = await client.textDetection({ image: { content: buffer } });
         const detections = result.textAnnotations;
   
-        // Check if any text was detected
         if (detections.length > 0) {
             const detectedText = detections[0].description;
             
@@ -58,7 +56,6 @@ async function parseTextFromPDF(buffer) {
     try {
         const base64File = buffer.toString('base64');
 
-        // Create initial request to get the total number of pages
         const initialRequest = {
             requests: [
                 {
@@ -81,7 +78,6 @@ async function parseTextFromPDF(buffer) {
 
         let fullText = '';
 
-        // Process pages in batches of 5
         for (let i = 0; i < totalPages; i += 5) {
             const pageBatch = Array.from({ length: Math.min(5, totalPages - i) }, (_, j) => i + j + 1);
             
