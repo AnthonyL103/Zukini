@@ -158,17 +158,12 @@ sudo pkill -f pm2 || true
 
 # Start PM2 processes
 echo "Starting PM2 processes..."
+cd /home/ubuntu/Zukini/backend
 npx pm2 start ecosystem.config.js
 npx pm2 save
 
 sudo chown -R ubuntu:ubuntu /home/ubuntu/.pm2
 sudo chmod -R 775 /home/ubuntu/.pm2
-
-# Run the correct PM2 startup command
-echo "Setting up PM2 as a system service..."
-sudo env PATH=$PATH:/usr/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
-sudo systemctl enable pm2-ubuntu
-sudo systemctl restart pm2-ubuntu
 
 # Restart services
 echo "Restarting Nginx..."

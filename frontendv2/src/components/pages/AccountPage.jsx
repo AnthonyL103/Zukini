@@ -46,7 +46,7 @@ const AccountPage = () => {
 
   const handleDeleteAccount = async () => {
     try {
-      const response = await fetch("https://api.zukini.com/account/deleteAccount", {
+      const response = await fetch("https://api.zukini.com/display/deleteAccount", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -57,10 +57,11 @@ const AccountPage = () => {
     
       const data = await response.json();
     
-      if (data.success) {  
+      if (data.message) {  
         alert("Account deleted successfully");
         setshowDeleteModal(false);
         setdeletePassword("");
+        setErrorMessage("");
       } else {
         setErrorMessage(data.error);
       }

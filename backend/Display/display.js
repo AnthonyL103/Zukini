@@ -1,9 +1,9 @@
 const express = require('express');
 const { logger } = require('../logging'); 
+const bcrypt = require('bcrypt');
 const { ParsedTextEntries, FlashCardEntries, MockTestEntries, userinfos } = require('../Database/db');
 const cors = require('cors');
 const PORT = 5001;
-
 const app = express();
 const router = express.Router(); 
 app.use(cors());

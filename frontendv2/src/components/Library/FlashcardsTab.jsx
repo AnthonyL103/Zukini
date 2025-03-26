@@ -58,7 +58,7 @@ const FlashcardsTab = () => {
 
         if (!data.scan) {
             console.error("No scan found for scankey:", scankey);
-            setCurrentScan(null); // Reset current scan if not found
+            setCurrentScan(null); 
             return;
         }
 
