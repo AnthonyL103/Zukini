@@ -418,8 +418,9 @@ router.delete('/deleteFC', async (req, res) => {
 });
 
 router.delete('/deleteAccount', async (req, res) => {
-  const { userId, password } = req.query;
+  const { userId, password } = req.body;
 
+  console.log("in delete account route");
   logger.info({
     type: 'delete_account_attempt',
     userId: userId

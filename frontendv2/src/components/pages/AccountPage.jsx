@@ -2,8 +2,8 @@ import { useUser } from "../authentication/UserContext";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import UpgradeButton from "../utils/upgradebutton";
+import { Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
 
-import { Eye, EyeOff} from "lucide-react";
 
 const AccountPage = () => {
   const { userId, name, email, totalScans, totalFlashcards, totalMockTests, isforgot, setisforgot} = useUser();
@@ -37,6 +37,13 @@ const AccountPage = () => {
     setErrorMessage("");
   };
 
+  const passwordValidations = {
+    hasLength: newPassword.length >= 8,
+    hasCapital: /[A-Z]/.test(newPassword),
+    hasNumber: /\d/.test(newPassword),
+    hasSpecial: /[!@#$%^&*]/.test(newPassword),
+};
+
   const handleDeleteAccount = async () => {
     try {
       const response = await fetch("https://api.zukini.com/account/deleteAccount", {
@@ -47,15 +54,15 @@ const AccountPage = () => {
           password: deletePassword 
         })
       });
-  
+    
       const data = await response.json();
-  
-      if (data.success) {
+    
+      if (data.success) {  
         alert("Account deleted successfully");
         setshowDeleteModal(false);
         setdeletePassword("");
       } else {
-        setErrorMessage(data.message);
+        setErrorMessage(data.error);
       }
     } catch (error) {
       console.error("Error deleting account:", error);
@@ -65,15 +72,26 @@ const AccountPage = () => {
 
   const handleConfirmChangePassword = async (e) => {
     e.preventDefault();
+    e.preventDefault();
 
-    if (newPassword !== confirmNewPassword) {
-      setErrorMessage("New passwords do not match");
-      return;
-    }
-    if (newPassword === oldPassword) {
-      setErrorMessage("New password cannot be the same as the old password");
-      return;
-    }
+  if (newPassword !== confirmNewPassword) {
+    setErrorMessage("New passwords do not match");
+    return;
+  }
+
+  const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])(?=.*[A-Z]).{8,}$/;
+  if (!passwordRegex.test(newPassword)) {
+    setErrorMessage("New password must be at least 8 characters long and include at least one number, one uppercase letter, and one special character.");
+    return;
+  }
+
+  if (newPassword === oldPassword) {
+    setErrorMessage("New password cannot be the same as the old password");
+    return;
+  }
+
+
+    
 
     try {
       const response = await fetch("https://api.zukini.com/account/changepassword", {
@@ -173,76 +191,111 @@ const AccountPage = () => {
 
       {/* Change Password Modal */}
       {showChangePasswordModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-8 w-full max-w-md m-4">
-            <form className="space-y-6" onSubmit={handleConfirmChangePassword}>
-              <h2 className="text-2xl font-semibold text-center text-[#0f0647]">
-                Change Password
-              </h2>
-              
-              <div className="space-y-4">
-                {!isforgot && (
-                  <input
-                    type="password"
-                    placeholder="Enter old password"
-                    required
-                    value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#67d7cc] focus:outline-none"
-                  />
-                )}
-                
-                <div className="relative">
-                <input 
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter password" 
-                    required 
-                    value={newPassword} 
-                    onChange={(e) => setNewPassword(e.target.value)} 
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                    >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                </div>
-
-                <input
-                  type="password"
-                  placeholder="Confirm new password"
-                  required
-                  value={confirmNewPassword}
-                  onChange={(e) => setConfirmNewPassword(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#67d7cc] focus:outline-none"
-                />
-              </div>
-
-              {errorMessage && (
-                <p className="text-red-500 text-sm text-center">{errorMessage}</p>
-              )}
-
-              <div className="flex gap-4">
-                <button
-                  type="button"
-                  onClick={handleClose}
-                  className="flex-1 px-6 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-6 py-2 bg-[#0f0647] text-white rounded-lg font-semibold hover:bg-opacity-90 transition-all"
-                >
-                  Confirm
-                </button>
-              </div>
-            </form>
+  <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="bg-white rounded-xl p-8 w-full max-w-md m-4">
+      <form className="space-y-6" onSubmit={handleConfirmChangePassword}>
+        <h2 className="text-2xl font-semibold text-center text-[#0f0647]">
+          Change Password
+        </h2>
+        
+        <div className="space-y-4">
+          {!isforgot && (
+            <input
+              type="password"
+              placeholder="Enter old password"
+              required
+              value={oldPassword}
+              onChange={(e) => setOldPassword(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#67d7cc] focus:outline-none"
+            />
+          )}
+          
+          <div className="relative">
+            <input 
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter new password" 
+              required 
+              value={newPassword} 
+              onChange={(e) => setNewPassword(e.target.value)} 
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:outline-none"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
+
+          <div className="space-y-1 text-sm">
+            <div className="flex items-center">
+              {passwordValidations.hasLength ? (
+                <CheckCircle className="text-green-500 mr-2" size={16} />
+              ) : (
+                <XCircle className="text-red-500 mr-2" size={16} />
+              )}
+              <span>At least 8 characters</span>
+            </div>
+            <div className="flex items-center">
+              {passwordValidations.hasCapital ? (
+                <CheckCircle className="text-green-500 mr-2" size={16} />
+              ) : (
+                <XCircle className="text-red-500 mr-2" size={16} />
+              )}
+              <span>One uppercase letter</span>
+            </div>
+            <div className="flex items-center">
+              {passwordValidations.hasNumber ? (
+                <CheckCircle className="text-green-500 mr-2" size={16} />
+              ) : (
+                <XCircle className="text-red-500 mr-2" size={16} />
+              )}
+              <span>One number</span>
+            </div>
+            <div className="flex items-center">
+              {passwordValidations.hasSpecial ? (
+                <CheckCircle className="text-green-500 mr-2" size={16} />
+              ) : (
+                <XCircle className="text-red-500 mr-2" size={16} />
+              )}
+              <span>One special character (!@#$...)</span>
+            </div>
+          </div>
+
+          <input
+            type="password"
+            placeholder="Confirm new password"
+            required
+            value={confirmNewPassword}
+            onChange={(e) => setConfirmNewPassword(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#67d7cc] focus:outline-none"
+          />
         </div>
-      )}
+
+        {errorMessage && (
+          <p className="text-red-500 text-sm text-center">{errorMessage}</p>
+        )}
+
+        <div className="flex gap-4">
+          <button
+            type="button"
+            onClick={handleClose}
+            className="flex-1 px-6 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-all"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="flex-1 px-6 py-2 bg-[#0f0647] text-white rounded-lg font-semibold hover:bg-opacity-90 transition-all"
+          >
+            Confirm
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
 
     {deleteModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
@@ -267,6 +320,8 @@ const AccountPage = () => {
                   Cancel
                 </button>
                 <button
+                  type="button"
+                  onClick={() => handleDeleteAccount()}
                   className="flex-1 px-6 py-2 hover:cursor-pointer  hover:bg-red-700 bg-red-600 text-white rounded-lg font-semibold hover:bg-opacity-90 transition-all"
                 >
                   Confirm
