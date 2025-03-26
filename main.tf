@@ -47,7 +47,7 @@ resource "aws_iam_instance_profile" "ec2_profile" {
 
 resource "aws_launch_template" "zukini_template" {
   name_prefix   = "zukini-template"
-  image_id      = "ami-02775513228ed3bf5"
+  image_id      = "ami-00fbfea1ad6fe6716"
   instance_type = "t2.small"
   key_name      = "zukini-key"
   vpc_security_group_ids = ["sg-068e3daeda5e15279", "sg-053c014d58ec801c5"] 
