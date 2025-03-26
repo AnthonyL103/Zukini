@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { createMockTests } = require('./parseMockTest');
 const { MockTestEntries } = require('../Database/db');
+const { logger } = require('../logging');
 const app = express();
 app.use(express.json());
 const router = express.Router(); 
@@ -10,8 +11,14 @@ const port = 5005;
 app.use(cors());
 
 async function appendmocktestToDB(newEntry) {
+    logger.info({
+        type: 'mocktest_db_append_attempt',
+        mocktestKey: newEntry.mocktestkey,
+        scanKey: newEntry.scankey,
+        userId: newEntry.userid
+    });
+    
     try {
-      // Insert the new entry into the database
       await MockTestEntries.create({
         mocktestkey: newEntry.mocktestkey,
         filepath: newEntry.filepath,
@@ -23,51 +30,89 @@ async function appendmocktestToDB(newEntry) {
         userid: newEntry.userid,
       });
   
-      console.log('New mocktest entry appended to the database');
+      logger.info({
+        type: 'mocktest_db_append_success',
+        mocktestKey: newEntry.mocktestkey,
+        userId: newEntry.userid
+      });
     } catch (error) {
-      console.error('Error appending to the database:', error);
+      logger.error({
+        type: 'mocktest_db_append_error',
+        mocktestKey: newEntry.mocktestkey,
+        userId: newEntry.userid,
+        error: error.message,
+        stack: error.stack
+      });
     }
-  }
+}
 
 router.post('/callparseMockTests', async (req, res) => {
-  const { scanname, text, date } = req.body; // Destructure scanname, text, and date
-  console.log('Received parameters:', { scanname, text, date });
+  const { scanname, text, date } = req.body;
+  
+  logger.info({
+    type: 'parse_mocktests_attempt',
+    scanName: scanname,
+    date: date,
+    textLength: text ? text.length : 0
+  });
 
   if (!text) {
+    logger.warn({
+      type: 'parse_mocktests_failure',
+      reason: 'missing_text',
+      scanName: scanname
+    });
     return res.status(400).json({ error: 'Missing text input' });
   }
 
   try {
-    // Call the parsing function to generate mocktest questions and answers
     const mockTestText = await createMockTests(text);
 
-    // Log the generated questions and answers for debugging
-    console.log('Generated mock tests:', mockTestText);
+    logger.info({
+      type: 'parse_mocktests_success',
+      scanName: scanname,
+      questionsGenerated: Array.isArray(mockTestText) ? mockTestText.length : 1
+    });
 
     res.json({
       message: 'Mock test text generated successfully',
-      text: mockTestText, // Return the generated mock test content
+      text: mockTestText,
     });
   } catch (error) {
-    console.error('Error generating mock tests:', error);
+    logger.error({
+      type: 'parse_mocktests_error',
+      scanName: scanname,
+      error: error.message,
+      stack: error.stack
+    });
     res.status(500).json({ error: 'Failed to generate mock tests.' });
   }
 });
 
-// In your backend (e.g., Express.js)
 router.post('/updateMockTest', async (req, res) => {
+  const { mocktestkey, filepath, scanname, questions, mtsessionname, date, scankey, userid } = req.body;
+  
+  logger.info({
+    type: 'update_mocktest_attempt',
+    mocktestKey: mocktestkey,
+    scanKey: scankey,
+    userId: userid
+  });
+
+  if (!mocktestkey || !userid || !questions) {
+    logger.warn({
+      type: 'update_mocktest_failure',
+      reason: 'missing_required_fields',
+      hasKey: !!mocktestkey,
+      hasUserId: !!userid,
+      hasQuestions: !!questions
+    });
+    return res.status(400).json({ message: 'Missing required fields' });
+  }
+
   try {
-    const { mocktestkey, filepath, scanname, questions, mtsessionname, date, scankey, userid } = req.body; // Extract variables
-
-
-    if (!mocktestkey || !userid || !questions) {
-      return res.status(400).json({ message: 'Missing required fields' });
-    }
-
-    // Delete the old mock test
     await db.collection('mocktests').deleteOne({ mocktestkey, scankey, userid });
 
-    // Insert the updated mock test
     const newMockTest = {
       mocktestkey: mocktestkey, 
       userid,
@@ -80,18 +125,44 @@ router.post('/updateMockTest', async (req, res) => {
 
     await db.collection('mocktests').insertOne(newMockTest);
 
+    logger.info({
+      type: 'update_mocktest_success',
+      mocktestKey: mocktestkey,
+      userId: userid
+    });
+
     res.status(200).json({ message: 'Mock test updated successfully' });
   } catch (error) {
-    console.error('Error updating mock test:', error);
+    logger.error({
+      type: 'update_mocktest_error',
+      mocktestKey: mocktestkey,
+      userId: userid,
+      error: error.message,
+      stack: error.stack
+    });
     res.status(500).json({ message: 'Server error' });
   }
 });
 
 
 router.post('/saveMockTest', async (req, res) => {
-    const { mocktestkey, filepath, scanname, questions, mtsessionname, date, scankey, userid } = req.body; // Extract variables
+    const { mocktestkey, filepath, scanname, questions, mtsessionname, date, scankey, userid } = req.body;
+    
+    logger.info({
+      type: 'save_mocktest_attempt',
+      mocktestKey: mocktestkey,
+      scanKey: scankey,
+      userId: userid
+    });
   
     if (!filepath || !questions) {
+      logger.warn({
+        type: 'save_mocktest_failure',
+        reason: 'missing_required_fields',
+        userId: userid,
+        hasFilepath: !!filepath,
+        hasQuestions: !!questions
+      });
       return res.status(400).json({ message: 'filePath and FlashCardtext are required' });
     }
   
@@ -109,19 +180,34 @@ router.post('/saveMockTest', async (req, res) => {
     try {
       await appendmocktestToDB(newEntry);
       
+      logger.info({
+        type: 'save_mocktest_success',
+        mocktestKey: mocktestkey,
+        scanKey: scankey,
+        userId: userid
+      });
+      
+      res.json({ message: 'mocktest saved successfully', newEntry });
     } catch (error) {
-      console.error('Error saving mocktest:', error);
+      logger.error({
+        type: 'save_mocktest_error',
+        mocktestKey: mocktestkey,
+        userId: userid,
+        error: error.message,
+        stack: error.stack
+      });
       return res.status(500).json({ message: 'Failed to save mocktest to the database ' });
     }
-    // Append the new entry to the JSON file
-    
-  
-    res.json({ message: 'mocktest saved successfully', newEntry });
-  });
+});
   
 app.use('/mocktests', router);
 
-
 app.listen(port, '0.0.0.0', () => {
+    logger.info({
+      type: 'server_start',
+      service: 'mocktests_service',
+      port: port,
+      timestamp: new Date().toISOString()
+    });
     console.log(`create mock tests server on ${port}`);
 });
