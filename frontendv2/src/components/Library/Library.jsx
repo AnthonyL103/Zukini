@@ -8,7 +8,6 @@ import { useLocation } from "react-router-dom";
 
 const Library = () => {
   const [activeTab, setActiveTab] = useState("scans");
-  const { userId } = useUser();
   const location = useLocation();
   const autoOpenScan = location.state?.autoOpenScan;
 

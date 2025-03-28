@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../authentication/UserContext';
-import { useMT } from '../mocktests/MTcontext';
-import { useScan } from '../scans/ScanContext';
 import { useNavigate } from 'react-router-dom';
+import { useAppState, useAppDispatch, AppActions } from '../utils/appcontext';
 
 const TestsTab = () => {
   const navigate = useNavigate();
-  const { setCurrentMT, currentMT } = useMT();
-  const { setCurrentScan } = useScan();
+  const dispatch = useAppDispatch();
+  const appState = useAppState();
+
   const [tests, setTests] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [testToDelete, setTestToDelete] = useState(null);
@@ -18,23 +18,22 @@ const TestsTab = () => {
   // Fetch tests on component mount or when userId changes
   useEffect(() => {
     const fetchTests = async () => {
-        try {
-          const response = await fetch(`https://api.zukini.com/display/displaymocktests?userId=${userId}`);
-          if (!response.ok) throw new Error('Failed to fetch tests');
-          const data = await response.json();
-          setTests(data); // Ensure UI updates correctly
-        } catch (error) {
-          console.error('Error fetching tests:', error);
-        }
-      };
+      try {
+        const response = await fetch(`https://api.zukini.com/display/displaymocktests?userId=${userId}`);
+        if (!response.ok) throw new Error('Failed to fetch tests');
+        const data = await response.json();
+        setTests(data);
+      } catch (error) {
+        console.error('Error fetching tests:', error);
+      }
+    };
     fetchTests();
-  }, [userId], currentMT);
+  }, [userId, appState.currentMT]);
 
-  // Function to fetch tests from API
-  
-  
   const handleStudy = (test) => {
-    setCurrentMT(test);
+    // Use dispatch to update global state
+    dispatch(AppActions.setCurrentMT(test));
+    dispatch(AppActions.setCurrentFC(null)); 
     getScan(test.scankey);
     console.log("test", test);
     navigate('/study?mode=test');
@@ -43,7 +42,7 @@ const TestsTab = () => {
   const getScan = async (scankey) => {
     if (!scankey) {
       console.error("scankey is missing");
-      setCurrentScan(null);
+      dispatch(AppActions.setCurrentScan(null));
       return;
     }
 
@@ -56,19 +55,18 @@ const TestsTab = () => {
       if (!response.ok) throw new Error("Failed to fetch scan");
 
       const data = await response.json();
-      
 
       if (!data.scan) {
         console.error("No scan found for scankey:", scankey);
         return;
       }
 
-      setCurrentScan(data.scan);
-      console.log("found curre scan", data.scan);
+      dispatch(AppActions.setCurrentScan(data.scan));
+      console.log("found current scan", data.scan);
       console.log("Scan retrieved successfully:", data.scan);
     } catch (error) {
       console.error("Error fetching scan:", error);
-      setCurrentScan(null);
+      dispatch(AppActions.setCurrentScan(null));
     }
   };
 
@@ -101,8 +99,9 @@ const TestsTab = () => {
 
       setShowDeleteModal(false);
       setTestToDelete(null);
-      setCurrentMT(null);
-      // Ensure latest tests are fetched
+      
+      // Use dispatch to reset current mock test
+      dispatch(AppActions.setCurrentMT(null));
     } catch (error) {
       console.error('Error deleting test:', error);
     }
@@ -151,6 +150,7 @@ const TestsTab = () => {
         ))}
       </div>
 
+      {/* Delete Modal - remains the same */}
       {showDeleteModal && testToDelete && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300 z-50">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md m-4 shadow-xl">

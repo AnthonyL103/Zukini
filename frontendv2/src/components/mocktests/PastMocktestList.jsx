@@ -1,28 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { useScan } from '../scans/ScanContext'; // Ensure correct import
 import { useUser } from '../authentication/UserContext';
-import { useMT } from '../mocktests/MTcontext';
 import { Trash2 } from 'lucide-react';
+import { useAppState, useAppDispatch, AppActions } from "../utils/appcontext";
 
 const PastMockTestList = ({ NewMTEntry }) => {
   const { userId } = useUser();
-  const { setCurrentMT } = useMT();
-  const { currentScan } = useScan();
+  const dispatch = useAppDispatch();
+  const appState = useAppState();
+
   const [mocktests, setMockTests] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [mocktestToDelete, setMockTestToDelete] = useState(null);
 
   useEffect(() => {
-    if (!currentScan) {
+    if (!appState.currentScan) {
         return;
     }
     const fetchMockTests = async () => {
       try {
-        if (!currentScan) {
+        if (!appState.currentScan) {
             return;
         }
-        const response = await fetch(`https://api.zukini.com/display/displayMTfromScanID?scanId=${currentScan.scankey}`);
+        const response = await fetch(`https://api.zukini.com/display/displayMTfromScanID?scanId=${appState.currentScan.scankey}`);
         if (!response.ok) throw new Error('Failed to fetch mock tests');
         const data = await response.json();
         setMockTests(data);
@@ -32,7 +32,7 @@ const PastMockTestList = ({ NewMTEntry }) => {
     };
 
     fetchMockTests();
-  }, [userId]);
+  }, [userId, appState.currentMT, mocktests.length]);
 
   useEffect(() => {
     if (NewMTEntry) {
@@ -46,11 +46,11 @@ const PastMockTestList = ({ NewMTEntry }) => {
   );
 
   const handleTakeTest = (mocktest) => {
-    setCurrentMT(mocktest);
+    // Use dispatch to update current mock test
+    dispatch(AppActions.setCurrentMT(mocktest));
   };
 
   const handleDelete = (mocktest) => {
-    
     setMockTestToDelete(mocktest);
     setShowDeleteModal(true);
   };
@@ -68,7 +68,9 @@ const PastMockTestList = ({ NewMTEntry }) => {
         prevMockTests.filter(mt => mt.mocktestkey !== mocktestToDelete.mocktestkey)
       );
       setShowDeleteModal(false);
-      setCurrentMT(null);
+      
+      // Use dispatch to reset current mock test
+      dispatch(AppActions.setCurrentMT(null));
       setMockTestToDelete(null);
     } catch (error) {
       console.error('Error deleting mock test:', error);

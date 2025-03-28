@@ -1,13 +1,15 @@
 import React, { useState, useRef } from 'react';
-import { useScan } from '../scans/ScanContext';
 import { useUser } from '../authentication/UserContext';
+import { useAppState, useAppDispatch } from '../utils/appcontext';
 import PencilLoader from '../utils/pencilloader';
 
 export const ReviewMode = () => {
-  const { currentScan } = useScan();
+  const dispatch = useAppDispatch();
+  const appState = useAppState();
+  
   const [notes, setNotes] = useState("");
   const [annotations, setAnnotations] = useState([]);
-  const { userId} = useUser();
+  const { userId } = useUser();
   
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState("");
@@ -42,14 +44,14 @@ export const ReviewMode = () => {
   };
   
   const handleSummarize = async () => {
-    if (!currentScan || !currentScan.value) {
+    if (!appState.currentScan || !appState.currentScan.value) {
       alert("No scan selected or no text available to summarize.");
       return;
     }
     setLoading(true);
     setTimeout(() => summaryRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
     
-    const SummaryStorageKey = `summary_${userId}_${currentScan.scankey}`;
+    const SummaryStorageKey = `summary_${userId}_${appState.currentScan.scankey}`;
 
     // Check if a summary already exists in localStorage
     const storedSummary = localStorage.getItem(SummaryStorageKey);
@@ -67,7 +69,7 @@ export const ReviewMode = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: currentScan.value }),
+        body: JSON.stringify({ text: appState.currentScan.value }),
       });
 
       if (!response.ok) {
@@ -92,25 +94,23 @@ export const ReviewMode = () => {
       setLoading(false);
     }
   };
-
-
   return (
     <div className="bg-white rounded-xl p-6 shadow-lg">
-      <h2 className="text-2xl font-bold text-[#0f0647] mb-4"> Scan Name: {currentScan?.scanname || "None"}</h2>
+      <h2 className="text-2xl font-bold text-[#0f0647] mb-4"> Scan Name: {appState.currentScan?.scanname || "None"}</h2>
       
       {/* Original Scan View */}
-      {!currentScan ? (
+      {!appState.currentScan ? (
         <div className="bg-red-100 p-4 rounded-lg mb-6 mt-6 text-red-700 text-center">
           No scan available or scan was deleted. Please select or upload a scan.
         </div>
       ) : (
         <div className="bg-gray-50 p-4 rounded-lg mb-6 max-h-[400px] overflow-y-auto">
           <h3 className="font-semibold mb-2">Text:</h3>
-          <p className="text-gray-600 whitespace-pre-wrap">{currentScan.value}</p>
+          <p className="text-gray-600 whitespace-pre-wrap">{appState.currentScan.value}</p>
         </div>
       )}
       
-      {currentScan && (
+      {appState.currentScan && (
         <div className="flex justify-between gap-4 mb-6">
             <button
             onClick={handleSummarize}

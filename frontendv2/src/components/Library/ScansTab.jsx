@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../authentication/UserContext';
-import { useScan } from '../scans/ScanContext';
-import { useFC } from '../flashcards/FCcontext';
-import { useMT } from '../mocktests/MTcontext';
-import { Trash2 } from 'lucide-react'
+import { Trash2 } from 'lucide-react';
+import { useAppState, useAppDispatch, AppActions } from '../utils/appcontext';
 
 const ScansTab = ({ autoOpenScan = null }) => {
   const navigate = useNavigate();
@@ -13,12 +11,11 @@ const ScansTab = ({ autoOpenScan = null }) => {
   const [showPreview, setShowPreview] = useState(false);
   const [showStudyModal, setShowStudyModal] = useState(false);
   const [selectedScan, setSelectedScan] = useState(null);
-  const { userId} = useUser();
-  const { setCurrentScan } = useScan();
-  const { setCurrentFC } = useFC();
-  const { setCurrentMT } = useMT();
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [scanToDelete, setScanToDelete] = useState(null);
+  const { userId } = useUser();
+  
+  // Replace useAppStoreState with useAppDispatch and useAppState
+  const dispatch = useAppDispatch();
+  const appState = useAppState();
 
   useEffect(() => {
     const fetchScans = async () => {
@@ -46,33 +43,38 @@ const ScansTab = ({ autoOpenScan = null }) => {
   };
 
   const handleStudyOption = (scan, type) => {
-    setCurrentScan(scan);
-    setCurrentFC(null);
-    setCurrentMT(null);
+    // Use dispatch to update the global state
+    dispatch(AppActions.setCurrentScan(scan));
+    dispatch(AppActions.setCurrentFC(null));
+    dispatch(AppActions.setCurrentMT(null));
+    
     navigate(`/study?mode=${type}`, {
       state: {
         initialMode: type,
       }
     });
-    
   };
 
-    // Auto-opening study modal
-    useEffect(() => {
-      if (autoOpenScan) {
-        setSelectedScan(autoOpenScan);
-        setCurrentScan(autoOpenScan);
-        setCurrentFC(null);
-        setCurrentMT(null);
-        console.log("here");
-        setShowStudyModal(true);
-      }
-    }, [autoOpenScan]);
+  // Auto-opening study modal
+  useEffect(() => {
+    if (autoOpenScan) {
+      setSelectedScan(autoOpenScan);
+      // Use dispatch instead of direct setter
+      dispatch(AppActions.setCurrentScan(autoOpenScan));
+      dispatch(AppActions.setCurrentFC(null));
+      dispatch(AppActions.setCurrentMT(null));
+      console.log("here");
+      setShowStudyModal(true);
+    }
+  }, [autoOpenScan, dispatch]);
 
   const handlePreview = (scan) => {
     setSelectedScan(scan);
     setShowPreview(true);
   };
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [scanToDelete, setScanToDelete] = useState(null);
 
   const handleDelete = (scan) => {
     setScanToDelete(scan);

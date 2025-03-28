@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useScan } from '../scans/ScanContext'; 
-import { useFC } from '../flashcards/FCcontext'; 
+import { v4 as uuidv4 } from 'uuid';
 import { useUser } from '../authentication/UserContext';
+import { useAppState, useAppDispatch, AppActions } from "../utils/appcontext";
 import PencilLoader from '../utils/pencilloader';
 import PastFlashCardList from '../flashcards/PastFlashcardList';
-import { v4 as uuidv4 } from 'uuid';
-import { Trash2 } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion';
+
 
 export const FlashcardMode = () => {
-  const { currentFC, setCurrentFC } = useFC(); 
-  const { currentScan } = useScan();
-  const { userId, setTotalFlashcards, isPremium} = useUser();
+  const dispatch = useAppDispatch();
+  const appState = useAppState();
+  
+  const { userId, setTotalFlashcards, isPremium } = useUser();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [showFCNameModal, setShowFCNameModal] = useState(false);
   const [FCName, setFCName] = useState("");
-  const [DisplayedFC, setDisplayedFC] = useState([])
+  const [DisplayedFC, setDisplayedFC] = useState([]);
   const [savenabled, setSaveEnabled] = useState(false);
   const [showpastFC, setshowpastFC] = useState(true);
-  const [FCentry, setFCEntry] = useState()
+  const [FCentry, setFCEntry] = useState();
   const [showVA, setshowVA] = useState(false);
   const [isloading, setisLoading] = useState(false);
   const [showAddFlashcardForm, setShowAddFlashcardForm] = useState(false);
@@ -29,21 +29,22 @@ export const FlashcardMode = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [regenerate, setRegenerate] = useState(false);
   
+  // Update displayed flashcards when current FC changes
   useEffect(() => {
-    if (currentFC && !saveEdit && !regenerate) {
-      console.log("currentFC.flashcards", currentFC.flashcards);
-      setDisplayedFC(currentFC.flashcards); 
-      console.log(DisplayedFC);
+    if (appState.currentFC && !saveEdit && !regenerate) {
+      console.log("currentFC.flashcards", appState.currentFC.flashcards);
+      setDisplayedFC(appState.currentFC.flashcards || []); 
     } else {
       setDisplayedFC([]);
     }
-  }, [currentFC]); 
+  }, [appState.currentFC, saveEdit, regenerate]); 
   
-  
+  // Fetch or generate flashcards when current scan changes
   useEffect(() => {
-    if (currentScan && !currentFC?.flashcards?.length) {
-      const flashcardStorageKey = `flashcards_${userId}_${currentScan.scankey}`;
+    if (appState.currentScan && !appState.currentFC?.flashcards?.length) {
+      const flashcardStorageKey = `flashcards_${userId}_${appState.currentScan.scankey}`;
       const storedFlashcards = localStorage.getItem(flashcardStorageKey);
+      
       if (storedFlashcards) {
         console.log("Using cached flashcards from local storage.");
         setDisplayedFC(JSON.parse(storedFlashcards));
@@ -52,14 +53,12 @@ export const FlashcardMode = () => {
         generateFlashcards();
       }
     }
-  }, [currentScan]); 
+  }, [appState.currentScan]); 
 
-
+  // Add a new flashcard
   const handleAddFlashcard = () => {
-
-    if (errorMessage){
-      return;
-    }
+    if (errorMessage) return;
+    
     if (!newQuestion.trim() || !newAnswer.trim()) {
       setErrorMessage("All fields must be filled.");
       return;
@@ -73,7 +72,7 @@ export const FlashcardMode = () => {
   
     setDisplayedFC([...DisplayedFC, newFlashcard]);
   
-    //reset form after adding
+    // Reset form
     setShowAddFlashcardForm(false);
     setNewQuestion("");
     setNewAnswer("");
@@ -81,6 +80,7 @@ export const FlashcardMode = () => {
     setSaveEnabled(true);
   };
 
+  // Cancel adding a flashcard
   const handleCancel = () => {
     setShowAddFlashcardForm(false);
     setNewQuestion("");
@@ -88,18 +88,21 @@ export const FlashcardMode = () => {
     setErrorMessage(""); 
   };
   
-  
+  // Delete a specific flashcard
   const handleDeleteFlashcard = async (index) => {
     const updatedFlashcards = DisplayedFC.filter((_, i) => i !== index);
     setDisplayedFC(updatedFlashcards);
     setSaveEnabled(true); 
   };
 
+  // Validate flashcard input
   const handleAnswerChange = (question, answer) => {
     const trimmedQuestion = question.trim().toLowerCase();
     const trimmedAnswer = answer.trim().toLowerCase();
     
-    if (trimmedQuestion.length > 0 && trimmedAnswer.length > 0 && trimmedQuestion === trimmedAnswer) {
+    if (trimmedQuestion.length > 0 && 
+        trimmedAnswer.length > 0 && 
+        trimmedQuestion === trimmedAnswer) {
       setErrorMessage("Question and answer cannot be the same.");
     } else {
       setErrorMessage("");
@@ -108,16 +111,17 @@ export const FlashcardMode = () => {
     setSaveEnabled(true);
   };
   
+  // Save edit for existing flashcard set
   const handleSaveEditFlashcard = async () => {
     console.log("in save edit");
-    setsaveEdit(true); // Show loading screen
+    setsaveEdit(true);
   
     try {
-  
       await handleSave();
   
+      // Delete old flashcard set
       const deleteResponse = await fetch(
-        `https://api.zukini.com/display/deleteFC?key=${currentFC.flashcardkey}&userId=${userId}`,
+        `https://api.zukini.com/display/deleteFC?key=${appState.currentFC.flashcardkey}&userId=${userId}`,
         {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
@@ -130,7 +134,8 @@ export const FlashcardMode = () => {
   
       console.log("Old flashcard deleted successfully");
   
-      const flashcardStorageKey = `flashcards_${userId}_${currentScan.scankey}`;
+      // Update local storage
+      const flashcardStorageKey = `flashcards_${userId}_${appState.currentScan.scankey}`;
       localStorage.setItem(flashcardStorageKey, JSON.stringify(DisplayedFC));
       console.log("Local storage updated with the new flashcard");
   
@@ -144,19 +149,19 @@ export const FlashcardMode = () => {
     }
   };
   
-  
+  // Save new or updated flashcard set
   const handleSave = async () => {
-    if (!currentScan) return;
+    if (!appState.currentScan) return;
     try {
       const key = uuidv4();
       const payload = {
         flashcardkey: key,
-        filepath: currentScan.filepath,
-        scanname: currentScan.scanname,
+        filepath: appState.currentScan.filepath,
+        scanname: appState.currentScan.scanname,
         flashcards: DisplayedFC,
-        fcsessionname: FCName || currentFC.fcsessionname,
-        date: currentScan.date,
-        scankey: currentScan.scankey || "None",
+        fcsessionname: FCName || appState.currentFC?.fcsessionname || "Unnamed Flashcard Set",
+        date: appState.currentScan.date,
+        scankey: appState.currentScan.scankey || "None",
         userid: userId,
       };
 
@@ -171,7 +176,9 @@ export const FlashcardMode = () => {
       if (onsaveresponse.ok) {
         setTotalFlashcards((prev) => prev + 1);
         setSaveEnabled(false);
-        setCurrentFC(payload);
+        
+        // Update current FC in global state
+        dispatch(AppActions.setCurrentFC(payload));
         setFCEntry(payload);
         console.log('Flashcards saved successfully');
       } else {
@@ -183,14 +190,14 @@ export const FlashcardMode = () => {
     }
   };
 
+  // Generate flashcards from current scan
   const generateFlashcards = async () => {
-    if (!currentScan) {
+    if (!appState.currentScan) {
       console.error("No scan selected.");
       return;
     }
     
-    
-    const flashcardStorageKey = `flashcards_${userId}_${currentScan.scankey}`;
+    const flashcardStorageKey = `flashcards_${userId}_${appState.currentScan.scankey}`;
 
     // Check if flashcards exist for this user and scan
     const storedFlashcards = localStorage.getItem(flashcardStorageKey);
@@ -205,9 +212,9 @@ export const FlashcardMode = () => {
     setshowpastFC(false);
   
     const payload = {
-      scanname: currentScan.scanname || "Unknown Scan",  // Ensure scanname is not undefined
-      text: currentScan.value || "",                      // Ensure text is provided
-      date: currentScan.date || new Date().toISOString() // Use current date if missing
+      scanname: appState.currentScan.scanname || "Unknown Scan",
+      text: appState.currentScan.value || "",
+      date: appState.currentScan.date || new Date().toISOString()
     };
   
     console.log("Sending to API:", payload);
@@ -257,12 +264,12 @@ export const FlashcardMode = () => {
     }
   };
   
+  // Prompt for flashcard set name
   const getFCName = () => {
     setShowFCNameModal(true);
   };
   
-
-  
+  // Confirm and save flashcard set name
   const confirmSaveFC = () => {
     if (FCName.trim().length === 0) {
       alert("Please enter a flashcard name.");
@@ -272,10 +279,8 @@ export const FlashcardMode = () => {
     setFCName("");
     handleSave();
   };
-  
-  
-  
 
+  // Navigation methods for flashcard set
   const handleNext = () => {
     setIsFlipped(false);
     setCurrentIndex((prev) => (prev + 1) % DisplayedFC.length);
@@ -290,10 +295,10 @@ export const FlashcardMode = () => {
     <div className="bg-white rounded-xl p-6 shadow-lg">
       <div className="flex justify-between items-center gap-4"> 
       <h2 className="text-2xl font-bold text-[#0f0647] mb-4">
-        Flashcard Name: {currentFC?.fcsessionname || "None"}
+        Flashcard Name: {appState.currentFC?.fcsessionname || "None"}
       </h2>
 
-      <div className= "flex flex-row gap-4 py-4"> 
+      <div className= "flex flex-col sm:flex-row  gap-4 py-4"> 
 
       {isPremium && (
         <button
@@ -382,7 +387,7 @@ export const FlashcardMode = () => {
           </div>
           <div className="flex justify-between gap-4 mb-6">
           <button
-            onClick={currentFC && savenabled ? handleSaveEditFlashcard : getFCName}
+            onClick={appState.currentFC && savenabled ? handleSaveEditFlashcard : getFCName}
             className={`flex-1 py-2 rounded-lg text-white transition-opacity ${
                 !savenabled
                 ? "bg-gray-400 cursor-not-allowed opacity-50"  

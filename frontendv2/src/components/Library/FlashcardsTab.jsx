@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../authentication/UserContext';
-import { useFC } from '../flashcards/FCcontext';
-import { useScan } from '../scans/ScanContext';
 import { useNavigate } from 'react-router-dom';
+import { useAppState, useAppDispatch, AppActions } from '../utils/appcontext';
 
 const FlashcardsTab = () => {
   const navigate = useNavigate();
-  const { setCurrentFC, currentFC } = useFC();
-  const { setCurrentScan } = useScan();
+  const dispatch = useAppDispatch();
+  const appState = useAppState();
+
   const [flashcardSets, setFlashcardSets] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [flashcardToDelete, setFlashcardToDelete] = useState(null);
@@ -15,59 +15,59 @@ const FlashcardsTab = () => {
 
   const { userId } = useUser();
 
-
   useEffect(() => {
     const fetchFlashcards = async () => {
-        try {
-            const response = await fetch(`https://api.zukini.com/display/displayflashcards?userId=${userId}`);
-            if (!response.ok) throw new Error('Failed to fetch flashcards');
-            const data = await response.json();
-            setFlashcardSets(data);
-        } catch (error) {
-            console.error('Error fetching flashcards:', error);
-        }
+      try {
+        const response = await fetch(`https://api.zukini.com/display/displayflashcards?userId=${userId}`);
+        if (!response.ok) throw new Error('Failed to fetch flashcards');
+        const data = await response.json();
+        setFlashcardSets(data);
+      } catch (error) {
+        console.error('Error fetching flashcards:', error);
+      }
     };
 
     fetchFlashcards();
-}, [userId, currentFC]); 
+  }, [userId, appState.currentFC]); 
 
-const handleStudy = (flashcards) => {
-  setCurrentFC(flashcards);
-  getScan(flashcards.scankey);
-  navigate('/study?mode=flashcards');
-};
+  const handleStudy = (flashcards) => {
+    // Use dispatch to update global state
+    dispatch(AppActions.setCurrentFC(flashcards));
+    dispatch(AppActions.setCurrentMT(null));
+    getScan(flashcards.scankey);
+    navigate('/study?mode=flashcards');
+  };
 
   const getScan = async (scankey) => {
     if (!scankey) {
-        console.error("scankey is missing");
-        setCurrentScan(null); 
-        return;
+      console.error("scankey is missing");
+      dispatch(AppActions.setCurrentScan(null)); 
+      return;
     }
 
     try {
-        const response = await fetch(`https://api.zukini.com/scans/getscan?scankey=${scankey}`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" }
-        });
+      const response = await fetch(`https://api.zukini.com/scans/getscan?scankey=${scankey}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+      });
 
-        if (!response.ok) throw new Error("Failed to fetch scan");
+      if (!response.ok) throw new Error("Failed to fetch scan");
 
-        const data = await response.json();
+      const data = await response.json();
 
-        if (!data.scan) {
-            console.error("No scan found for scankey:", scankey);
-            setCurrentScan(null); 
-            return;
-        }
+      if (!data.scan) {
+        console.error("No scan found for scankey:", scankey);
+        dispatch(AppActions.setCurrentScan(null)); 
+        return;
+      }
 
-        setCurrentScan(data.scan);
-        console.log("Scan retrieved successfully:", data.scan);
+      dispatch(AppActions.setCurrentScan(data.scan));
+      console.log("Scan retrieved successfully:", data.scan);
     } catch (error) {
-        console.error("Error fetching scan:", error);
-        setCurrentScan(null); 
+      console.error("Error fetching scan:", error);
+      dispatch(AppActions.setCurrentScan(null)); 
     }
-};
-
+  };
 
   const handleDelete = (set) => {
     setFlashcardToDelete(set);
@@ -96,9 +96,14 @@ const handleStudy = (flashcards) => {
 
       setShowDeleteModal(false);
       setFlashcardToDelete(null);
-      setCurrentFC(null);
+      
+      // Use dispatch to reset current flashcard
+      dispatch(AppActions.setCurrentFC(null));
    
-      fetchFlashcards();
+      // Refetch flashcards (you might want to replace this with a proper method)
+      const refetchResponse = await fetch(`https://api.zukini.com/display/displayflashcards?userId=${userId}`);
+      const data = await refetchResponse.json();
+      setFlashcardSets(data);
     } catch (error) {
       console.error('Error deleting flashcard:', error);
     }

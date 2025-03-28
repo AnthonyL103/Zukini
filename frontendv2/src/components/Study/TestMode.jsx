@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useMT } from '../mocktests/MTcontext';
-import { useScan } from '../scans/ScanContext';
 import { useUser } from '../authentication/UserContext';
-import PencilLoader from '../utils/pencilloader';
-import PastMockTestList from '../mocktests/PastMocktestList';
 import { v4 as uuidv4 } from 'uuid';
-import { Trash2 } from 'lucide-react'
+import { useAppState, useAppDispatch, AppActions } from '../utils/appcontext';
+import PastMockTestList from '../mocktests/PastMocktestList';
+import PencilLoader from '../utils/pencilloader';
 
 export const TestMode = () => {
-  const { currentMT, setCurrentMT } = useMT();
-  const { currentScan } = useScan();
+  const dispatch = useAppDispatch();
+  const appState = useAppState();
+  
   const { userId, setTotalMockTests, isPremium } = useUser();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
@@ -31,19 +30,20 @@ export const TestMode = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [regenerate, setRegenerate] = useState(false);
 
-
+  // Update questions when current mock test changes
   useEffect(() => {
-    if (currentMT && !saveEdit && !regenerate) {
-      console.log("Mock Test Questions:", currentMT.questions);
-      setQuestions(currentMT.questions || []);
+    if (appState.currentMT && !saveEdit && !regenerate) {
+      console.log("Mock Test Questions:", appState.currentMT.questions);
+      setQuestions(appState.currentMT.questions || []);
     } else {
       setQuestions([]);
     }
-  }, [currentMT]);
+  }, [appState.currentMT, saveEdit, regenerate]);
 
+  // Fetch or generate mock tests when current scan changes
   useEffect(() => {
-    if (currentScan && !currentMT?.questions?.length) {
-      const mocktestStorageKey = `mocktests_${userId}_${currentScan.scankey}`;
+    if (appState.currentScan && !appState.currentMT?.questions?.length) {
+      const mocktestStorageKey = `mocktests_${userId}_${appState.currentScan.scankey}`;
       const storedMockTests = localStorage.getItem(mocktestStorageKey);
 
       if (storedMockTests) {
@@ -54,7 +54,7 @@ export const TestMode = () => {
         generateMockTests();
       }
     }
-  }, [currentScan]);
+  }, [appState.currentScan]);
   
   const handleRetry = () => {
     setIsSubmitted(false);      
@@ -64,9 +64,8 @@ export const TestMode = () => {
   };
 
   const handleAddQuestion = () => {
-    if (errorMessage){
-      return;
-    }
+    if (errorMessage) return;
+    
     if (!newQuestion.trim() || newAnswers.some(answer => answer.trim() === "")) {
       setErrorMessage("All fields must be filled.");
       return;
@@ -123,17 +122,14 @@ export const TestMode = () => {
     setErrorMessage(""); 
   };
   
-  
-
   const handleSaveEditQuestion = async () => {
     console.log("in save edit");
     setsaveEdit(true); 
     try {
-  
       await handleSave();
   
       const deleteResponse = await fetch(
-        `https://api.zukini.com/display/deleteMT?key=${currentMT.mocktestkey}&userId=${userId}`,
+        `https://api.zukini.com/display/deleteMT?key=${appState.currentMT.mocktestkey}&userId=${userId}`,
         {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
@@ -145,7 +141,7 @@ export const TestMode = () => {
       }
       console.log("Old mock test deleted successfully");
   
-      const mocktestStorageKey = `mocktests_${userId}_${currentScan.scankey}`;
+      const mocktestStorageKey = `mocktests_${userId}_${appState.currentScan.scankey}`;
       localStorage.setItem(mocktestStorageKey, JSON.stringify(questions));
   
       console.log("Local storage updated with the new mock test");
@@ -160,21 +156,19 @@ export const TestMode = () => {
     }
   };
   
-  
-  
   const handleSave = async () => {
-    if (!currentScan) return;
+    if (!appState.currentScan) return;
   
     try {
       const key = uuidv4();
       const payload = {
         mocktestkey: key,
-        filepath: currentScan.filepath,
-        scanname: currentScan.scanname,
+        filepath: appState.currentScan.filepath,
+        scanname: appState.currentScan.scanname,
         questions: questions,
-        mtsessionname: MTName || currentMT.mtsessionname,
-        date: currentScan.date,
-        scankey: currentScan.scankey,
+        mtsessionname: MTName || appState.currentMT?.mtsessionname || "Unnamed Mock Test",
+        date: appState.currentScan.date,
+        scankey: appState.currentScan.scankey,
         userid: userId,
       };
   
@@ -187,7 +181,9 @@ export const TestMode = () => {
       if (response.ok) {
         setTotalMockTests((prev) => prev + 1);
         setSaveEnabled(false);
-        setCurrentMT(payload);
+        
+        // Use dispatch to update current MT
+        dispatch(AppActions.setCurrentMT(payload));
         setMTEntry(payload);
         console.log("Mock test saved successfully");
       } else {
@@ -198,17 +194,13 @@ export const TestMode = () => {
       alert("Failed to save mock test. Please try again.");
     }
   };
-  
 
-  
-  
   const handleAnswerSelect = (answer) => {
     if (isSubmitted) return;
     setSelectedAnswers(prev => ({
       ...prev,
       [questions[currentQuestion].id]: answer
     }));
-    console.log(selectedAnswers);
   };
 
   const handleSubmit = () => {
@@ -222,14 +214,13 @@ export const TestMode = () => {
     setScore(totalCorrect);
   };
 
-
   const generateMockTests = async () => {
-    if (!currentScan) {
+    if (!appState.currentScan) {
       console.error("No scan selected.");
       return;
     }
 
-    const mocktestStorageKey = `mocktests_${userId}_${currentScan.scankey}`;
+    const mocktestStorageKey = `mocktests_${userId}_${appState.currentScan.scankey}`;
     const storedMockTests = localStorage.getItem(mocktestStorageKey);
 
     if (!isPremium && storedMockTests) {
@@ -243,9 +234,9 @@ export const TestMode = () => {
     setshowpastMT(false);
 
     const payload = {
-      scanname: currentScan.scanname || "Unknown Scan",
-      text: currentScan.value || "",
-      date: currentScan.date || new Date().toISOString(),
+      scanname: appState.currentScan.scanname || "Unknown Scan",
+      text: appState.currentScan.value || "",
+      date: appState.currentScan.date || new Date().toISOString(),
     };
 
     try {
@@ -257,71 +248,68 @@ export const TestMode = () => {
 
       if (!response.ok) {
         throw new Error('Failed to generate mock tests');
-    }
+      }
     
-    const result = await response.json();
-    console.log("result",result.text);
+      const result = await response.json();
+      console.log("result", result.text);
     
-    const ScrambleAnswers = (answers) => {
+      const ScrambleAnswers = (answers) => {
         let currentIndex = answers.length;
         while (currentIndex !== 0) {
-            let randomIndex = Math.floor(Math.random() * currentIndex);
-            currentIndex--;
-            [answers[currentIndex], answers[randomIndex]] = [answers[randomIndex], answers[currentIndex]];
+          let randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex--;
+          [answers[currentIndex], answers[randomIndex]] = [answers[randomIndex], answers[currentIndex]];
         }
         return answers;
-    };
+      };
     
-    const parsedQuestions = [];
-    const lines = result.text.split("question:").filter(line => line.trim() !== ''); 
+      const parsedQuestions = [];
+      const lines = result.text.split("question:").filter(line => line.trim() !== ''); 
     
-    for (let index = 0; index < lines.length; index++) {
+      for (let index = 0; index < lines.length; index++) {
         const line = lines[index];
         const [questionPart, ...answerParts] = line.split("answer:"); 
         if (questionPart && answerParts.length > 0) {
-            const answers = answerParts
-                .map(answer => answer.trim())
-                .filter(answer => answer !== "");
-            
-            parsedQuestions.push({
-                id: `${parsedQuestions.length}-${Date.now()}`, 
-                number: index + 1, 
-                total: lines.length,
-                question: questionPart.trim(), 
-                answers: answers, 
-                rightAnswer: answers[0],
-                chosenAnswer: null,
-            });
-            
-            parsedQuestions[parsedQuestions.length - 1].answers = ScrambleAnswers(parsedQuestions[parsedQuestions.length - 1].answers);
-            
+          const answers = answerParts
+            .map(answer => answer.trim())
+            .filter(answer => answer !== "");
+          
+          parsedQuestions.push({
+            id: `${parsedQuestions.length}-${Date.now()}`, 
+            number: index + 1, 
+            total: lines.length,
+            question: questionPart.trim(), 
+            answers: answers, 
+            rightAnswer: answers[0],
+            chosenAnswer: null,
+          });
+          
+          parsedQuestions[parsedQuestions.length - 1].answers = ScrambleAnswers(parsedQuestions[parsedQuestions.length - 1].answers);
         }
+      }
+    
+      setSaveEnabled(true);
+      setQuestions(parsedQuestions);
+      setisLoading(false);
+      setshowpastMT(true);
+      localStorage.setItem(mocktestStorageKey, JSON.stringify(parsedQuestions));
+      console.log("here", parsedQuestions);
+    } catch (error) {
+      console.error('Error generating mock tests:', error);
+      alert('Failed to generate mock tests. Please try again.');
+    } finally {
+      setisLoading(false);
+      setRegenerate(false);
     }
-    
-    
-    setSaveEnabled(true);
-    setQuestions(parsedQuestions);
-    setisLoading(false);
-    setshowpastMT(true);
-    localStorage.setItem(mocktestStorageKey, JSON.stringify(parsedQuestions));
-    console.log("here",parsedQuestions);
-  } catch (error) {
-    console.error('Error generating mock tests:', error);
-    alert('Failed to generate mock tests. Please try again.');
-  } finally {
-    setisLoading(false);
-    setRegenerate(false);
-  }
-};
+  };
   
   const getMTName = () => {
     setShowMTNameModal(true);
   };
   
-  
   const confirmSaveMT = () => {
     if (MTName.trim().length === 0) {
-      alert("Please enter a flashcard name.");
+      alert("Please enter a mock test name.");
       return;
     }
     setShowMTNameModal(false);
@@ -334,7 +322,7 @@ export const TestMode = () => {
     <div className="bg-white rounded-xl p-6 shadow-lg">
       <div className="flex justify-between items-center gap-4">
         <h2 className="text-2xl font-bold text-[#0f0647] mb-4">
-          Test Name: {currentMT?.mtsessionname || "None"}
+          Test Name: {appState.currentMT?.mtsessionname || "None"}
         </h2>
 
         <div className= "flex flex-row gap-4 py-4">
@@ -361,7 +349,7 @@ export const TestMode = () => {
             </button>
           </div>
             ) : (
-              <div className="flex justify-between gap-4 "> 
+              <div className="flex flex-col sm:flex-row  justify-between gap-4 "> 
                 {isPremium && (
                  <button
 
@@ -482,7 +470,7 @@ export const TestMode = () => {
           
           <div className="flex justify-between gap-4 mt-6 mb-6">
           <button
-            onClick={currentMT && savenabled ? handleSaveEditQuestion : getMTName}
+            onClick={appState.currentMT && savenabled ? handleSaveEditQuestion : getMTName}
             className={`flex-1 py-2 rounded-lg text-white transition-opacity ${
                 !savenabled
                 ? "bg-gray-400 cursor-not-allowed opacity-50"  // Disabled state (gray)

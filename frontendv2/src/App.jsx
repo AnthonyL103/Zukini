@@ -8,9 +8,8 @@ import AccountPage from './components/pages/AccountPage';
 import LoginPage from './components/pages/LoginPage';
 import SignUpPage from './components/pages/SignUpPage';
 import { UserProvider } from './components/authentication/UserContext';
-import { ScanProvider } from './components/scans/ScanContext';
-import { FCProvider } from './components/flashcards/FCcontext';
-import { MTProvider } from './components/mocktests/MTcontext'; 
+import { AppStateProvider } from './components/utils/appcontext';
+
 import Dashboard from './components/Dashboard/Dashboard';
 import Library from './components/Library/Library';
 import Create from './components/Create/Create';
@@ -37,16 +36,12 @@ const AnimatedRoutes = () => {
 const App = () => {
   return (
     <UserProvider>
-      <ScanProvider>  
-        <FCProvider>
-          <MTProvider>  
+        <AppStateProvider>
             <Router>
               <Navbar />
               <AnimatedRoutes />
             </Router>
-          </MTProvider>
-        </FCProvider>
-      </ScanProvider>
+            </AppStateProvider>
     </UserProvider>
   );
 };

@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { useScan } from '../scans/ScanContext'; // Ensure correct import
 import { useUser } from '../authentication/UserContext';
-import { useFC } from '../flashcards/FCcontext';
 import { Trash2 } from 'lucide-react';
+import { useAppState, useAppDispatch, AppActions } from "../utils/appcontext";
 
 const PastFlashCardList = ({NewFCEntry}) => {
   const { userId } = useUser();
-  const { setCurrentFC, currentFC } = useFC();
-  const { currentScan } = useScan();
+  const dispatch = useAppDispatch();
+  const appState = useAppState();
+
   const [flashcards, setFlashcards] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [flashcardToDelete, setFlashcardToDelete] = useState(null);
 
   useEffect(() => {
-    if (!currentScan) {
+    if (!appState.currentScan) {
         return;
     }
     const fetchFlashcards = async () => {
         try {
-            const response = await fetch(`https://api.zukini.com/display/displayFCfromScanID?scanId=${currentScan.scankey}`);
+            const response = await fetch(`https://api.zukini.com/display/displayFCfromScanID?scanId=${appState.currentScan.scankey}`);
             if (!response.ok) throw new Error('Failed to fetch flashcards');
             const data = await response.json();
             setFlashcards(data);
@@ -29,7 +29,7 @@ const PastFlashCardList = ({NewFCEntry}) => {
     };
 
     fetchFlashcards();
-}, [userId, currentFC, flashcards.length]);
+}, [userId, appState.currentFC, flashcards.length]);
   
   useEffect(() => {
     if (NewFCEntry) {
@@ -43,11 +43,11 @@ const PastFlashCardList = ({NewFCEntry}) => {
   );
 
   const handleStudyFC = (flashcard) => {
-    setCurrentFC(flashcard);
- };
+    // Use dispatch to update current flashcard
+    dispatch(AppActions.setCurrentFC(flashcard));
+  };
   
   const handleDelete = (flashcard) => {
-    
     setFlashcardToDelete(flashcard);
     setShowDeleteModal(true);
   };
@@ -65,7 +65,9 @@ const PastFlashCardList = ({NewFCEntry}) => {
         prevFlashcards.filter(fc => fc.flashcardkey !== flashcardToDelete.flashcardkey)
       );
       setShowDeleteModal(false);
-      setCurrentFC(null);
+      
+      // Use dispatch to reset current flashcard
+      dispatch(AppActions.setCurrentFC(null));
       setFlashcardToDelete(null);
       
     } catch (error) {
@@ -115,7 +117,7 @@ const PastFlashCardList = ({NewFCEntry}) => {
         ))}
       </div>
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete Confirmation Modal - remains the same */}
       {showDeleteModal && flashcardToDelete && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300 z-50">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md m-4 shadow-xl">
