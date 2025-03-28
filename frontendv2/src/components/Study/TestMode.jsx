@@ -42,7 +42,7 @@ export const TestMode = () => {
   }, [currentMT]);
 
   useEffect(() => {
-    if (currentScan) {
+    if (currentScan && !currentMT?.questions?.length) {
       const mocktestStorageKey = `mocktests_${userId}_${currentScan.scankey}`;
       const storedMockTests = localStorage.getItem(mocktestStorageKey);
 

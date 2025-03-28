@@ -41,7 +41,7 @@ export const FlashcardMode = () => {
   
   
   useEffect(() => {
-    if (currentScan) {
+    if (currentScan && !currentFC?.flashcards?.length) {
       const flashcardStorageKey = `flashcards_${userId}_${currentScan.scankey}`;
       const storedFlashcards = localStorage.getItem(flashcardStorageKey);
       if (storedFlashcards) {

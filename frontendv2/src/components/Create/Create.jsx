@@ -68,6 +68,7 @@ const Create = () => {
       setCurrentScan(newScan);
       setCurrentFC(null);
       setCurrentMT(null);
+
       navigate('/study', { 
         state: { 
           initialMode: 'review'

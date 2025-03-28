@@ -49,8 +49,12 @@ const ScansTab = ({ autoOpenScan = null }) => {
     setCurrentScan(scan);
     setCurrentFC(null);
     setCurrentMT(null);
-    console.log("currentFC", setCurrentFC);
-    navigate('/study', { state: { initialMode: type } });
+    navigate(`/study?mode=${type}`, {
+      state: {
+        initialMode: type,
+      }
+    });
+    
   };
 
     // Auto-opening study modal
