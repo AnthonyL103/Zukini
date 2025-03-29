@@ -1,12 +1,26 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
-// Initial state
-const initialState = {
-  currentScan: null,
-  currentFC: null,
-  currentMT: null,
-  totalScans: 0,
-  totalFlashcards: 0,
+// Get initial state from localStorage if available
+const getInitialState = () => {
+  try {
+    const savedState = localStorage.getItem('appState');
+    return savedState ? JSON.parse(savedState) : {
+      currentScan: null,
+      currentFC: null,
+      currentMT: null,
+      totalScans: 0,
+      totalFlashcards: 0,
+    };
+  } catch (error) {
+    console.error('Error loading state from localStorage:', error);
+    return {
+      currentScan: null,
+      currentFC: null,
+      currentMT: null,
+      totalScans: 0,
+      totalFlashcards: 0,
+    };
+  }
 };
 
 // Action types
@@ -23,30 +37,44 @@ const ActionTypes = {
 
 // Reducer function
 function appReducer(state, action) {
+  let newState;
+  
   switch (action.type) {
     case ActionTypes.SET_CURRENT_SCAN:
-      return { ...state, currentScan: action.payload };
+      newState = { ...state, currentScan: action.payload };
+      break;
     case ActionTypes.SET_CURRENT_FC:
-      return { ...state, currentFC: action.payload };
+      newState = { ...state, currentFC: action.payload };
+      break;
     case ActionTypes.SET_CURRENT_MT:
-      return { ...state, currentMT: action.payload };
+      newState = { ...state, currentMT: action.payload };
+      break;
     case ActionTypes.SET_TOTAL_SCANS:
-      return { ...state, totalScans: action.payload };
+      newState = { ...state, totalScans: action.payload };
+      break;
     case ActionTypes.SET_TOTAL_FLASHCARDS:
-      return { ...state, totalFlashcards: action.payload };
+      newState = { ...state, totalFlashcards: action.payload };
+      break;
     case ActionTypes.RESET_FC:
-      return { ...state, currentFC: null };
+      newState = { ...state, currentFC: null };
+      break;
     case ActionTypes.RESET_MT:
-      return { ...state, currentMT: null };
+      newState = { ...state, currentMT: null };
+      break;
     case ActionTypes.RESET_ALL:
-      return { 
+      newState = { 
         ...state, 
         currentFC: null, 
         currentMT: null 
       };
+      break;
     default:
       return state;
   }
+  
+  // Persist state to localStorage
+  localStorage.setItem('appState', JSON.stringify(newState));
+  return newState;
 }
 
 // Create context
@@ -55,7 +83,12 @@ const AppDispatchContext = createContext();
 
 // Provider component
 export function AppStateProvider({ children }) {
-  const [state, dispatch] = useReducer(appReducer, initialState);
+  const [state, dispatch] = useReducer(appReducer, getInitialState());
+
+  // This effect ensures state is saved whenever it changes
+  useEffect(() => {
+    localStorage.setItem('appState', JSON.stringify(state));
+  }, [state]);
 
   return (
     <AppStateContext.Provider value={state}>
