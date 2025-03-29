@@ -5,6 +5,7 @@ import { useAppState, useAppDispatch, AppActions } from "../utils/appcontext";
 import PencilLoader from '../utils/pencilloader';
 import PastFlashCardList from '../flashcards/PastFlashcardList';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Trash2 } from 'lucide-react';
 
 
 export const FlashcardMode = () => {
@@ -28,6 +29,7 @@ export const FlashcardMode = () => {
   const [saveEdit, setsaveEdit] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [regenerate, setRegenerate] = useState(false);
+  
   
   // Update displayed flashcards when current FC changes
   useEffect(() => {
@@ -139,9 +141,8 @@ export const FlashcardMode = () => {
       localStorage.setItem(flashcardStorageKey, JSON.stringify(DisplayedFC));
       console.log("Local storage updated with the new flashcard");
   
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
+      setsaveEdit(false);
+      setSaveEnabled(false);
   
     } catch (error) {
       console.error("Error updating flashcards:", error);

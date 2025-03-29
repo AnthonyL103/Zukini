@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useAppState, useAppDispatch, AppActions } from '../utils/appcontext';
 import PastMockTestList from '../mocktests/PastMocktestList';
 import PencilLoader from '../utils/pencilloader';
+import { Trash2 } from 'lucide-react';
 
 export const TestMode = () => {
   const dispatch = useAppDispatch();
@@ -146,9 +147,8 @@ export const TestMode = () => {
   
       console.log("Local storage updated with the new mock test");
   
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
+      setsaveEdit(false);
+      setSaveEnabled(false);
   
     } catch (error) {
       console.error("Error updating mock test:", error);
