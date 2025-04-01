@@ -5,6 +5,7 @@ import { useAppState, useAppDispatch, AppActions } from "../utils/appcontext";
 import PencilLoader from '../utils/pencilloader';
 import PastFlashCardList from '../flashcards/PastFlashcardList';
 import { motion, AnimatePresence } from 'framer-motion';
+import GenerateModal from '../flashcards/GenerateModal';
 import { Trash2 } from 'lucide-react';
 
 
@@ -29,17 +30,18 @@ export const FlashcardMode = () => {
   const [saveEdit, setsaveEdit] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [regenerate, setRegenerate] = useState(false);
+  const [OpenGenerateModal, setOpenGenerateModal] = useState(false);
   
   
   // Update displayed flashcards when current FC changes
   useEffect(() => {
-    if (appState.currentFC && !saveEdit && !regenerate) {
+    if (appState.currentFC && !saveEdit) {
       console.log("currentFC.flashcards", appState.currentFC.flashcards);
       setDisplayedFC(appState.currentFC.flashcards || []); 
     } else {
       setDisplayedFC([]);
     }
-  }, [appState.currentFC, saveEdit, regenerate]); 
+  }, [appState.currentFC, saveEdit]); 
   
   // Fetch or generate flashcards when current scan changes
   useEffect(() => {
@@ -305,8 +307,9 @@ export const FlashcardMode = () => {
         <button
 
           onClick={() => {
-            generateFlashcards();
-            setRegenerate(true);}}
+            //generateFlashcards();
+            //setRegenerate(true);}}
+            setOpenGenerateModal(true);}}
           
           className={`flex flex-row py-2 px-4 gap-2'} ${
             regenerate
@@ -328,7 +331,7 @@ export const FlashcardMode = () => {
                       d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"
                     ></path>
                   </svg>
-          Regenerate
+          Generate
         </button>
       )}
       
@@ -544,9 +547,24 @@ export const FlashcardMode = () => {
                             Close
                         </button>
                     </div>
+
+                  
                 </div>
-            </div>
+            </div> 
         )}
+
+        
+        <GenerateModal
+            setRegenerate = {setRegenerate}
+            setisLoading = {setisLoading}
+            DisplayedFC = {DisplayedFC}
+            setDisplayedFC = {setDisplayedFC}
+            OpenGenerateModal = {OpenGenerateModal}
+            setOpenGenerateModal = {setOpenGenerateModal}
+            setSaveEnabled={setSaveEnabled}
+            setshowpastFC={setshowpastFC}
+        />
+        
 
       
       
