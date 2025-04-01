@@ -34,7 +34,7 @@ async function summarizeNotes(text, retries = MAX_RETRIES) {
     });
     
     try {
-      const maxTokenEstimate = 4000; 
+      const maxTokenEstimate = 5000; 
       const truncatedText = text.length > maxTokenEstimate * 4 ? text.slice(0, maxTokenEstimate * 4) : text;
       const wasTruncated = text.length !== truncatedText.length;
       
@@ -113,7 +113,7 @@ async function sendOpenAiRequest(prompt, systemRole, retries) {
           { role: 'user', content: prompt },
         ],
         temperature: 0.7,
-        max_tokens: 1000,
+        max_tokens: 2000,
       },
       {
         headers: {

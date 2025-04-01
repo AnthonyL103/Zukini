@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-const { parseFlashCards } = require('./parseFlashCards');
+const { parseFlashCards, generatemoreFC, generatenewFC } = require('./parseFlashCards');
 const { FlashCardEntries } = require('../Database/db');
 const { logger } = require('../logging');
 const app = express();
@@ -46,6 +46,66 @@ async function appendflashCardToDB(newEntry) {
     });
   }
 }
+
+router.post('/callregenerateFlashcards', async (req, res) => {
+  const {customprompt, scantext, generatemore, currentflashcards, accuracy} = req.body;
+  logger.info({
+    type: 'regenerate_flashcards_attempt',
+    customprompt: customprompt,
+    generatemore: generatemore,
+    accuracy: accuracy
+  });
+
+  if (generatemore) {
+    try {
+      const flashCardText = await generatemoreFC(customprompt, scantext, currentflashcards, accuracy);
+      const questionCount = (flashCardText.match(/Question:/g) || []).length;
+      
+      logger.info({
+        type: 'regenerate_flashcards_success',
+        generatemore: generatemore,
+        cardsGenerated: questionCount
+      });
+  
+      res.json({
+        message: 'More Flashcard text generated successfully',
+        text: flashCardText, 
+      });
+    } catch (error) {
+      logger.error({
+        type: 'regenerate_flashcards_error',
+        generatemore: generatemore,
+        error: error.message,
+        stack: error.stack
+      });
+      res.status(500).json({ error: 'Failed to generate more flashcards.' });
+    }
+  } else {
+    try {
+      const flashCardText = await generatenewFC(scantext, customprompt, accuracy);
+      const questionCount = (flashCardText.match(/Question:/g) || []).length;
+      
+      logger.info({
+        type: 'regenerate_flashcards_success',
+        generatemore: generatemore,
+        cardsGenerated: questionCount
+      });
+  
+      res.json({
+        message: 'New Flashcard text generated successfully',
+        text: flashCardText, 
+      });
+    } catch (error) {
+      logger.error({
+        type: 'regenerate_flashcards_error',
+        generatemore: generatemore,
+        error: error.message,
+        stack: error.stack
+      });
+      res.status(500).json({ error: 'Failed to generate new flashcards.' });
+    }
+  }
+});
   
 router.post('/callparseFlashCards', async (req, res) => {
   const { scanname, text, date } = req.body;
@@ -68,11 +128,11 @@ router.post('/callparseFlashCards', async (req, res) => {
 
   try {
     const flashCardText = await parseFlashCards(text);
-
+    const questionCount = (flashCardText.match(/Question:/g) || []).length;
     logger.info({
       type: 'parse_flashcards_success',
       scanName: scanname,
-      cardsGenerated: Array.isArray(flashCardText) ? flashCardText.length : 1
+      cardsGenerated: questionCount
     });
 
     res.json({
@@ -145,6 +205,8 @@ router.post('/saveFlashCards', async (req, res) => {
     return res.status(500).json({ message: 'Failed to save FlashCards to the database ' });
   }
 });
+
+
 
 
 app.use('/flashcards', router);

@@ -31,7 +31,7 @@ async function createMockTests(text, retries = 5) {
   });
   
   try {
-    const maxTokenEstimate = 4000; 
+    const maxTokenEstimate = 5000; 
     const truncatedText = text.length > maxTokenEstimate * 4 ? text.slice(0, maxTokenEstimate * 4) : text;
     const wasTruncated = text.length !== truncatedText.length;
     
@@ -75,8 +75,8 @@ async function createMockTests(text, retries = 5) {
           { role: 'system', content: 'You are an assistant that generates text for mock tests.' },
           { role: 'user', content: prompt },
         ],
-        temperature: 0.7,
-        max_tokens: 500,
+        temperature: 0.5,
+        max_tokens: 5000,
       },
       {
         headers: {
