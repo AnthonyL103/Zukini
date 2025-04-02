@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useAppState, useAppDispatch, AppActions } from '../utils/appcontext';
 import PastMockTestList from '../mocktests/PastMocktestList';
 import PencilLoader from '../utils/pencilloader';
+import GenerateModalMT from '../mocktests/GenerateModalMT';
 import { Trash2 } from 'lucide-react';
 
 export const TestMode = () => {
@@ -30,16 +31,17 @@ export const TestMode = () => {
   const [saveEdit, setsaveEdit] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [regenerate, setRegenerate] = useState(false);
+  const [OpenGenerateModal, setOpenGenerateModal] = useState(false);
 
   // Update questions when current mock test changes
   useEffect(() => {
-    if (appState.currentMT && !saveEdit && !regenerate) {
+    if (appState.currentMT && !saveEdit) {
       console.log("Mock Test Questions:", appState.currentMT.questions);
       setQuestions(appState.currentMT.questions || []);
     } else {
       setQuestions([]);
     }
-  }, [appState.currentMT, saveEdit, regenerate]);
+  }, [appState.currentMT, saveEdit]);
 
   // Fetch or generate mock tests when current scan changes
   useEffect(() => {
@@ -354,8 +356,9 @@ export const TestMode = () => {
                  <button
 
                   onClick={() => {
-                    generateMockTests();
-                    setRegenerate(true);}}
+                    //generateMockTests();
+                    //setRegenerate(true);}}
+                    setOpenGenerateModal(true);}}
                   
                   className={`flex flex-row py-2 px-4 gap-2'} ${
                     regenerate
@@ -377,7 +380,7 @@ export const TestMode = () => {
                               d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"
                             ></path>
                           </svg>
-                  Regenerate
+                  Generate
                 </button>
               )}
                 
@@ -400,10 +403,13 @@ export const TestMode = () => {
           </div>
       ) : questions?.length > 0 ? (
         <>
+          <div
+              className="bg-gradient-to-r from-[#0f0647] to-[#67d7cc] p-1 rounded-xl mb-6 cursor-pointer">
+          <div className="bg-white p-6 rounded-xl flex flex-col  ">
           <h3 className="font-semibold mb-4">
             Question {currentQuestion + 1} of {questions.length}
           </h3>
-          <div className="bg-gray-50 p-4 rounded-lg mb-4">
+          <div className="bg-gray-50 p-4 rounded-lg mb-4 border ">
             <p className="text-lg">{questions[currentQuestion].question}</p>
           </div>
 
@@ -420,7 +426,7 @@ export const TestMode = () => {
                 className={`w-full p-3 text-left border rounded-lg transition-colors
                     ${selectedAnswer === option && !isSubmitted
                     ? 'bg-[#0f0647] text-white '  
-                    : 'border-gray-300  hover:bg-gray-400 hover:text-white'
+                    : 'border-gray-500  hover:bg-gray-400 hover:text-white'
                     }
                     ${isSubmitted && option === questions[currentQuestion].rightAnswer
                     ? 'bg-green-500 text-white'  
@@ -437,6 +443,8 @@ export const TestMode = () => {
 
               );
             })}
+          </div>
+          </div>
           </div>
 
 
@@ -637,6 +645,17 @@ export const TestMode = () => {
           </div>
         </div>
       )}
+
+      <GenerateModalMT
+            setRegenerate = {setRegenerate}
+            setisLoading = {setisLoading}
+            questions = {questions}
+            setQuestions = {setQuestions}
+            OpenGenerateModal = {OpenGenerateModal}
+            setOpenGenerateModal = {setOpenGenerateModal}
+            setSaveEnabled={setSaveEnabled}
+            setshowpastMT={setshowpastMT}
+        />
 
       
     </div>

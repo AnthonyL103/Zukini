@@ -5,7 +5,7 @@ import { useAppState, useAppDispatch, AppActions } from "../utils/appcontext";
 import PencilLoader from '../utils/pencilloader';
 import PastFlashCardList from '../flashcards/PastFlashcardList';
 import { motion, AnimatePresence } from 'framer-motion';
-import GenerateModal from '../flashcards/GenerateModal';
+import GenerateModalFC from '../flashcards/GenerateModalFC';
 import { Trash2 } from 'lucide-react';
 
 
@@ -554,7 +554,7 @@ export const FlashcardMode = () => {
         )}
 
         
-        <GenerateModal
+        <GenerateModalFC
             setRegenerate = {setRegenerate}
             setisLoading = {setisLoading}
             DisplayedFC = {DisplayedFC}

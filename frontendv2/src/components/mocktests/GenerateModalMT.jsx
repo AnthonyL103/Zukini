@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {useAppState} from '../utils/appcontext';
 import { useUser } from '../authentication/UserContext';
 
-const GenerateModal = ({setRegenerate, setisLoading, DisplayedFC, setDisplayedFC, OpenGenerateModal, setOpenGenerateModal, setSaveEnabled, setshowpastFC}) => {
+const GenerateModalMT = ({setRegenerate, setisLoading, questions, setQuestions, OpenGenerateModal, setOpenGenerateModal, setSaveEnabled, setshowpastMT}) => {
     const appState = useAppState();
     const { userId} = useUser();
     const [accuracy, setaccurracy] = useState(50);
@@ -20,24 +20,27 @@ const GenerateModal = ({setRegenerate, setisLoading, DisplayedFC, setDisplayedFC
             return;
         }
 
-        let pastFlashcards = "";
-        if (DisplayedFC && DisplayedFC.length > 0) {
-            pastFlashcards = DisplayedFC.map(flashcard => 
-                `Question: ${flashcard.question}\nAnswer: ${flashcard.answer}`
+        let pastQuestions = "";
+        if (questions && questions.length > 0) {
+            pastQuestions = questions.map(question => 
+                `Number: ${question.number}\nQuestion: ${question.question}\nAnswers: ${
+                    question.answers.map(answer => `${answer}`)
+                }\nRight Answer: ${question.rightAnswer}`
             ).join('\n\n');
         }
+
 
         const payload = {
             customprompt: customprompt || "",
             scantext: appState.currentScan.value || "",
             generatemore: generatemore,
-            currentflashcards: pastFlashcards,
+            currentquestions: pastQuestions,
             accuracy: accuracy
             
         };
 
         try {
-            const response = await fetch('https://api.zukini.com/flashcards/callregenerateFlashCards', {
+            const response = await fetch('https://api.zukini.com/mocktests/callregenerateMocktests', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -46,7 +49,7 @@ const GenerateModal = ({setRegenerate, setisLoading, DisplayedFC, setDisplayedFC
             });
 
             if (!response.ok) {
-                throw new Error(`Failed to regenerate flashcards. Status: ${response.status}`);
+                throw new Error(`Failed to regenerate mocktest. Status: ${response.status}`);
             }
 
             const result = await response.json();
@@ -56,42 +59,61 @@ const GenerateModal = ({setRegenerate, setisLoading, DisplayedFC, setDisplayedFC
             }
             
           
-            const parsedFlashcards = result.text
-                .split(/\n?Question:/) 
-                .filter(line => line.trim() && line.includes("Answer:")) 
-                .map((line, index) => {
-                const [question, answer] = line.split('Answer:');
-                return {
-                    id: `${index}-${Date.now()}`,
-                    question: question?.trim() || "Untitled Question",
-                    answer: answer?.trim() || "No Answer Provided"
-                };
-            });
-
-            console.log(parsedFlashcards);
-            setSaveEnabled(true);
-            const flashcardStorageKey = `flashcards_${userId}_${appState.currentScan.scankey}`;
-            if (generatemore) {
-                // Create a new array that combines existing and new flashcards
-                const combinedFlashcards = [...DisplayedFC, ...parsedFlashcards];
-                setDisplayedFC(combinedFlashcards);
-                // Save the combined flashcards to localStorage
-                localStorage.setItem(flashcardStorageKey, JSON.stringify(combinedFlashcards));
-            } else {
-                setDisplayedFC(parsedFlashcards);
-                localStorage.setItem(flashcardStorageKey, JSON.stringify(parsedFlashcards));
+            const ScrambleAnswers = (answers) => {
+                let currentIndex = answers.length;
+                while (currentIndex !== 0) {
+                  let randomIndex = Math.floor(Math.random() * currentIndex);
+                  currentIndex--;
+                  [answers[currentIndex], answers[randomIndex]] = [answers[randomIndex], answers[currentIndex]];
+                }
+                return answers;
+            };
+            
+            const parsedQuestions = [];
+            const lines = result.text.split("question:").filter(line => line.trim() !== ''); 
+            
+            for (let index = 0; index < lines.length; index++) {
+                const line = lines[index];
+                const [questionPart, ...answerParts] = line.split("answer:"); 
+                if (questionPart && answerParts.length > 0) {
+                  const answers = answerParts
+                    .map(answer => answer.trim())
+                    .filter(answer => answer !== "");
+                  
+                  parsedQuestions.push({
+                    id: `${parsedQuestions.length}-${Date.now()}`, 
+                    number: index + 1, 
+                    total: lines.length,
+                    question: questionPart.trim(), 
+                    answers: answers, 
+                    rightAnswer: answers[0],
+                    chosenAnswer: null,
+                });
+                  
+                  parsedQuestions[parsedQuestions.length - 1].answers = ScrambleAnswers(parsedQuestions[parsedQuestions.length - 1].answers);
+                }
             }
-            setshowpastFC(true);
+
+            setSaveEnabled(true);
+            const mocktestStorageKey = `mocktests_${userId}_${appState.currentScan.scankey}`;
+            if (generatemore) {
+                const combinedQuestions = [...questions, ...parsedQuestions];
+                setQuestions(combinedQuestions);
+                localStorage.setItem(mocktestStorageKey, JSON.stringify(combinedQuestions));
+            } else {
+                setQuestions(parsedQuestions);
+                localStorage.setItem(mocktestStorageKey, JSON.stringify(parsedQuestions));
+            }
+            setshowpastMT(true);
         } catch (error) {
-            console.error("Error generating flashcards:", error);
-            alert("Failed to generate flashcards. Please try again.");
+            console.error("Error generating mocktest:", error);
+            alert("Failed to generate mocktest. Please try again.");
         } finally {
             setisLoading(false);
             setRegenerate(false);
         }
         
 
-        // Check if flashcards exist for this user and scan
         
           
     };
@@ -104,9 +126,10 @@ const GenerateModal = ({setRegenerate, setisLoading, DisplayedFC, setDisplayedFC
                         <h2 className="text-2xl font-bold text-[#0f0647] mb-4">
                             Generate 
                         </h2>
-                        
-                        <div className="flex flex-col items-center justify-center gap-4 p-4 border border-black rounded-lg shadow-sm mb-4">
-                            <h2 className="text-1xl font-bold text-[#0f0647]">Custom prompt</h2>
+                        <div
+                            className="bg-gradient-to-r from-[#0f0647] to-[#67d7cc] p-1 rounded-xl mb-6 cursor-pointer">
+                        <div className="bg-white p-6 rounded-xl flex flex-col gap-4 justify-center items-center">
+                            <h2 className="text-1xl font-bold text-[#0f0647]">Custom prompt:</h2>
                             <input 
                                 type="text" 
                                 value={customprompt}
@@ -114,7 +137,7 @@ const GenerateModal = ({setRegenerate, setisLoading, DisplayedFC, setDisplayedFC
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 mb-6 focus:outline-none"
                             />
 
-                            <h2 className="text-1xl font-bold text-[#0f0647]">Adjust Accuracy</h2>
+                            <h2 className="text-1xl font-bold text-[#0f0647]">Adjust Accuracy:</h2>
                             <input 
                                 type="range" 
                                 min="0" 
@@ -126,7 +149,7 @@ const GenerateModal = ({setRegenerate, setisLoading, DisplayedFC, setDisplayedFC
                             />
                             <p className="font-semibold">{accuracy} %</p>
                             
-                            <h2 className="text-1xl font-bold text-[#0f0647]">Generation Type</h2>
+                            <h2 className="text-1xl font-bold text-[#0f0647]">Generation Type:</h2>
                             <div className="flex space-x-4">
                                 <button 
                                     onClick={() => setgeneratemore(false)}
@@ -145,6 +168,7 @@ const GenerateModal = ({setRegenerate, setisLoading, DisplayedFC, setDisplayedFC
                                     Generate More
                                 </button>
                             </div>
+                        </div>
                         </div>
 
                         <div className="flex justify-between gap-4 mb-6">
@@ -168,4 +192,4 @@ const GenerateModal = ({setRegenerate, setisLoading, DisplayedFC, setDisplayedFC
     );
 };
 
-export default GenerateModal;
+export default GenerateModalMT;
