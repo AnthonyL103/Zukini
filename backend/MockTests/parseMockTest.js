@@ -327,6 +327,9 @@ async function generatenewMT(scantext, customprompt, accuracy, retries = 5) {
       
       NotesText:
       ${truncatedText}
+
+      UserRequest:
+      ${customprompt}
     `;
 
     logger.info({
