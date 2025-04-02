@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { createMockTests } = require('./parseMockTest');
+const { createMockTests, generatemoreMT, generatenewMT } = require('./parseMockTest');
 const { MockTestEntries } = require('../Database/db');
 const { logger } = require('../logging');
 const app = express();
@@ -45,6 +45,67 @@ async function appendmocktestToDB(newEntry) {
       });
     }
 }
+
+
+router.post('/callregenerateMocktests', async (req, res) => {
+  const {customprompt, scantext, generatemore, currentquestions, accuracy} = req.body;
+  logger.info({
+    type: 'regenerate_mocktest_attempt',
+    customprompt: customprompt,
+    generatemore: generatemore,
+    accuracy: accuracy
+  });
+
+  if (generatemore) {
+    try {
+      const questionText = await generatemoreMT(customprompt, scantext, currentquestions, accuracy);
+      const questionCount = (questionText.match(/question:/g) || []).length;
+      
+      logger.info({
+        type: 'regenerate_mocktest_success',
+        generatemore: generatemore,
+        cardsGenerated: questionCount
+      });
+  
+      res.json({
+        message: 'More mocktest questions generated successfully',
+        text: questionText, 
+      });
+    } catch (error) {
+      logger.error({
+        type: 'regenerate_mocktest_error',
+        generatemore: generatemore,
+        error: error.message,
+        stack: error.stack
+      });
+      res.status(500).json({ error: 'Failed to generate more mocktest questions.' });
+    }
+  } else {
+    try {
+      const questionText = await generatenewMT(scantext, customprompt, accuracy);
+      const questionCount = (questionText.match(/question:/g) || []).length;
+      
+      logger.info({
+        type: 'regenerate_mocktest_success',
+        generatemore: generatemore,
+        cardsGenerated: questionCount
+      });
+  
+      res.json({
+        message: 'New mocktest questions generated successfully',
+        text: questionText, 
+      });
+    } catch (error) {
+      logger.error({
+        type: 'regenerate_mocktest_error',
+        generatemore: generatemore,
+        error: error.message,
+        stack: error.stack
+      });
+      res.status(500).json({ error: 'Failed to generate new mocktest questions.' });
+    }
+  }
+});
 
 router.post('/callparseMockTests', async (req, res) => {
   const { scanname, text, date } = req.body;
@@ -163,7 +224,7 @@ router.post('/saveMockTest', async (req, res) => {
         hasFilepath: !!filepath,
         hasQuestions: !!questions
       });
-      return res.status(400).json({ message: 'filePath and FlashCardtext are required' });
+      return res.status(400).json({ message: 'filePath and Mocktest text are required' });
     }
   
     const newEntry = {
