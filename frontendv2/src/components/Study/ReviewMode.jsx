@@ -79,10 +79,21 @@ export const ReviewMode = () => {
       const data = await response.json();
       
       if (data.summary) {
-        setSummary(data.summary);
-        localStorage.setItem(SummaryStorageKey, JSON.stringify(data.summary));
-        console.log("Generated summary stored:", data.summary);
-         // Auto scroll
+
+        let cleanedSummary = data.summary;
+  
+        if (cleanedSummary.startsWith("```html")) {
+          cleanedSummary = cleanedSummary.substring(7); 
+        }
+        
+        if (cleanedSummary.endsWith("```")) {
+          cleanedSummary = cleanedSummary.substring(0, cleanedSummary.length - 3); // 3 is the length of "```"
+        }
+        
+        setSummary(cleanedSummary);
+        localStorage.setItem(SummaryStorageKey, JSON.stringify(cleanedSummary));
+        console.log("Generated summary stored:", cleanedSummary);
+        
         setTimeout(() => summaryRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
       } else {
         console.warn("⚠️ Received an empty summary from the API.");
