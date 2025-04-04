@@ -131,9 +131,8 @@ export const ReviewMode = () => {
       
       {summary?.length > 0 ? (
         <div className="bg-gray-50 p-4 rounded-lg mb-6 max-h-[500px] overflow-y-auto">
-        <p className="text-gray-600 whitespace-pre-wrap">{summary}</p>
+          <div dangerouslySetInnerHTML={{ __html: summary }} />
         </div>
-        
       ) : loading ? (
         <div className="flex justify-center items-center h-64">
         <PencilLoader />
@@ -143,8 +142,6 @@ export const ReviewMode = () => {
         No summary available, click summary button to generate one.
         </div>
       )}
-
-      
 
       {/* Notes 
       <div className="mb-6">
@@ -158,7 +155,6 @@ export const ReviewMode = () => {
         />
       </div>
 
-      
       <div className="flex gap-2">
         <button 
           onClick={handleAddHighlight}

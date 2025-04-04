@@ -48,25 +48,53 @@ async function summarizeNotes(text, retries = MAX_RETRIES) {
       }
       
       const prompt = `
-        Summarize the following notes in **clear and structured text**.
-
-        **Summary Length Constraint:**  
-        - Keep the summary **under 500 words**.
-        - Focus only on the most important concepts.
-        - Omit excessive details and minor explanations.
-        - Ensure that all key points remain intact.
-
-        **Formatting Guidelines:**  
-        - Organize information with headings, subheadings, and use newlines/indentation.
-        - Use bullet points with dashes to break down complex information.
-        - Keep the summary concise, structured, and easy to read.
-        - Use as many emojis as possible.
-        - DO NOT USE ANY SYMBOL OTHER THAN DASHES OR EMOJIS
-        
-        **Now, summarize the following notes using the guidelines:**  
-  ${truncatedText}
-      `;
+      You are tasked with summarizing a given text into a well-formatted HTML document that enhances readability and user experience. The summary should be no longer than 500 words and should focus on the key points of the text, ensuring the following formatting guidelines are met:
       
+      1. **Title Formatting:**
+        - Use larger fonts for titles to make them stand out.
+        - Example: \`<h1 style="font-size: 24px; color: #2C3E50;">Title</h1>\`
+
+      2. **Key Points:**
+        - Highlight key points by using different colors or bold text.
+        - Example: \`<p style="color: #E74C3C; font-weight: bold;">This is a key point.</p>\`
+
+      3. **Bullet Points:**
+        - Use bullet points to list important items or steps in a process.
+        - Example: \`<ul><li>First important item.</li><li>Second important item.</li></ul>\`
+
+      4. **Section Headings:**
+        - Make section headings clear and distinguishable.
+        - Example: \`<h2 style="font-size: 20px; color: #3498DB;">Section Heading</h2>\`
+
+      5. **Text Formatting:**
+        - Use different colors to differentiate between sections or points to improve user experience.
+        - Example: \`<p style="color: #34495E;">General text in the summary.</p>\`
+
+      6. **Overall Styling:**
+        - Ensure the HTML document is visually appealing and easy to read.
+        - Example: \`<div style="font-family: Arial, sans-serif; line-height: 1.6;">\`
+
+      Here is an example input and output:
+
+      ### Input Text:
+      ${truncatedText}
+
+      ### Output HTML:
+      \`\`\`
+      <h1 style="font-size: 24px; color: #2C3E50;">Title of the Summary</h1>
+      <p style="color: #34495E;">Text introduction and general information...</p>
+      <h2 style="font-size: 20px; color: #3498DB;">Key Points</h2>
+      <p style="color: #E74C3C; font-weight: bold;">First key point.</p>
+      <p style="color: #E74C3C; font-weight: bold;">Second key point.</p>
+      <ul><li>Important item one</li><li>Important item two</li></ul>
+      <h2 style="font-size: 20px; color: #3498DB;">Conclusion</h2>
+      <p style="color: #34495E;">Final thoughts and summary...</p>
+      </div>
+      \`\`\`
+
+      Ensure the summary is informative, concise, and structured for optimal user experience.
+   `;
+
       const systemRole = "You are an AI assistant that summarizes study notes clearly and concisely";
       
       logger.info({
@@ -74,9 +102,9 @@ async function summarizeNotes(text, retries = MAX_RETRIES) {
         promptLength: prompt.length,
         systemRole: systemRole
       });
-  
+
       const result = await sendOpenAiRequest(prompt, systemRole, retries);
-      
+
       logger.info({
         type: 'summarize_notes_success',
         inputLength: text.length,
@@ -113,7 +141,7 @@ async function sendOpenAiRequest(prompt, systemRole, retries) {
           { role: 'user', content: prompt },
         ],
         temperature: 0.7,
-        max_tokens: 2000,
+        max_tokens: 5000,
       },
       {
         headers: {
