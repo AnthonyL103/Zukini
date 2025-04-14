@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {useAppState} from '../utils/appcontext';
 import { useUser } from '../authentication/UserContext';
 
-const GenerateModalMT = ({setRegenerate, setisLoading, questions, setQuestions, OpenGenerateModal, setOpenGenerateModal, setSaveEnabled, setshowpastMT}) => {
+const GenerateModalMT = ({setRegenerate, setisLoading, questions, setQuestions, OpenGenerateModal, setOpenGenerateModal, setSaveEnabled, setshowpastMT, setCurrentQuestion, currentQuestion}) => {
     const appState = useAppState();
     const { userId} = useUser();
     const [accuracy, setaccurracy] = useState(50);
@@ -104,6 +104,7 @@ const GenerateModalMT = ({setRegenerate, setisLoading, questions, setQuestions, 
                 setQuestions(parsedQuestions);
                 localStorage.setItem(mocktestStorageKey, JSON.stringify(parsedQuestions));
             }
+            setCurrentQuestion(currentQuestion);
             setshowpastMT(true);
         } catch (error) {
             console.error("Error generating mocktest:", error);

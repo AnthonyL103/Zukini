@@ -96,7 +96,8 @@ const PastFlashCardList = ({NewFCEntry}) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredFlashcards.map((flashcard) => (
+        {filteredFlashcards.length > 0 ? (
+        filteredFlashcards.map((flashcard) => (
           <div key={flashcard.flashcardkey} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-all relative">
             <button 
               onClick={() => handleDelete(flashcard)}
@@ -114,7 +115,12 @@ const PastFlashCardList = ({NewFCEntry}) => {
               Study
             </button>
           </div>
-        ))}
+        ))
+      ) : (
+        <div className="text-gray-500 mt-5">
+            <h1>No flashcards found matching your search.</h1>
+        </div>
+      )}
       </div>
 
       {/* Delete Confirmation Modal - remains the same */}

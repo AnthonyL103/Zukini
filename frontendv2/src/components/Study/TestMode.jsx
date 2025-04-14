@@ -32,6 +32,8 @@ export const TestMode = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [regenerate, setRegenerate] = useState(false);
   const [OpenGenerateModal, setOpenGenerateModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [VAsearchQuery, setVASearchQuery] = useState('');
 
   // Update questions when current mock test changes
   useEffect(() => {
@@ -319,6 +321,31 @@ export const TestMode = () => {
     handleSave();
   };
 
+  const gotopage = () => {
+    if (isNaN(parseInt(searchQuery))) {
+      setSearchQuery("");
+      return;
+    }
+    if (searchQuery > questions.length) {
+      setCurrentQuestion(questions.length - 1);
+    }
+    else if (searchQuery < 0) {
+      setCurrentQuestion(0);
+    } else {
+      setCurrentQuestion(searchQuery - 1);
+    }
+    setSearchQuery("");
+  };
+
+  const closeVA = () => {
+    setVASearchQuery("");
+    setshowVA(false);
+  }
+
+  const filteredQuestions = questions.filter(question =>
+    question.question.toLowerCase().includes(VAsearchQuery.toLowerCase())
+  );
+
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-lg">
@@ -407,8 +434,20 @@ export const TestMode = () => {
               className="bg-gradient-to-r from-[#0f0647] to-[#67d7cc] p-1 rounded-xl mb-6 cursor-pointer">
           <div className="bg-white p-6 rounded-xl flex flex-col  ">
           <h3 className="font-semibold mb-4">
-            Question {currentQuestion + 1} of {questions.length}
+            Question {<input type = "text" placeholder={currentQuestion + 1} value={searchQuery}
+             onChange={(e) => setSearchQuery(e.target.value)} disabled={questions.length === 0}
+             onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                gotopage();
+              }
+            }}
+             className="w-7 px-1 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f0647] focus:border-transparent"
+             style={{
+              backgroundColor: questions.length === 0 ? "#f0f0f0" : "white",
+              cursor: questions.length === 0 ? "not-allowed" : "text",
+              }}/>} of {questions.length}
           </h3>
+            
           <div className="bg-gray-50 p-4 rounded-lg mb-4 border ">
             <p className="text-lg">{questions[currentQuestion].question}</p>
           </div>
@@ -416,7 +455,6 @@ export const TestMode = () => {
           <div className="space-y-2">
             {questions[currentQuestion].answers.map((option, index) => {
               const questionId = questions[currentQuestion].id;
-            
               const selectedAnswer = selectedAnswers[questionId];
 
               return (
@@ -545,37 +583,56 @@ export const TestMode = () => {
             <h2 className="text-2xl font-bold text-[#0f0647] mb-4 text-center">
               All Questions
             </h2>
+            <input
+            type="text"
+            placeholder={"Search questions..."}
+            className="px-4 py-2 border w-full border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f0647] focus:border-transparent mb-6"
+            value={VAsearchQuery}
+            onChange={(e) => setVASearchQuery(e.target.value)}
+            disabled={questions.length === 0} 
+            style={{
+            backgroundColor: questions.length === 0 ? "#f0f0f0" : "white",
+            cursor: questions.length === 0 ? "not-allowed" : "text",
+            }}
+        />
+
 
             <div className="max-h-[70vh] overflow-y-auto space-y-6">
-              {questions.map((question, idx) => (
-                <div key={idx} className="relative p-4 border rounded-lg">
-                  
-                  <button 
-                    onClick={() => handleDeleteQuestion(idx)}
-                    className="absolute top-2 right-2 p-2 text-gray-400 hover:text-red-500 hover:cursor-pointer transition-colors rounded-full hover:bg-red-50"
-                    aria-label="Delete question"
-                  >
-                    <Trash2 size={20} />
-                  </button>
+              {filteredQuestions.length > 0 ? (
+                filteredQuestions.map((question, idx) => (
+                  <div key={idx} className="relative p-4 border rounded-lg">
+                    
+                    <button 
+                      onClick={() => handleDeleteQuestion(idx)}
+                      className="absolute top-2 right-2 p-2 text-gray-400 hover:text-red-500 hover:cursor-pointer transition-colors rounded-full hover:bg-red-50"
+                      aria-label="Delete question"
+                    >
+                      <Trash2 size={20} />
+                    </button>
 
-                  <h3 className="font-semibold text-lg mb-6 pr-10"> 
-                    {idx + 1}. {question.question}
-                  </h3>
+                    <h3 className="font-semibold text-lg mb-6 pr-10"> 
+                      {idx + 1}. {question.question}
+                    </h3>
 
-                  <div className="space-y-2">
-                    {question.answers.map((option, index) => (
-                      <p
-                        key={index}
-                        className={`p-2 rounded-lg ${
-                          option === question.rightAnswer ? "bg-green-500 text-white" : "bg-gray-200"
-                        }`}
-                      >
-                        {String.fromCharCode(65 + index)}. {option}
-                      </p>
-                    ))}
+                    <div className="space-y-2">
+                      {question.answers.map((option, index) => (
+                        <p
+                          key={index}
+                          className={`p-2 rounded-lg ${
+                            option === question.rightAnswer ? "bg-green-500 text-white" : "bg-gray-200"
+                          }`}
+                        >
+                          {String.fromCharCode(65 + index)}. {option}
+                        </p>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+            ) : (
+                <div className="text-gray-500 mt-5">
+                  <h1>No questions found matching your search.</h1>
+              </div>
+            )}
 
               {!showAddQuestionForm ? (
                 <button
@@ -637,7 +694,7 @@ export const TestMode = () => {
             </div>
 
             <button
-              onClick={() => setshowVA(false)}
+              onClick={closeVA}
               className="w-full mt-4 py-2 bg-[#0f0647] text-white rounded-lg hover:bg-[#2c2099]"
             >
               Close
@@ -655,6 +712,8 @@ export const TestMode = () => {
             setOpenGenerateModal = {setOpenGenerateModal}
             setSaveEnabled={setSaveEnabled}
             setshowpastMT={setshowpastMT}
+            setCurrentQuestion={setCurrentQuestion}
+            currentQuestion={currentQuestion}
         />
 
       

@@ -31,6 +31,8 @@ export const FlashcardMode = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [regenerate, setRegenerate] = useState(false);
   const [OpenGenerateModal, setOpenGenerateModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [VAsearchQuery, setVASearchQuery] = useState('');
   
   
   // Update displayed flashcards when current FC changes
@@ -294,12 +296,54 @@ export const FlashcardMode = () => {
     setCurrentIndex((prev) => (prev - 1 + DisplayedFC.length) % DisplayedFC.length);
   };
 
+  const gotopage = () => {
+    if (isNaN(parseInt(searchQuery))) {
+      setSearchQuery("");
+      return;
+    }
+    if (searchQuery > DisplayedFC.length) {
+      setCurrentIndex(DisplayedFC.length - 1);
+    }
+    else if (searchQuery < 0) {
+      setCurrentIndex(0);
+    } else {
+      setCurrentIndex(searchQuery - 1);
+    }
+    setSearchQuery("");
+  };
+
+  const closeVA = () => {
+    setVASearchQuery("");
+    setshowVA(false);
+  }
+
+  const filteredFlashcards = DisplayedFC.filter(fc =>
+    fc.question.toLowerCase().includes(VAsearchQuery.toLowerCase())
+  );
+
   return (
     <div className="bg-white rounded-xl p-6 shadow-lg">
       <div className="flex justify-between items-center gap-4"> 
+      <div className="flex flex-col"> 
       <h2 className="text-2xl font-bold text-[#0f0647] mb-4">
         Flashcard Name: {appState.currentFC?.fcsessionname || "None"}
+
       </h2>
+      <h3 className="font-semibold mb-4">
+            Flashcard {<input type = "text" placeholder={currentIndex + 1} value={searchQuery}
+             onChange={(e) => setSearchQuery(e.target.value)} disabled={DisplayedFC.length === 0}
+             onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                gotopage();
+              }
+            }}
+             className="w-7 px-1 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f0647] focus:border-transparent"
+             style={{
+              backgroundColor: DisplayedFC.length === 0 ? "#f0f0f0" : "white",
+              cursor: DisplayedFC.length === 0 ? "not-allowed" : "text",
+              }}/>} of {DisplayedFC.length}
+        </h3>
+      </div>
 
       <div className= "flex flex-col sm:flex-row  gap-4 py-4"> 
 
@@ -460,9 +504,22 @@ export const FlashcardMode = () => {
                     <h2 className="text-2xl font-bold text-[#0f0647] mb-4 text-center">
                         All Flashcards
                     </h2>
+                    <input
+                      type="text"
+                      placeholder={"Search questions..."}
+                      className="px-4 py-2 border w-full border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f0647] focus:border-transparent mb-6"
+                      value={VAsearchQuery}
+                      onChange={(e) => setVASearchQuery(e.target.value)}
+                      disabled={DisplayedFC.length === 0} 
+                      style={{
+                      backgroundColor: DisplayedFC.length === 0 ? "#f0f0f0" : "white",
+                      cursor: DisplayedFC.length === 0 ? "not-allowed" : "text",
+                      }}
+                  />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {DisplayedFC.map((fc, index) => (
+                      {filteredFlashcards.length > 0 ? (
+                        filteredFlashcards.map((fc, index) => (
                             <div 
                             key={index} 
                             className="relative bg-gray-100 p-4 rounded-lg shadow hover:shadow-md transition cursor-pointer"
@@ -479,7 +536,15 @@ export const FlashcardMode = () => {
                             <p className="text-gray-600 mt-2">{fc.answer}</p>
                           </div>
                           
-                        ))}
+                        ))
+
+                      ) : (
+                        <div className="col-span-1 md:col-span-2 lg:col-span-3 flex flex-col items-center">
+                        <div className="text-gray-500 mb-4 w-full">
+                          <h1>No flashcards found matching your search.</h1>
+                        </div>
+                      </div>
+                      )}
 
                         {!showAddFlashcardForm ? (
                                        <button
@@ -563,6 +628,8 @@ export const FlashcardMode = () => {
             setOpenGenerateModal = {setOpenGenerateModal}
             setSaveEnabled={setSaveEnabled}
             setshowpastFC={setshowpastFC}
+            setCurrentIndex={setCurrentIndex}
+            currentIndex={currentIndex}
         />
         
 

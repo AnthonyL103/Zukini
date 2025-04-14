@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {useAppState} from '../utils/appcontext';
 import { useUser } from '../authentication/UserContext';
 
-const GenerateModalFC = ({setRegenerate, setisLoading, DisplayedFC, setDisplayedFC, OpenGenerateModal, setOpenGenerateModal, setSaveEnabled, setshowpastFC}) => {
+const GenerateModalFC = ({setRegenerate, setisLoading, DisplayedFC, setDisplayedFC, OpenGenerateModal, setOpenGenerateModal, setSaveEnabled, setshowpastFC, setCurrentIndex, currentIndex}) => {
     const appState = useAppState();
     const { userId} = useUser();
     const [accuracy, setaccurracy] = useState(50);
@@ -80,6 +80,7 @@ const GenerateModalFC = ({setRegenerate, setisLoading, DisplayedFC, setDisplayed
                 setDisplayedFC(parsedFlashcards);
                 localStorage.setItem(flashcardStorageKey, JSON.stringify(parsedFlashcards));
             }
+            setCurrentIndex(currentIndex);
             setshowpastFC(true);
         } catch (error) {
             console.error("Error generating flashcards:", error);

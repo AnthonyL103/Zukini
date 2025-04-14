@@ -97,7 +97,8 @@ const PastMockTestList = ({ NewMTEntry }) => {
         />
         </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredMockTests.map((mocktest) => (
+        {filteredMockTests.length > 0 ? (
+          filteredMockTests.map((mocktest) => (
           <div key={mocktest.mocktestkey} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-all relative">
             <button 
               onClick={() => handleDelete(mocktest)}
@@ -115,8 +116,14 @@ const PastMockTestList = ({ NewMTEntry }) => {
               Take Test
             </button>
           </div>
-        ))}
-      </div>
+          ))
+        ) : (
+          <div className="text-gray-500 mt-5">
+              <h1>No mocktests found matching your search.</h1>
+          </div>
+        )}
+        </div>
+      
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && mocktestToDelete && (
