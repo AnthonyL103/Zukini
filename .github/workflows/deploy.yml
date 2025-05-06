@@ -47,6 +47,13 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
+        
+      - name: Trigger ASG Instance Refresh
+        run: |
+          aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name benchracers-asg \
+            --strategy Rolling
+
 
 
       
